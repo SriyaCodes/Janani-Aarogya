@@ -1,0 +1,9 @@
+# React + Firebase
+node_modules/
+.env
+build/
+dist/
+firebase-debug.log
+firebase-error.log
+.DS_Store
+.vscode/
