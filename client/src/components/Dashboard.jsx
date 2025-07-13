@@ -1,9 +1,32 @@
-import React from 'react';
+// src/components/Dashboard.jsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputSection from './InputSection';
 
 function Dashboard() {
+  const [aiReply, setAiReply] = useState('');
   const navigate = useNavigate();
+
+  const features = [
+    {
+      title: 'Memory Vault',
+      desc: 'Capture and relive your motherhood journey.',
+      img: 'https://via.placeholder.com/100',
+      link: '/memory-vault',
+    },
+    {
+      title: 'Maternal Yoga',
+      desc: 'Curated yoga routines for each stage.',
+      img: 'https://via.placeholder.com/100',
+      link: '/yoga',
+    },
+    {
+      title: 'Ayurveda',
+      desc: 'Ayurvedic wisdom tailored for you.',
+      img: 'https://via.placeholder.com/100',
+      link: '/ayurveda',
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-rose-50">
@@ -23,33 +46,22 @@ function Dashboard() {
         Welcome to Janani Aarogya, your health companion
       </div>
 
-      {/* Unified Input + Response section */}
-      <div className="mt-6 flex justify-center px-4">
-        <InputSection />
+      {/* Input Section */}
+      <div className="mt-6 flex justify-center">
+        <InputSection onReply={setAiReply} />
       </div>
+
+      {/* AI Response */}
+      {aiReply && (
+        <div className="mt-4 mx-auto w-11/12 md:w-2/3 bg-white p-4 rounded-lg shadow text-gray-800">
+          <strong>Janani Says:</strong>
+          <div>{aiReply}</div>
+        </div>
+      )}
 
       {/* Feature Thumbnails */}
       <div className="mt-10 space-y-6 px-4 max-w-3xl mx-auto">
-        {[
-          {
-            title: 'Memory Vault',
-            desc: 'Capture and relive your motherhood journey.',
-            img: 'https://via.placeholder.com/100',
-            link: '/memory-vault',
-          },
-          {
-            title: 'Maternal Yoga',
-            desc: 'Curated yoga routines for each stage.',
-            img: 'https://via.placeholder.com/100',
-            link: '/yoga',
-          },
-          {
-            title: 'Ayurveda',
-            desc: 'Ayurvedic wisdom tailored for you.',
-            img: 'https://via.placeholder.com/100',
-            link: '/ayurveda',
-          },
-        ].map(({ title, desc, img, link }) => (
+        {features.map(({ title, desc, img, link }) => (
           <div key={title} className="flex bg-white shadow-md rounded-lg overflow-hidden">
             <img src={img} alt={title} className="w-28 h-28 object-cover" />
             <div className="flex-1 p-4">
