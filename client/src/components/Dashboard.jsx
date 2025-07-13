@@ -1,11 +1,14 @@
 // src/components/Dashboard.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
 import InputSection from './InputSection';
+import LanguageSelector from './LanguageSelector';
 
 function Dashboard() {
   const [aiReply, setAiReply] = useState('');
   const navigate = useNavigate();
+  const user = getAuth().currentUser;
 
   const features = [
     {
@@ -44,6 +47,14 @@ function Dashboard() {
       {/* Heading */}
       <div className="text-center mt-6 text-2xl font-semibold text-pink-700">
         Welcome to Janani Aarogya, your health companion
+      </div>
+
+      {/* Language Selector Block */}
+      <div className="mt-4 text-center">
+        <h2 className="text-lg font-medium mb-2 text-gray-700">🌐 Select Your Language</h2>
+        <div className="inline-flex gap-3 flex-wrap justify-center">
+          <LanguageSelector uid={user?.uid} />
+        </div>
       </div>
 
       {/* Input Section */}

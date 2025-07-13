@@ -1,60 +1,54 @@
+// src/components/LanguageSelector.jsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
-function LanguageSelector() {
+function LanguageSelector({ uid }) {
   const languages = [
-    { code: 'hi', label: 'हिन्दी' },
-    { code: 'en', label: 'English' },
-    { code: 'ta', label: 'தமிழ்' },
-    { code: 'te', label: 'తెలుగు' },
+    { code: 'en-IN', label: '🇬🇧 English' },
+    { code: 'hi-IN', label: '🇮🇳 हिन्दी' },
+    { code: 'te-IN', label: '🇮🇳 తెలుగు' },
+    { code: 'ta-IN', label: '🇮🇳 தமிழ்' },
   ];
 
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user")); // Get user from localStorage
+  const current = localStorage.getItem('lang') || 'en-IN';
 
-  const handleSelect = async (lang) => {
-    if (!user?.uid) {
-      alert("User not found. Please log in again.");
-      return;
-    }
-
+  const handleChange = async (lang) => {
     try {
-      // Update Firestore with selected language
-      const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, { language: lang });
+      localStorage.setItem('lang', lang);
 
-      // Update localStorage user object
-      const updatedUser = { ...user, language: lang };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user) {
+        localStorage.setItem('user', JSON.stringify({ ...user, language: lang }));
+      }
 
-      // Navigate to next screen
-      navigate('/stage-selector');
+      if (uid) {
+        const ref = doc(db, 'users', uid);
+        await updateDoc(ref, { language: lang });
+      }
+
+      alert('Language set to: ' + lang);
     } catch (err) {
-      console.error("Error updating language:", err);
-      alert("Failed to save language. Try again.");
+      console.error('Language update error', err);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold mb-6">
-        अपनी भाषा चुनें / Choose your language
-      </h1>
-
-      <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
-        {languages.map((l) => (
-          <button
-            key={l.code}
-            onClick={() => handleSelect(l.code)}
-            className="py-3 rounded-lg bg-purple-600 text-white text-lg font-medium hover:bg-purple-700 transition"
-          >
-            {l.label}
-          </button>
-        ))}
-      </div>
-    </div>
+    <>
+      {languages.map(({ code, label }) => (
+        <button
+          key={code}
+          onClick={() => handleChange(code)}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+            code === current
+              ? 'bg-pink-500 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          {label}
+        </button>
+      ))}
+    </>
   );
 }
 
