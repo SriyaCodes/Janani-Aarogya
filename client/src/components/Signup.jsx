@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../firebase";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -42,8 +42,8 @@ function Signup() {
         })
       );
 
-      // 4️⃣ Redirect to stage selector
-      navigate("/stage-selector");
+      // 4️⃣ Redirect to language selector
+      navigate("/language-selector");
     } catch (error) {
       console.error("❌ Signup failed:", error.code, error.message);
       alert("Signup failed: " + error.message);
@@ -83,7 +83,7 @@ function Signup() {
         <input
           name="password"
           type="password"
-          placeholder="Password (min 6 chars)"
+          placeholder="Password (min 6 chars)"
           className="w-full p-2 mb-4 border rounded"
           value={form.password}
           onChange={onChange}
@@ -97,14 +97,6 @@ function Signup() {
         >
           Sign Up
         </button>
-
-        {/* Login Link */}
-        <p className="text-center mt-4 text-sm text-gray-600">
-          Already a user?{" "}
-          <Link to="/login" className="text-pink-600 hover:underline">
-            Login
-          </Link>
-        </p>
       </form>
     </div>
   );

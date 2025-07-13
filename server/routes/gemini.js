@@ -15,23 +15,12 @@ const genAI = new GoogleGenerativeAI(apiKey);
 
 router.post('/', async (req, res) => {
   try {
-    const { prompt, stage = 'pregnancy', language = 'English' } = req.body;
-
+    const { prompt } = req.body;
     if (!prompt) return res.status(400).json({ error: 'Prompt is required' });
 
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    // ✨ Customize prompt with tone, stage, and language
-    const customPrompt = `
-You are Janani Aarogya, a caring and culturally sensitive AI health companion for Indian women.
-This user is currently in the ${stage} stage and prefers responses in ${language}.
-Your goal is to provide answers that are gentle, supportive, emotionally warm, and easy to understand.
-Avoid medical jargon. Keep it friendly and human-like.
-
-Question: ${prompt}
-`;
-
-    const result = await model.generateContent(customPrompt);
+    const result = await model.generateContent(prompt);
     const text = result.response.text();
 
     res.json({ reply: text });
