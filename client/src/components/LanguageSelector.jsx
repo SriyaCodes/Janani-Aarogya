@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 function LanguageSelector() {
-  // List of languages you want to show
   const languages = [
     { code: 'hi', label: 'हिन्दी' },
     { code: 'en', label: 'English' },
@@ -11,13 +12,29 @@ function LanguageSelector() {
   ];
 
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user")); // Get user from localStorage
 
-  // Handle click on any language button
-  const handleSelect = (lang) => {
-    // 1) Save the choice in localStorage for now
-    localStorage.setItem('lang', lang);
-    // 2) Move to the next screen
-    navigate('/stage');
+  const handleSelect = async (lang) => {
+    if (!user?.uid) {
+      alert("User not found. Please log in again.");
+      return;
+    }
+
+    try {
+      // Update Firestore with selected language
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, { language: lang });
+
+      // Update localStorage user object
+      const updatedUser = { ...user, language: lang };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      // Navigate to next screen
+      navigate('/stage-selector');
+    } catch (err) {
+      console.error("Error updating language:", err);
+      alert("Failed to save language. Try again.");
+    }
   };
 
   return (
