@@ -1,4 +1,3 @@
-// src/components/Dashboard.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InputSection from './InputSection';
@@ -26,6 +25,12 @@ function Dashboard() {
       img: 'https://via.placeholder.com/100',
       link: '/ayurveda',
     },
+    {
+      title: 'Journal',
+      desc: 'Create daily emotional summaries of your journey.',
+      img: 'https://via.placeholder.com/100',
+      link: '/journal',
+    },
   ];
 
   return (
@@ -37,6 +42,7 @@ function Dashboard() {
           <button onClick={() => navigate('/memory-vault')} className="hover:text-pink-600">Memory Vault</button>
           <button onClick={() => navigate('/yoga')} className="hover:text-pink-600">Maternal Yoga</button>
           <button onClick={() => navigate('/ayurveda')} className="hover:text-pink-600">Ayurveda</button>
+          <button onClick={() => navigate('/journal')} className="hover:text-pink-600">Journal</button>
           <div className="w-8 h-8 bg-pink-100 text-pink-600 rounded-full flex items-center justify-center">👤</div>
         </div>
       </nav>

@@ -1,308 +1,186 @@
+// src/components/InputSection.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import { db } from '../firebase';
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getGeminiReply } from '../services/geminiApi';
 import { franc } from 'franc';
 
 function InputSection({ onReply }) {
-  const [input, setInput] = useState('');
+  /* ───────── state ───────── */
+  const [input, setInput]           = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [inputMethod, setInputMethod] = useState(null);
-  const silenceTimerRef = useRef(null);
-  const recognitionRef = useRef(null);
+
+  /* ───────── refs ────────── */
+  const silenceTimerRef   = useRef(null);
+  const recognitionRef    = useRef(null);
   const speechSynthesisRef = useRef(null);
 
-  const user = getAuth().currentUser;
+  /* ───────── user / lang ─── */
+  const user     = getAuth().currentUser;
   const userLang = localStorage.getItem('lang') || 'en-IN';
 
-  // Initialize speech synthesis with better voice handling
+  /* ─────── voice setup ───── */
   useEffect(() => {
     speechSynthesisRef.current = window.speechSynthesis;
-    
-    // Some browsers need this to populate voices
-    const handleVoicesChanged = () => {
-      if (speechSynthesisRef.current) {
-        speechSynthesisRef.current.getVoices();
-      }
-    };
-    
-    speechSynthesisRef.current.addEventListener('voiceschanged', handleVoicesChanged);
-    
+    const populate = () => speechSynthesisRef.current?.getVoices();
+    speechSynthesisRef.current.addEventListener('voiceschanged', populate);
     return () => {
-      if (speechSynthesisRef.current) {
-        speechSynthesisRef.current.removeEventListener('voiceschanged', handleVoicesChanged);
-        speechSynthesisRef.current.cancel();
-      }
+      speechSynthesisRef.current.removeEventListener('voiceschanged', populate);
+      speechSynthesisRef.current.cancel();
     };
   }, []);
 
-  // Cleanup on unmount
+  /* ─────── cleanup ───────── */
   useEffect(() => {
     return () => {
       clearTimeout(silenceTimerRef.current);
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      if (speechSynthesisRef.current) {
-        speechSynthesisRef.current.cancel();
-      }
+      recognitionRef.current?.stop();
+      speechSynthesisRef.current?.cancel();
     };
   }, []);
 
-  /* ---------- Enhanced Text-to-Speech with Native Voices --------- */
+  /* ───── TTS helper ──────── */
   const speak = (text, lang) => {
-    if (!speechSynthesisRef.current) return;
-    
-    speechSynthesisRef.current.cancel();
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = lang;
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-    
-    // Get all available voices
-    const voices = speechSynthesisRef.current.getVoices();
-    
-    // Language-specific voice selection logic
-    const getPreferredVoice = () => {
-      // Try to find exact match first
-      const exactMatch = voices.find(v => v.lang === lang);
-      if (exactMatch) return exactMatch;
-      
-      // Then try language code match (e.g., 'hi' for 'hi-IN')
-      const langCode = lang.split('-')[0];
-      const langMatch = voices.find(v => v.lang.startsWith(langCode));
-      if (langMatch) return langMatch;
-      
-      // Fallback to any voice that can speak the language
-      const fallback = voices.find(v => v.lang.includes(langCode));
-      if (fallback) return fallback;
-      
-      // Default to first available voice
-      return voices[0];
-    };
-    
-    const preferredVoice = getPreferredVoice();
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
-    }
-    
-    // Speak with a slight delay to ensure voice is ready
-    setTimeout(() => {
-      speechSynthesisRef.current.speak(utterance);
-    }, 100);
+    const synth = speechSynthesisRef.current;
+    if (!synth) return;
+    synth.cancel();
+    const uttr    = new SpeechSynthesisUtterance(text);
+    uttr.lang     = lang;
+    uttr.rate     = 0.9;
+    uttr.pitch    = 1.0;
+    const voices  = synth.getVoices();
+    const voice   =
+      voices.find(v => v.lang === lang) ||
+      voices.find(v => v.lang.startsWith(lang.split('-')[0])) ||
+      voices[0];
+    uttr.voice = voice;
+    setTimeout(() => synth.speak(uttr), 100);
   };
 
-  /* ---------- Language Detection --------- */
+  /* ───── language detect ─── */
   const detectLanguage = (text) => {
     if (text.length < 3) return userLang;
-    
-    const langMap = {
-      hin: 'hi-IN', // Hindi
-      tel: 'te-IN', // Telugu
-      tam: 'ta-IN', // Tamil
-      kan: 'kn-IN', // Kannada
-      eng: 'en-IN', // English
-      mar: 'mr-IN', // Marathi
-      ben: 'bn-IN', // Bengali
-      guj: 'gu-IN', // Gujarati
-      mal: 'ml-IN', // Malayalam
-      pan: 'pa-IN', // Punjabi
-      urd: 'ur-IN', // Urdu
+    const map = {
+      hin: 'hi-IN', tel: 'te-IN', tam: 'ta-IN', kan: 'kn-IN',
+      eng: 'en-IN', mar: 'mr-IN', ben: 'bn-IN', guj: 'gu-IN',
+      mal: 'ml-IN', pan: 'pa-IN', urd: 'ur-IN'
     };
-    
-    const detected = franc(text, { minLength: 3, only: Object.keys(langMap) });
-    return langMap[detected] || userLang;
+    const code = franc(text, { minLength: 3, only: Object.keys(map) });
+    return map[code] || userLang;
   };
 
-  /* ---------- Enhanced Speech Recognition --------- */
-  const startListening = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert('Speech Recognition not supported in your browser');
-      return;
-    }
-
-    recognitionRef.current = new SpeechRecognition();
-    recognitionRef.current.lang = userLang;
-    recognitionRef.current.interimResults = true;
-    recognitionRef.current.continuous = true;
-    recognitionRef.current.maxAlternatives = 1;
-
-    // Reset silence timer on any sound
-    const resetSilenceTimer = () => {
-      clearTimeout(silenceTimerRef.current);
-      silenceTimerRef.current = setTimeout(() => {
-        stopListening();
-      }, 3000); // 3 seconds of silence
-    };
-
-    recognitionRef.current.onresult = (event) => {
-      resetSilenceTimer();
-      const transcript = Array.from(event.results)
-        .map(result => result[0])
-        .map(result => result.transcript)
-        .join('');
-      
-      if (event.results[event.results.length - 1].isFinal) {
-        setInputMethod('speech');
-        const detectedLang = detectLanguage(transcript);
-        handleSubmit(transcript, detectedLang);
-      }
-    };
-
-    recognitionRef.current.onerror = (event) => {
-      console.error('Recognition error:', event);
-      stopListening();
-    };
-
-    recognitionRef.current.onend = () => {
-      setIsListening(false);
-      setIsProcessing(false);
-    };
-
-    setIsListening(true);
-    recognitionRef.current.start();
-    resetSilenceTimer();
-  };
-
+  /* ───── start / stop SR ─── */
   const stopListening = () => {
     clearTimeout(silenceTimerRef.current);
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
+    recognitionRef.current?.stop();
     setIsListening(false);
   };
 
-  /* ---------- Enhanced Handle Submission with Mother-Friendly Responses --------- */
+  const startListening = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return alert('Speech Recognition not supported in this browser');
+    recognitionRef.current                  = new SR();
+    recognitionRef.current.lang             = userLang;
+    recognitionRef.current.interimResults   = true;
+    recognitionRef.current.continuous       = true;
+    recognitionRef.current.maxAlternatives  = 1;
+
+    const resetSilence = () => {
+      clearTimeout(silenceTimerRef.current);
+      silenceTimerRef.current = setTimeout(stopListening, 3000);
+    };
+
+    recognitionRef.current.onresult = (e) => {
+      resetSilence();
+      const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+      if (e.results[e.results.length - 1].isFinal) {
+        setInputMethod('speech');
+        handleSubmit(transcript, detectLanguage(transcript));
+      }
+    };
+    recognitionRef.current.onerror = (err) => { console.error(err); stopListening(); };
+    recognitionRef.current.onend   = () => { setIsListening(false); setIsProcessing(false); };
+
+    setIsListening(true);
+    recognitionRef.current.start();
+    resetSilence();
+  };
+
+  /* ───── handle submit ───── */
   const handleSubmit = async (textVal, forcedLang) => {
     const finalInput = textVal || input.trim();
     if (!finalInput) return;
 
+    setIsProcessing(true);
     try {
-      setIsProcessing(true);
       const responseLang = forcedLang || detectLanguage(finalInput);
-      const langCode = responseLang.slice(0, 2);
+      const langCode     = responseLang.slice(0,2);
 
-      // Modify the prompt to ensure mother-friendly, optimistic responses
-      const ayurvedicPrompt = `Act as a traditional Indian mother giving loving advice to her pregnant daughter. 
-      Respond to the following concern in ${langCode} with warm, nurturing tone combining:
-      1. Ancient Ayurvedic remedies (use ingredients like ginger, turmeric, ghee, etc.)
-      2. Simple yoga asanas (mention trimester-specific safe poses)
-      3. Traditional Indian practices (like oil massage, dietary tips)
-      4. Emotional support with cultural wisdom (shlokas or proverbs if appropriate)
-      5. Home-ready solutions using common Indian kitchen ingredients
+      /* ---------- NEW EMOTIONAL PROMPT ---------- */
+      const prompt = `
+You are a wise, emotionally strong Indian woman (like an elder sister or trusted midwife).
+Give a short, warm, and deeply empathetic reply in ${langCode}.
+• 2‑3 concise lines
+• Gentle reassurance, emotional support
+• A dash of motivation or cultural wisdom if fitting
+User said:
+"${finalInput}"`;
 
-      Keep responses practical, safe for pregnancy, and rooted in Indian tradition and response should be given in the same langaue as the ques was asked for.
-      The concern is: ${finalInput}`;
+      const reply = await getGeminiReply(prompt, langCode);
 
-      // Get AI response
-      const reply = await getGeminiReply(ayurvedicPrompt, langCode);
-
-      // Update UI and store data
+      /* update UI */
       onReply(reply, responseLang, inputMethod || 'text');
+      speak(reply, responseLang);
       setInput('');
       setInputMethod(null);
 
-      // Speak the response with native voice
-      speak(reply, responseLang);
-
+      /* store entry */
       if (user) {
-        await updateDoc(doc(db, 'users', user.uid), {
-          journal: arrayUnion({
-            input: finalInput,
-            response: reply,
-            date: new Date().toISOString(),
-            lang: responseLang,
-            inputMethod: inputMethod || 'text',
-            adviceType: 'ayurvedic_pregnancy'
-          }),
+        console.log('📦 Saving entry for UID:', user.uid);
+        await addDoc(collection(db, 'users', user.uid, 'entries'), {
+          input: finalInput,
+          response: reply,
+          lang: responseLang,
+          inputMethod: inputMethod || 'text',
+          createdAt: serverTimestamp()
         });
-      }
+      } else console.warn('⚠️ No authenticated user, skipping Firestore write');
     } catch (err) {
-      console.error('AI error', err);
-      const errorMsg = userLang.includes('hi') ? 'प्रिय बेटी,क्षमा करें, एक त्रुटि हुई। कृपया पुनः प्रयास करें।' : 
-                      'Dear beta,sorry an error occurred. Please try again.';
-      onReply(errorMsg, userLang, inputMethod || 'text');
-      speak(errorMsg, userLang);
+      console.error('Gemini error', err);
+      const fallback = userLang.startsWith('hi')
+        ? 'क्षमा करें, अभी उत्तर उपलब्ध नहीं है। कृपया पुनः प्रयास करें।'
+        : 'Sorry, I’m unable to respond right now. Please try again.';
+      onReply(fallback, userLang, inputMethod || 'text');
+      speak(fallback, userLang);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Handle text input submission
-  const handleTextSubmit = () => {
-    setInputMethod('text');
-    handleSubmit();
+  /* ───── text submit click ─ */
+  const handleTextSubmit = () => { setInputMethod('text'); handleSubmit(); };
+
+  /* ───── translations ────── */
+  const translations = {
+    'hi-IN': { ph:'अपना प्रश्न लिखें...', send:'भेजें', mic:'बोलें' },
+    'te-IN': { ph:'మీ ప్రశ్న టైప్ చేయండి...', send:'పంపు', mic:'మాట్లాడు' },
+    'ta-IN': { ph:'உங்கள் கேள்வி...', send:'அனுப்பு', mic:'பேச' },
+    'kn-IN': { ph:'ನಿಮ್ಮ ಪ್ರಶ್ನೆ...', send:'ಕಳುಹೆ', mic:'ಮಾತನಾಡಿ' },
+    'mr-IN': { ph:'तुमचा प्रश्न...', send:'पाठवा', mic:'बोला' },
+    'bn-IN': { ph:'আপনার প্রশ্ন...', send:'পাঠান', mic:'বলুন' },
+    'gu-IN': { ph:'તમારો પ્રશ્ન...', send:'મોકલો', mic:'બોલો' },
+    'ml-IN': { ph:'ചോദ്യം ടൈപ്പുചെയ്യൂ...', send:' അയയ്ക്കുക', mic:'സംസാരിക്കുക' },
+    'pa-IN': { ph:'ਆਪਣਾ ਸਵਾਲ...', send:'ਭੇਜੋ', mic:'ਬੋਲੋ' },
+    'ur-IN': { ph:'اپنا سوال لکھیں...', send:'بھیجیں', mic:'بولیں' },
+    default : { ph:'Type your question...', send:'Send', mic:'Speak' }
   };
+  const t = translations[userLang] || translations.default;
+  const { ph:placeholder, send, mic:speakLabel } = t;
 
-  // Get localized UI text
-  const getLocalizedText = () => {
-    const translations = {
-      'hi-IN': {
-        placeholder: 'अपना प्रश्न पूछें...',
-        send: 'भेजें',
-        speak: 'बोलकर पूछें'
-      },
-      'te-IN': {
-        placeholder: 'మీ ప్రశ్న అడగండి...',
-        send: 'పంపండి',
-        speak: 'మాట్లాడి అడగండి'
-      },
-      'ta-IN': {
-        placeholder: 'உங்கள் கேள்வியைக் கேளுங்கள்...',
-        send: 'அனுப்பு',
-        speak: 'பேசிக் கேளுங்கள்'
-      },
-      'kn-IN': {
-        placeholder: 'ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಕೇಳಿ...',
-        send: 'ಕಳುಹಿಸಿ',
-        speak: 'ಮಾತನಾಡಿ ಕೇಳಿ'
-      },
-      'mr-IN': {
-        placeholder: 'तुमचा प्रश्न विचारा...',
-        send: 'पाठवा',
-        speak: 'बोलून विचारा'
-      },
-      'bn-IN': {
-        placeholder: 'আপনার প্রশ্ন জিজ্ঞাসা করুন...',
-        send: 'পাঠান',
-        speak: 'বলে জিজ্ঞাসা করুন'
-      },
-      'gu-IN': {
-        placeholder: 'તમારો પ્રશ્ન પૂછો...',
-        send: 'મોકલો',
-        speak: 'બોલીને પૂછો'
-      },
-      'ml-IN': {
-        placeholder: 'നിങ്ങളുടെ ചോദ്യം ചോദിക്കുക...',
-        send: 'അയയ്ക്കുക',
-        speak: 'സംസാരിച്ച് ചോദിക്കുക'
-      },
-      'pa-IN': {
-        placeholder: 'ਆਪਣਾ ਸਵਾਲ ਪੁੱਛੋ...',
-        send: 'ਭੇਜੋ',
-        speak: 'ਬੋਲ ਕੇ ਪੁੱਛੋ'
-      },
-      'ur-IN': {
-        placeholder: 'اپنا سوال پوچھیں...',
-        send: 'بھیجیں',
-        speak: 'بول کر پوچھیں'
-      },
-      default: {
-        placeholder: 'Ask your question...',
-        send: 'Send',
-        speak: 'Speak'
-      }
-    };
-    
-    return translations[userLang] || translations.default;
-  };
-
-  const { placeholder, send, speak: speakLabel } = getLocalizedText();
-
+  /* ───── render ───── */
   return (
     <div className="p-4 bg-white shadow rounded-xl w-full max-w-2xl">
       <div className="flex items-center gap-2">
@@ -310,12 +188,11 @@ function InputSection({ onReply }) {
           type="text"
           placeholder={placeholder}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && handleTextSubmit()}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleTextSubmit()}
           className="flex-1 border p-2 rounded-lg"
           disabled={isProcessing}
         />
-        
         <button
           onClick={handleTextSubmit}
           disabled={isProcessing}
@@ -323,7 +200,6 @@ function InputSection({ onReply }) {
         >
           {isProcessing ? '...' : send}
         </button>
-        
         <button
           onClick={isListening ? stopListening : startListening}
           disabled={isProcessing}
