@@ -4,16 +4,18 @@ import { getAuth } from 'firebase/auth';
 import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Player } from '@lottiefiles/react-lottie-player';
-import { FaHeart, FaBookmark, FaShareAlt } from 'react-icons/fa';
+import { FaHeart, FaBookmark, FaRegClock, FaChild, FaBaby } from 'react-icons/fa';
 
-const PostAyurveda = () => {
-  const [selectedRemedy, setSelectedRemedy] = useState(null);
+const PregYogaPage = () => {
+  const [selectedPose, setSelectedPose] = useState(null);
   const [userData, setUserData] = useState(null);
   const [language, setLanguage] = useState('en-IN');
   const [bookmarked, setBookmarked] = useState([]);
+  const [activeTab, setActiveTab] = useState('all');
+  const [trimester, setTrimester] = useState(1);
   const auth = getAuth();
 
-  // Fetch user data and language preference
+  // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
       if (auth.currentUser) {
@@ -22,115 +24,172 @@ const PostAyurveda = () => {
         if (docSnap.exists()) {
           setUserData(docSnap.data());
           setLanguage(docSnap.data().language || 'en-IN');
-          setBookmarked(docSnap.data().bookmarkedRemedies || []);
+          setBookmarked(docSnap.data().bookmarkedYoga || []);
+          
+          // Calculate trimester based on pregnancy start date if available
+          if (docSnap.data().pregnancyStartDate) {
+            const pregnancyStart = new Date(docSnap.data().pregnancyStartDate);
+            const weeksPregnant = Math.floor((new Date() - pregnancyStart) / (7 * 24 * 60 * 60 * 1000));
+            setTrimester(weeksPregnant < 13 ? 1 : weeksPregnant < 27 ? 2 : 3);
+          }
         }
       }
     };
     fetchUserData();
   }, [auth.currentUser]);
 
-  // Post-delivery Ayurvedic remedies
-  const ayurvedicRemedies = {
-    'en-IN': [
-      {
-        id: 1,
-        title: 'Golden Milk Elixir',
-        description: 'Traditional healing drink for postpartum recovery',
-        benefits: [
-          'Boosts immunity and energy',
-          'Reduces inflammation',
-          'Aids digestion and lactation',
-          'Promotes restful sleep'
-        ],
-        ingredients: [
-          '1 cup warm milk (cow or almond)',
-          '½ tsp turmeric powder',
-          '¼ tsp ginger powder',
-          'Pinch of black pepper',
-          '1 tsp ghee',
-          'Jaggery to taste'
-        ],
-        preparation: [
-          'Heat milk gently (do not boil)',
-          'Mix all dry ingredients',
-          'Add to warm milk and stir well',
-          'Add ghee at the end',
-          'Drink warm before bedtime'
-        ],
-        animation: 'https://assets1.lottiefiles.com/packages/lf20_5itouocj.json',
-        duration: 'Daily for 40 days',
-        precautions: 'Avoid if allergic to dairy'
-      },
-      // ... more remedies in English
-    ],
-    'hi-IN': [
-      {
-        id: 1,
-        title: 'स्वर्ण दूध',
-        description: 'प्रसव के बाद की देखभाल के लिए पारंपरिक आयुर्वेदिक पेय',
-        benefits: [
-          'रोग प्रतिरोधक क्षमता बढ़ाता है',
-          'सूजन कम करता है',
-          'पाचन और स्तनपान में सहायक',
-          'अच्छी नींद लाने में मददगार'
-        ],
-        ingredients: [
-          '1 कप गर्म दूध (गाय या बादाम)',
-          '½ चम्मच हल्दी पाउडर',
-          '¼ चम्मच सोंठ पाउडर',
-          'चुटकी भर काली मिर्च',
-          '1 चम्मच घी',
-          'गुड़ स्वादानुसार'
-        ],
-        preparation: [
-          'दूध को धीमी आंच पर गर्म करें (उबालें नहीं)',
-          'सभी सूखी सामग्री मिलाएं',
-          'गर्म दूध में डालकर अच्छी तरह मिलाएं',
-          'अंत में घी डालें',
-          'सोने से पहले गर्मागर्म पियें'
-        ],
-        animation: 'https://assets1.lottiefiles.com/packages/lf20_5itouocj.json',
-        duration: '40 दिनों तक रोजाना',
-        precautions: 'डेयरी से एलर्जी हो तो न पियें'
-      },
-      // ... more remedies in Hindi
-    ],
-    'ta-IN': [
-      {
-        id: 1,
-        title: 'பொன் பால்',
-        description: 'பிரசவத்திற்குப் பின் சிகிச்சைக்கான பாரம்பரிய ஆயுர்வேத பானம்',
-        benefits: [
-          'நோயெதிர்ப்பு சக்தியை அதிகரிக்கிறது',
-          'வீக்கத்தை குறைக்கிறது',
-          'செரிமானம் மற்றும் முலைப்பால் ஊட்டுவதற்கு உதவுகிறது',
-          'நல்ல தூக்கத்தை ஊக்குவிக்கிறது'
-        ],
-        ingredients: [
-          '1 கப் சூடான பால் (மாடு அல்லது பாதாம்)',
-          '½ தேக்கரண்டி மஞ்சள் தூள்',
-          '¼ தேக்கரண்டி இஞ்சி தூள்',
-          'சிட்டிகை கருமிளகு',
-          '1 தேக்கரண்டி நெய்',
-          'வெல்லம் சுவைக்கேற்ப'
-        ],
-        preparation: [
-          'பாலை மெதுவாக சூடாக்கவும் (கொதிக்க விடக்கூடாது)',
-          'அனைத்து உலர் பொருட்களையும் கலக்கவும்',
-          'சூடான பாலில் சேர்த்து நன்றாக கலக்கவும்',
-          'கடைசியில் நெய் சேர்க்கவும்',
-          'படுக்கைக்கு செல்வதற்கு முன் சூடாக அருந்தவும்'
-        ],
-        animation: 'https://assets1.lottiefiles.com/packages/lf20_5itouocj.json',
-        duration: '40 நாட்கள் தினமும்',
-        precautions: 'பால் வெறுப்பு இருந்தால் தவிர்க்கவும்'
-      },
-      // ... more remedies in Tamil
-    ]
+  // Pregnancy yoga data organized by trimester and language
+  const yogaData = {
+    'en-IN': {
+      1: [
+        {
+          id: 101,
+          title: 'Gentle Cat-Cow',
+          benefits: [
+            'Eases back tension',
+            'Improves spinal flexibility',
+            'Reduces morning sickness',
+            'Promotes relaxation'
+          ],
+          duration: '5 mins',
+          level: 'Beginner',
+          category: 'flexibility',
+          steps: [
+            'Come to hands and knees position',
+            'Inhale: Arch back, lift head (Cow)',
+            'Exhale: Round spine, tuck chin (Cat)',
+            'Move slowly with your breath',
+            'Repeat 5-8 times gently'
+          ],
+          animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
+          precautions: 'Avoid if experiencing dizziness'
+        },
+        // ... more first trimester poses
+      ],
+      2: [
+        {
+          id: 201,
+          title: 'Supported Bridge Pose',
+          benefits: [
+            'Relieves lower back pain',
+            'Stretches chest and hips',
+            'Improves circulation',
+            'Calms the nervous system'
+          ],
+          duration: '3 mins',
+          level: 'Beginner',
+          category: 'relaxation',
+          steps: [
+            'Lie on back with knees bent',
+            'Place block or pillow under hips',
+            'Arms relaxed by sides',
+            'Breathe deeply and hold',
+            'Release gently after 3 minutes'
+          ],
+          animation: 'https://assets1.lottiefiles.com/packages/lf20_5itouocj.json',
+          precautions: 'Use support if uncomfortable'
+        },
+        // ... more second trimester poses
+      ],
+      3: [
+        {
+          id: 301,
+          title: 'Supported Squat',
+          benefits: [
+            'Opens pelvis for birth',
+            'Strengthens legs',
+            'Improves posture',
+            'Relieves pressure on spine'
+          ],
+          duration: '2 mins',
+          level: 'Intermediate',
+          category: 'pelvic',
+          steps: [
+            'Stand with feet wider than hips',
+            'Use wall or chair for support',
+            'Slowly lower into squat',
+            'Keep knees aligned with toes',
+            'Hold for 5-8 breaths'
+          ],
+          animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
+          precautions: 'Stop if any pain occurs'
+        },
+        // ... more third trimester poses
+      ]
+    },
+    'hi-IN': {
+      1: [
+        {
+          id: 101,
+          title: 'कोमल बिल्ली-गाय मुद्रा',
+          benefits: [
+            'पीठ के तनाव को कम करती है',
+            'रीढ़ की लचीलापन बढ़ाती है',
+            'मॉर्निंग सिकनेस कम करती है',
+            'आराम को बढ़ावा देती है'
+          ],
+          duration: '5 मिनट',
+          level: 'शुरुआती',
+          category: 'flexibility',
+          steps: [
+            'हाथों और घुटनों के बल आएं',
+            'श्वास लें: पीठ मोड़ें, सिर ऊपर (गाय)',
+            'श्वास छोड़ें: रीढ़ गोल करें, ठोड़ी नीचे (बिल्ली)',
+            'धीरे-धीरे सांस के साथ हिलें',
+            '5-8 बार धीरे से दोहराएं'
+          ],
+          animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
+          precautions: 'चक्कर आने पर न करें'
+        },
+        // ... more Hindi poses
+      ],
+      2: [
+        // ... second trimester Hindi poses
+      ],
+      3: [
+        // ... third trimester Hindi poses
+      ]
+    },
+    'ta-IN': {
+      1: [
+        {
+          id: 101,
+          title: 'மென்மையான பூனை-மாடு தோரணை',
+          benefits: [
+            'முதுகு பதற்றத்தை குறைக்கிறது',
+            'முதுகெலும்பு நெகிழ்வுத்தன்மையை மேம்படுத்துகிறது',
+            'காலை நேர மயக்கத்தை குறைக்கிறது',
+            'ஓய்வை ஊக்குவிக்கிறது'
+          ],
+          duration: '5 நிமிடங்கள்',
+          level: 'தொடக்கநிலை',
+          category: 'flexibility',
+          steps: [
+            'கைகள் மற்றும் முழங்கால்களில் வந்து நில்லுங்கள்',
+            'மூச்சிழுக்க: முதுகை வளைக்க, தலையை உயர்த்தவும் (மாடு)',
+            'மூச்சுவிட: முதுகெலும்பை வட்டமாக்க, தாடையை உள்நோக்கி (பூனை)',
+            'மூச்சுடன் மெதுவாக நகரவும்',
+            '5-8 முறை மெதுவாக திரும்ப செய்யவும்'
+          ],
+          animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
+          precautions: 'தலைச்சுற்றல் ஏற்பட்டால் தவிர்க்கவும்'
+        },
+        // ... more Tamil poses
+      ],
+      2: [
+        // ... second trimester Tamil poses
+      ],
+      3: [
+        // ... third trimester Tamil poses
+      ]
+    }
   };
 
-  // Get remedies for current language
-  const remedies = ayurvedicRemedies[language] || ayurvedicRemedies['en-IN'];
+  // Get poses for current language and trimester
+  const trimesterPoses = yogaData[language]?.[trimester] || yogaData['en-IN'][trimester];
+  const filteredPoses = activeTab === 'all' 
+    ? trimesterPoses 
+    : trimesterPoses.filter(pose => pose.category === activeTab);
 
   // Animation variants
   const containerVariants = {
@@ -154,17 +213,17 @@ const PostAyurveda = () => {
     }
   };
 
-  const toggleBookmark = async (remedyId) => {
-    const newBookmarked = bookmarked.includes(remedyId)
-      ? bookmarked.filter(id => id !== remedyId)
-      : [...bookmarked, remedyId];
+  const toggleBookmark = async (poseId) => {
+    const newBookmarked = bookmarked.includes(poseId)
+      ? bookmarked.filter(id => id !== poseId)
+      : [...bookmarked, poseId];
     
     setBookmarked(newBookmarked);
     
     if (auth.currentUser) {
       try {
         await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-          bookmarkedRemedies: newBookmarked
+          bookmarkedYoga: newBookmarked
         });
       } catch (error) {
         console.error("Error updating bookmarks:", error);
@@ -173,7 +232,7 @@ const PostAyurveda = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-4 md:p-8">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
@@ -181,65 +240,125 @@ const PostAyurveda = () => {
         transition={{ duration: 0.5 }}
         className="mb-8 text-center"
       >
-        <h1 className="text-3xl font-bold text-orange-800 mb-2">
-          {language === 'hi-IN' ? 'प्रसवोत्तर आयुर्वेदिक देखभाल' : 
-           language === 'ta-IN' ? 'பிரசவத்திற்குப் பின் ஆயுர்வேத மருத்துவம்' : 
-           'Post-Delivery Ayurvedic Care'}
+        <h1 className="text-3xl font-bold text-purple-800 mb-2">
+          {language === 'hi-IN' ? 'गर्भावस्था योग' : 
+           language === 'ta-IN' ? 'கர்ப்ப கால யோகா' : 
+           'Prenatal Yoga'}
         </h1>
         <p className="text-gray-600">
-          {language === 'hi-IN' ? 'माँ और शिशु के लिए प्राकृतिक उपचार' : 
-           language === 'ta-IN' ? 'தாய் மற்றும் குழந்தைக்கான இயற்கை மருத்துவம்' : 
-           'Natural healing for mother and baby'}
+          {language === 'hi-IN' ? 'माँ और बच्चे के लिए सुरक्षित अभ्यास' : 
+           language === 'ta-IN' ? 'தாய் மற்றும் குழந்தைக்கு பாதுகாப்பான பயிற்சிகள்' : 
+           'Safe practices for mother and baby'}
         </p>
+        
+        {/* Trimester Selector */}
+        <div className="flex justify-center mt-4 mb-6">
+          <div className="inline-flex rounded-md shadow-sm">
+            {[1, 2, 3].map((num) => (
+              <button
+                key={num}
+                onClick={() => setTrimester(num)}
+                className={`px-4 py-2 text-sm font-medium ${trimester === num 
+                  ? 'bg-purple-600 text-white' 
+                  : 'bg-white text-purple-700 hover:bg-purple-50'} 
+                  ${num === 1 ? 'rounded-l-lg' : ''} 
+                  ${num === 3 ? 'rounded-r-lg' : ''} 
+                  border border-purple-200`}
+              >
+                {language === 'hi-IN' ? `${num}री तिमाही` : 
+                 language === 'ta-IN' ? `${num}வது மூன்று மாதம்` : 
+                 `Trimester ${num}`}
+              </button>
+            ))}
+          </div>
+        </div>
       </motion.header>
 
-      {/* Remedies Grid */}
+      {/* Category Tabs */}
+      <motion.div 
+        className="flex overflow-x-auto mb-6 pb-2 scrollbar-hide"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <button
+          className={`px-4 py-2 rounded-full whitespace-nowrap mr-2 ${activeTab === 'all' ? 'bg-purple-600 text-white' : 'bg-white text-purple-600'}`}
+          onClick={() => setActiveTab('all')}
+        >
+          {language === 'hi-IN' ? 'सभी' : 
+           language === 'ta-IN' ? 'அனைத்தும்' : 
+           'All'}
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full whitespace-nowrap mr-2 ${activeTab === 'flexibility' ? 'bg-purple-600 text-white' : 'bg-white text-purple-600'}`}
+          onClick={() => setActiveTab('flexibility')}
+        >
+          {language === 'hi-IN' ? 'लचीलापन' : 
+           language === 'ta-IN' ? 'நெகிழ்வுத்தன்மை' : 
+           'Flexibility'}
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full whitespace-nowrap mr-2 ${activeTab === 'relaxation' ? 'bg-purple-600 text-white' : 'bg-white text-purple-600'}`}
+          onClick={() => setActiveTab('relaxation')}
+        >
+          {language === 'hi-IN' ? 'आराम' : 
+           language === 'ta-IN' ? 'ஓய்வு' : 
+           'Relaxation'}
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full whitespace-nowrap ${activeTab === 'pelvic' ? 'bg-purple-600 text-white' : 'bg-white text-purple-600'}`}
+          onClick={() => setActiveTab('pelvic')}
+        >
+          {language === 'hi-IN' ? 'श्रोणि' : 
+           language === 'ta-IN' ? 'இடுப்பு' : 
+           'Pelvic'}
+        </button>
+      </motion.div>
+
+      {/* Yoga Pose Grid */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
-        {remedies.map((remedy) => (
+        {filteredPoses.map((pose) => (
           <motion.div
-            key={remedy.id}
+            key={pose.id}
             variants={itemVariants}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
           >
-            <div className="h-48 bg-amber-100 flex items-center justify-center relative">
+            <div className="h-48 bg-pink-100 flex items-center justify-center relative">
               <Player
                 autoplay
                 loop
-                src={remedy.animation}
+                src={pose.animation}
                 style={{ height: '100%', width: '100%' }}
               />
               <button
-                className={`absolute top-4 right-4 p-2 rounded-full ${bookmarked.includes(remedy.id) ? 'text-amber-600' : 'text-gray-400'}`}
-                onClick={() => toggleBookmark(remedy.id)}
+                className={`absolute top-4 right-4 p-2 rounded-full ${bookmarked.includes(pose.id) ? 'text-purple-600' : 'text-gray-400'}`}
+                onClick={() => toggleBookmark(pose.id)}
               >
                 <FaBookmark className="text-2xl" />
               </button>
             </div>
             <div className="p-5">
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="text-xl font-semibold text-orange-700">{remedy.title}</h3>
-                <button className="text-amber-500">
-                  <FaHeart />
-                </button>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">{remedy.description}</p>
+              <h3 className="text-xl font-semibold text-purple-700 mb-2">{pose.title}</h3>
               
               <div className="flex items-center mb-3">
-                <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded mr-2">
-                  {remedy.duration}
+                <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded mr-2 flex items-center">
+                  <FaRegClock className="mr-1" /> {pose.duration}
+                </span>
+                <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded flex items-center">
+                  <FaBaby className="mr-1" /> {pose.level}
                 </span>
               </div>
               
               <button
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white py-2 rounded-lg font-medium transition"
-                onClick={() => setSelectedRemedy(remedy)}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition"
+                onClick={() => setSelectedPose(pose)}
               >
                 {language === 'hi-IN' ? 'विवरण देखें' : 
                  language === 'ta-IN' ? 'விவரங்களைக் காண்க' : 
@@ -250,15 +369,15 @@ const PostAyurveda = () => {
         ))}
       </motion.div>
 
-      {/* Remedy Detail Modal */}
+      {/* Pose Detail Modal */}
       <AnimatePresence>
-        {selectedRemedy && (
+        {selectedPose && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setSelectedRemedy(null)}
+            onClick={() => setSelectedPose(null)}
           >
             <motion.div
               initial={{ scale: 0.9, y: 50 }}
@@ -267,16 +386,16 @@ const PostAyurveda = () => {
               className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="h-56 bg-amber-100 relative">
+              <div className="h-56 bg-pink-100 relative">
                 <Player
                   autoplay
                   loop
-                  src={selectedRemedy.animation}
+                  src={selectedPose.animation}
                   style={{ height: '100%', width: '100%' }}
                 />
                 <button
                   className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md"
-                  onClick={() => setSelectedRemedy(null)}
+                  onClick={() => setSelectedPose(null)}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -285,15 +404,24 @@ const PostAyurveda = () => {
               </div>
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-2xl font-bold text-orange-800">{selectedRemedy.title}</h2>
+                  <h2 className="text-2xl font-bold text-purple-800">{selectedPose.title}</h2>
                   <button 
-                    className={`p-2 ${bookmarked.includes(selectedRemedy.id) ? 'text-amber-600' : 'text-gray-400'}`}
-                    onClick={() => toggleBookmark(selectedRemedy.id)}
+                    className={`p-2 ${bookmarked.includes(selectedPose.id) ? 'text-purple-600' : 'text-gray-400'}`}
+                    onClick={() => toggleBookmark(selectedPose.id)}
                   >
                     <FaBookmark className="text-xl" />
                   </button>
                 </div>
                 
+                <div className="flex mb-4">
+                  <span className="text-sm bg-pink-100 text-pink-800 px-3 py-1 rounded-full mr-2 flex items-center">
+                    <FaRegClock className="mr-1" /> {selectedPose.duration}
+                  </span>
+                  <span className="text-sm bg-purple-100 text-purple-800 px-3 py-1 rounded-full flex items-center">
+                    <FaBaby className="mr-1" /> {selectedPose.level}
+                  </span>
+                </div>
+
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">
                     {language === 'hi-IN' ? 'लाभ' : 
@@ -301,7 +429,7 @@ const PostAyurveda = () => {
                      'Benefits'}
                   </h3>
                   <ul className="list-disc pl-5 space-y-1">
-                    {selectedRemedy.benefits.map((benefit, index) => (
+                    {selectedPose.benefits.map((benefit, index) => (
                       <li key={index} className="text-gray-700">{benefit}</li>
                     ))}
                   </ul>
@@ -309,25 +437,12 @@ const PostAyurveda = () => {
 
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {language === 'hi-IN' ? 'सामग्री' : 
-                     language === 'ta-IN' ? 'பொருட்கள்' : 
-                     'Ingredients'}
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {selectedRemedy.ingredients.map((ingredient, index) => (
-                      <li key={index} className="text-gray-700">{ingredient}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {language === 'hi-IN' ? 'बनाने की विधि' : 
-                     language === 'ta-IN' ? 'தயாரிப்பு முறை' : 
-                     'Preparation'}
+                    {language === 'hi-IN' ? 'चरण' : 
+                     language === 'ta-IN' ? 'படிகள்' : 
+                     'Steps'}
                   </h3>
                   <ol className="list-decimal pl-5 space-y-2">
-                    {selectedRemedy.preparation.map((step, index) => (
+                    {selectedPose.steps.map((step, index) => (
                       <li key={index} className="text-gray-700">{step}</li>
                     ))}
                   </ol>
@@ -339,37 +454,60 @@ const PostAyurveda = () => {
                      language === 'ta-IN' ? 'முன்னெச்சரிக்கைகள்' : 
                      'Precautions'}
                   </h3>
-                  <p className="text-red-600">{selectedRemedy.precautions}</p>
+                  <p className="text-red-600">{selectedPose.precautions}</p>
                 </div>
 
-                <div className="flex space-x-3">
-                  <button className="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-lg font-medium transition">
-                    {language === 'hi-IN' ? 'आज की सूची में जोड़ें' : 
-                     language === 'ta-IN' ? 'இன்றைய பட்டியலில் சேர்க்கவும்' : 
-                     'Add to Today\'s List'}
-                  </button>
-                  <button className="p-3 bg-gray-100 rounded-lg">
-                    <FaShareAlt className="text-amber-600" />
-                  </button>
-                </div>
+                <button
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-medium transition"
+                  onClick={async () => {
+                    if (auth.currentUser) {
+                      try {
+                        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+                          yogaHistory: arrayUnion({
+                            pose: selectedPose.title,
+                            date: new Date().toISOString(),
+                            duration: selectedPose.duration,
+                            trimester: trimester
+                          })
+                        });
+                      } catch (error) {
+                        console.error("Error updating yoga history:", error);
+                      }
+                    }
+                    setSelectedPose(null);
+                  }}
+                >
+                  {language === 'hi-IN' ? 'अभ्यास शुरू करें' : 
+                   language === 'ta-IN' ? 'பயிற்சியைத் தொடங்கவும்' : 
+                   'Start Practice'}
+                </button>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Daily Tips Section */}
+      {/* Daily Tip */}
       <div className="mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
-        <h2 className="text-xl font-semibold text-orange-800 mb-4">
-          {language === 'hi-IN' ? 'आज का आयुर्वेदिक सुझाव' : 
-           language === 'ta-IN' ? 'இன்றைய ஆயுர்வேத உதவிக்குறிப்பு' : 
-           'Today\'s Ayurvedic Tip'}
+        <h2 className="text-xl font-semibold text-purple-800 mb-4">
+          {language === 'hi-IN' ? 'आज का योग टिप' : 
+           language === 'ta-IN' ? 'இன்றைய யோகா உதவிக்குறிப்பு' : 
+           'Today\'s Yoga Tip'}
         </h2>
-        <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-          <p className="text-amber-800">
-            {language === 'hi-IN' ? 'प्रसव के बाद पहले 40 दिनों तक हल्का गर्म तेल से पूरे शरीर की मालिश करें। यह मांसपेशियों को आराम देता है और शरीर को पुनर्जीवित करता है।' : 
-             language === 'ta-IN' ? 'பிரசவத்திற்குப் பின் முதல் 40 நாட்களுக்கு சூடான எண்ணெயால் முழு உடலுக்கும் மசாஜ் செய்யவும். இது தசைகளை ஓய்வு பெறச் செய்து உடலை புத்துணர்ச்சியடையச் செய்கிறது.' : 
-             'For the first 40 days after delivery, massage your entire body with lukewarm oil. This relaxes muscles and rejuvenates the body.'}
+        <div className="bg-pink-50 p-4 rounded-lg border border-pink-200">
+          <p className="text-pink-800">
+            {trimester === 1 && (language === 'hi-IN' ? 'पहली तिमाही में ज़ोरदार मुद्राओं से बचें। धीमी, कोमल गतिविधियों पर ध्यान दें और खूब पानी पिएँ।' : 
+             language === 'ta-IN' ? 'முதல் மூன்று மாதங்களில் தீவிரமான தோரணைகளைத் தவிர்க்கவும். மெதுவான, மென்மையான செயல்பாடுகளில் கவனம் செலுத்துங்கள் மற்றும் நிறைய தண்ணீர் குடிக்கவும்.' : 
+             'Avoid vigorous poses in first trimester. Focus on slow, gentle movements and drink plenty of water.')
+            }
+            {trimester === 2 && (language === 'hi-IN' ? 'दूसरी तिमाही में संतुलन मुद्राओं के लिए दीवार का सहारा लें। पेट के बल लेटने से बचें।' : 
+             language === 'ta-IN' ? 'இரண்டாவது மூன்று மாதங்களில் சமநிலை தோரணைகளுக்கு சுவரைப் பயன்படுத்தவும். வயிற்றில் படுத்துக்கொள்வதைத் தவிர்க்கவும்.' : 
+             'Use wall for balance poses in second trimester. Avoid lying on your belly.')
+            }
+            {trimester === 3 && (language === 'hi-IN' ? 'तीसरी तिमाही में श्रोणि खोलने वाली मुद्राओं पर ध्यान दें। लंबे समय तक पीठ के बल न लेटें।' : 
+             language === 'ta-IN' ? 'மூன்றாவது மூன்று மாதங்களில் இடுப்பை திறக்கும் தோரணைகளில் கவனம் செலுத்துங்கள். நீண்ட நேரம் முதுகில் படுத்துக்கொள்ளாதீர்கள்.' : 
+             'Focus on pelvis-opening poses in third trimester. Don\'t lie on back for long periods.')
+            }
           </p>
         </div>
       </div>
@@ -377,4 +515,4 @@ const PostAyurveda = () => {
   );
 };
 
-export default PostAyurveda;
+export default PregYogaPage;
