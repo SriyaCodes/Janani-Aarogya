@@ -89,23 +89,23 @@ function Dashboard() {
     {
       title: 'Memory Vault',
       desc: 'Capture and relive your motherhood journey.',
-      img: 'https://via.placeholder.com/100',
+      img: 'https://i.pinimg.com/1200x/40/8f/7a/408f7ab46a5d8c992e9054212699689b.jpg',
       link: '/memory-vault',
     },
     {
       title: 'Maternal Yoga',
       desc: 'Curated yoga routines for each stage.',
-      img: 'https://via.placeholder.com/100',
+      img: 'https://i.pinimg.com/736x/ca/48/1d/ca481d99f8431d1c6b4ada5f626a6433.jpg',
     },
     {
       title: 'Ayurveda',
       desc: 'Ayurvedic wisdom tailored for you.',
-      img: 'https://via.placeholder.com/100',
+      img: 'https://i.pinimg.com/736x/08/ce/80/08ce80b82d735ed30bcd6122d0ffbca6.jpg',
     },
     {
       title: 'Journal',
       desc: 'Create daily emotional summaries of your journey.',
-      img: 'https://via.placeholder.com/100',
+      img: 'https://i.pinimg.com/1200x/b3/e9/9e/b3e99e71f23f5b4819d451907e7f81ec.jpg',
       link: '/journal',
     },
   ];
