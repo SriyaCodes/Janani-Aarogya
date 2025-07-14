@@ -1,4 +1,3 @@
-// src/pages/JournalPage.jsx
 import React, { useEffect, useState } from 'react';
 import {
   collection,
@@ -10,34 +9,56 @@ import {
   serverTimestamp,
   doc,
   setDoc,
+  getDoc
 } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../firebase';
 import { getGeminiReply } from '../services/geminiApi';
 
 const JournalPage = () => {
-  const [user, setUser] = useState(null);
-  const [entries, setEntries] = useState([]);
-  const [journals, setJournals] = useState([]);
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+  /* ───────── state ───────── */
+  const [user, setUser]           = useState(null);
+  const [lang, setLang]           = useState(localStorage.getItem('lang') || 'en'); // ← pull from LS
+  const [entries, setEntries]     = useState([]);
+  const [todayJournal, setTodayJournal] = useState(null);
+  const [creating, setCreating]   = useState(false);
+  const [error, setError]         = useState('');
+  const [message, setMessage]     = useState('');
 
-  const todayISO = new Date().toISOString().split('T')[0];
+  const todayISO = new Date().toISOString().split('T')[0]; // YYYY‑MM‑DD
 
+  /* 1️⃣ Auth listener + fallback lang fetch */
   useEffect(() => {
-    const unsub = onAuthStateChanged(getAuth(), (u) => {
-      if (u) setUser(u);
+    const unsub = onAuthStateChanged(getAuth(), async (u) => {
+      if (!u) return;
+      setUser(u);
+
+      // fallback: if localStorage.lang missing, pull from Firestore user doc
+      if (!localStorage.getItem('lang')) {
+        const userDoc = await getDoc(doc(db, 'users', u.uid));
+        if (userDoc.exists()) {
+          const storedLang = userDoc.data().languageCode || 'en';
+          setLang(storedLang);
+        }
+      }
+
+      // fetch today's journal if already created
+      const journalSnap = await getDoc(
+        doc(db, 'users', u.uid, 'journals', todayISO)
+      );
+      if (journalSnap.exists()) setTodayJournal(journalSnap.data().text);
     });
     return () => unsub();
   }, []);
 
+  /* 2️⃣ Fetch today's entries (uses server time) */
   useEffect(() => {
     if (!user) return;
 
     const fetchTodayEntries = async () => {
-      const start = new Date(); start.setHours(0, 0, 0, 0);
-      const end = new Date(); end.setHours(23, 59, 59, 999);
+      const now = Timestamp.now().toDate();          // server‑based time
+      const start = new Date(now); start.setHours(0, 0, 0, 0);
+      const end   = new Date(now); end.setHours(23, 59, 59, 999);
 
       const q = query(
         collection(db, 'users', user.uid, 'entries'),
@@ -50,30 +71,17 @@ const JournalPage = () => {
       setEntries(snap.docs.map(d => d.data()));
     };
 
-    const fetchAllJournals = async () => {
-      const snap = await getDocs(collection(db, 'users', user.uid, 'journals'));
-      const data = snap.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      // Sort by date string descending
-      data.sort((a, b) => b.id.localeCompare(a.id));
-      setJournals(data);
-    };
-
     fetchTodayEntries();
-    fetchAllJournals();
   }, [user]);
 
+  /* 3️⃣ Create / overwrite today's journal */
   const createJournal = async () => {
     if (entries.length === 0) {
       setError('Please interact at least once today to generate your journal.');
       return;
     }
 
-    setCreating(true);
-    setError('');
-    setMessage('');
+    setCreating(true); setError(''); setMessage('');
 
     try {
       const combined = entries
@@ -81,43 +89,29 @@ const JournalPage = () => {
         .join('\n\n');
 
       const prompt = `
-You are writing a very special, emotional pregnancy journal — as if it’s written by a mother to her unborn baby.
+You are writing a deeply emotional pregnancy journal — as if it’s written by a mother to her unborn child.
 
-Even if the mother didn’t express much, reflect her inner world — her emotions, her care, her fatigue, her love — through soft, poetic language.
+🪔 Guidelines:
+- Write entirely in ${lang}
+- Do not translate or repeat lines
+- Use gentle metaphors (moonlight, heartbeat, warm cocoon, monsoon breeze)
+- Keep it short, heart‑touching, and poetic — like a lullaby
+- Conclude with this single note line:
+Note: This journal entry is crafted to reflect the emotional world of a mother. Some poetic license is used to convey depth and tenderness.
 
-🪔 Style:
-- Write in the user’s language
-- Use gentle metaphors (like: heartbeat, soft sky, warm cocoon, monsoon breeze)
-- Reflect deep maternal love, not just advice
-- Keep it short and beautiful — like a lullaby in words
-- Avoid listing things; instead, turn them into emotional memories
-- Imagine this journal will be shown to the baby one day
-
-Today, this is what the mother shared with her AI:
+Today the mother shared:
 ${combined}
-`;
+      `;
 
-      const diary = await getGeminiReply(prompt, 'hi');
+      const diary = await getGeminiReply(prompt, lang);
 
       await setDoc(
         doc(db, 'users', user.uid, 'journals', todayISO),
-        {
-          text: diary,
-          createdAt: serverTimestamp()
-        }
+        { text: diary, createdAt: serverTimestamp() }
       );
 
+      setTodayJournal(diary);
       setMessage('✅ Journal created!');
-
-      // Refetch full journal list to reflect latest overwrite
-      const snap = await getDocs(collection(db, 'users', user.uid, 'journals'));
-      const data = snap.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      data.sort((a, b) => b.id.localeCompare(a.id));
-      setJournals(data);
-
     } catch (err) {
       console.error(err);
       setError('Error generating journal. Please try again.');
@@ -126,6 +120,7 @@ ${combined}
     }
   };
 
+  /* ───── UI ───── */
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h2 className="text-2xl font-bold text-pink-600 mb-4">Your Daily Journal</h2>
@@ -146,17 +141,15 @@ ${combined}
         {creating ? 'Generating…' : "Create Today's Journal"}
       </button>
 
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {error   && <p className="text-red-500 mb-4">{error}</p>}
       {message && <p className="text-green-600 mb-4">{message}</p>}
 
-      <div className="space-y-4">
-        {journals.map(j => (
-          <div key={j.id} className="p-4 bg-white shadow rounded-lg">
-            <h3 className="font-semibold text-gray-700 mb-2">📅 {j.id}</h3>
-            <p className="text-gray-800 whitespace-pre-wrap">{j.text}</p>
-          </div>
-        ))}
-      </div>
+      {todayJournal && (
+        <div className="mt-4 p-4 bg-white shadow rounded-lg">
+          <h3 className="font-semibold text-gray-700 mb-2">📓 Today's Journal</h3>
+          <p className="text-gray-800 whitespace-pre-wrap leading-relaxed">{todayJournal}</p>
+        </div>
+      )}
     </div>
   );
 };
