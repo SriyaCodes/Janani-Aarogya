@@ -5,7 +5,7 @@ import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { FaHeart, FaBookmark, FaShareAlt } from 'react-icons/fa';
-import translations from './Pretranslations';
+import translations from './Pregtranslations';
 const PregAyurvedaPage = () => {
   const [selectedRemedy, setSelectedRemedy] = useState(null);
   const [userData, setUserData] = useState(null);
