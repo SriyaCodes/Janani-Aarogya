@@ -16,49 +16,50 @@ import { db } from '../firebase';
 import { getGeminiReply } from '../services/geminiApi';
 
 const JournalPage = () => {
-  /* ───────── state ───────── */
-  const [user, setUser]           = useState(null);
-  const [lang, setLang]           = useState(localStorage.getItem('lang') || 'en'); // ← pull from LS
-  const [entries, setEntries]     = useState([]);
+  const [user, setUser] = useState(null);
+  const [lang, setLang] = useState(null); // ❌ not from localStorage
+  const [entries, setEntries] = useState([]);
   const [todayJournal, setTodayJournal] = useState(null);
-  const [creating, setCreating]   = useState(false);
-  const [error, setError]         = useState('');
-  const [message, setMessage]     = useState('');
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
-  const todayISO = new Date().toISOString().split('T')[0]; // YYYY‑MM‑DD
+  const todayISO = new Date().toISOString().split('T')[0];
 
-  /* 1️⃣ Auth listener + fallback lang fetch */
+  // 1️⃣ Auth + Fetch Lang & Journal
   useEffect(() => {
     const unsub = onAuthStateChanged(getAuth(), async (u) => {
       if (!u) return;
       setUser(u);
 
-      // fallback: if localStorage.lang missing, pull from Firestore user doc
-      if (!localStorage.getItem('lang')) {
+      try {
         const userDoc = await getDoc(doc(db, 'users', u.uid));
         if (userDoc.exists()) {
-          const storedLang = userDoc.data().languageCode || 'en';
-          setLang(storedLang);
+          const langFromDb = userDoc.data().languageCode || 'en';
+          setLang(langFromDb);
         }
-      }
 
-      // fetch today's journal if already created
-      const journalSnap = await getDoc(
-        doc(db, 'users', u.uid, 'journals', todayISO)
-      );
-      if (journalSnap.exists()) setTodayJournal(journalSnap.data().text);
+        const journalSnap = await getDoc(
+          doc(db, 'users', u.uid, 'journals', todayISO)
+        );
+        if (journalSnap.exists()) {
+          setTodayJournal(journalSnap.data().text);
+        }
+      } catch (err) {
+        console.error('Error loading language or journal:', err);
+      }
     });
     return () => unsub();
   }, []);
 
-  /* 2️⃣ Fetch today's entries (uses server time) */
+  // 2️⃣ Fetch entries for today
   useEffect(() => {
     if (!user) return;
 
     const fetchTodayEntries = async () => {
-      const now = Timestamp.now().toDate();          // server‑based time
+      const now = Timestamp.now().toDate();
       const start = new Date(now); start.setHours(0, 0, 0, 0);
-      const end   = new Date(now); end.setHours(23, 59, 59, 999);
+      const end = new Date(now); end.setHours(23, 59, 59, 999);
 
       const q = query(
         collection(db, 'users', user.uid, 'entries'),
@@ -74,14 +75,21 @@ const JournalPage = () => {
     fetchTodayEntries();
   }, [user]);
 
-  /* 3️⃣ Create / overwrite today's journal */
+  // 3️⃣ Create journal (in Firestore lang)
   const createJournal = async () => {
     if (entries.length === 0) {
       setError('Please interact at least once today to generate your journal.');
       return;
     }
 
-    setCreating(true); setError(''); setMessage('');
+    if (!lang) {
+      setError('Language not set yet. Please wait or refresh.');
+      return;
+    }
+
+    setCreating(true);
+    setError('');
+    setMessage('');
 
     try {
       const combined = entries
@@ -101,7 +109,7 @@ Note: This journal entry is crafted to reflect the emotional world of a mother. 
 
 Today the mother shared:
 ${combined}
-      `;
+`;
 
       const diary = await getGeminiReply(prompt, lang);
 
@@ -120,7 +128,6 @@ ${combined}
     }
   };
 
-  /* ───── UI ───── */
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h2 className="text-2xl font-bold text-pink-600 mb-4">Your Daily Journal</h2>
@@ -131,9 +138,9 @@ ${combined}
 
       <button
         onClick={createJournal}
-        disabled={creating || entries.length === 0}
+        disabled={creating || entries.length === 0 || !lang}
         className={`mb-6 px-4 py-2 rounded ${
-          entries.length === 0
+          entries.length === 0 || !lang
             ? 'bg-gray-300 cursor-not-allowed'
             : 'bg-pink-500 hover:bg-pink-600 text-white'
         }`}
@@ -141,7 +148,7 @@ ${combined}
         {creating ? 'Generating…' : "Create Today's Journal"}
       </button>
 
-      {error   && <p className="text-red-500 mb-4">{error}</p>}
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       {message && <p className="text-green-600 mb-4">{message}</p>}
 
       {todayJournal && (

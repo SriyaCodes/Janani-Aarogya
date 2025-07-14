@@ -9,10 +9,17 @@ import Signup from './components/Signup';
 import YogaPage from './components/YogaPage';
 import AyurvedaPage from './components/AyurvedaPage';
 import MemoryVault from './components/MemoryVault';
-import JournalPage from './components/JournalPage'; // ✅ Make sure this file exists
+import JournalPage from './components/JournalPage';
+import ProfilePage from './components/ProfilePage';
+import PreConceptionYogaPage from './components/PreConceptionYogaPage';
+import PregYogaPage from './components/PregYogaPage';
+import PostYogaPage from './components/PostYogaPage';
+import PreConceptionAyurvedaPage from './components/PreConceptionAyurvedaPage';
+import PregAyurvedaPage from './components/PregAyurvedaPage';
+import PostAyurvedaPage from './components/PostAyurvedaPage';
 
 function App() {
-  const user = JSON.parse(localStorage.getItem('user')); // Stored after login/signup
+  const user = JSON.parse(localStorage.getItem('user'));
   const isNewUser = !user?.stage || !user?.language;
 
   return (
@@ -29,9 +36,17 @@ function App() {
         <Route path="/yoga" element={<YogaPage />} />
         <Route path="/ayurveda" element={<AyurvedaPage />} />
         <Route path="/memory-vault" element={<MemoryVault />} />
-        <Route path="/journal" element={<JournalPage />} /> {/* ✅ Journal route */}
+        <Route path="/journal" element={<JournalPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        {/* Stage-specific Yoga & Ayurveda */}
+        <Route path="/preconception-yoga" element={<PreConceptionYogaPage />} />
+        <Route path="/pregnancy-yoga" element={<PregYogaPage />} />
+        <Route path="/post-yoga" element={<PostYogaPage />} />
+        <Route path="/preconception-ayurveda" element={<PreConceptionAyurvedaPage />} />
+        <Route path="/pregnancy-ayurveda" element={<PregAyurvedaPage />} />
+        <Route path="/post-ayurveda" element={<PostAyurvedaPage />} />
 
-        {/* Default Route */}
+        {/* Default Redirect */}
         <Route
           path="/"
           element={
@@ -48,4 +63,3 @@ function App() {
 }
 
 export default App;
-
