@@ -18,6 +18,7 @@ function Dashboard() {
   const [streak, setStreak] = useState(0);
   const [reminderDate, setReminderDate] = useState('');
   const [reminderFreq, setReminderFreq] = useState('once');
+  const [daysLeft, setDaysLeft] = useState(null);          // ⬅️ NEW
   const [msg, setMsg] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -34,6 +35,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const { width, height } = useWindowSize();
 
+  /* --- Load saved checklist for today --- */
   useEffect(() => {
     const key = todayKey();
     const saved = JSON.parse(localStorage.getItem(key) || '[]');
@@ -46,18 +48,48 @@ function Dashboard() {
     }
   }, []);
 
+  /* --- Load user + reminder details --- */
   useEffect(() => {
     const unsub = auth.onAuthStateChanged(async (user) => {
       if (!user) return;
-      const snap = await getDoc(doc(db, 'users', user.uid));
-      if (snap.exists()) {
-        const d = snap.data();
+
+      // User basics
+      const userSnap = await getDoc(doc(db, 'users', user.uid));
+      if (userSnap.exists()) {
+        const d = userSnap.data();
         setStage(d.stage || 'prepregnancy');
         setStreak(d.streak || 0);
+      }
+
+      // Reminder settings
+      const reminderSnap = await getDoc(
+        doc(db, 'users', user.uid, 'reminder', 'settings')
+      );
+      if (reminderSnap.exists()) {
+        const r = reminderSnap.data();
+        setReminderDate(r.date || '');
+        setReminderFreq(r.frequency || 'once');
       }
     });
     return () => unsub();
   }, [auth]);
+
+  /* --- Re‑compute daysLeft every hour --- */
+  useEffect(() => {
+    const calc = () => {
+      if (!reminderDate) {
+        setDaysLeft(null);
+        return;
+      }
+      const diff = dayjs(reminderDate)
+        .startOf('day')
+        .diff(dayjs().startOf('day'), 'day');
+      setDaysLeft(diff);
+    };
+    calc();
+    const id = setInterval(calc, 3600 * 1000); // hourly
+    return () => clearInterval(id);
+  }, [reminderDate]);
 
   const triggerCelebration = () => {
     setShowConfetti(true);
@@ -129,23 +161,66 @@ function Dashboard() {
   };
 
   const features = [
-    { title: 'Journal', desc: 'Daily emotional summaries powered by AI, helping you track mood shifts and celebrate small wins.', img: 'https://via.placeholder.com/150', link: '/journal' },
-    { title: 'Memory Vault', desc: 'Preserve milestones, emotions, and photos in one space you can revisit anytime.', img: 'https://via.placeholder.com/150', link: '/memory-vault' },
-    { title: 'Ayurveda', desc: 'Indian wisdom for your trimester or postpartum — food, herbs & rituals personalised to you.', img: 'https://via.placeholder.com/150' },
-    { title: 'Maternal Yoga', desc: 'Stage-wise yoga routines to nurture your strength, peace and connection.', img: 'https://via.placeholder.com/150' },
+    {
+      title: 'Journal',
+      desc: 'Daily emotional summaries powered by AI, helping you track mood shifts and celebrate small wins.',
+      img: 'https://via.placeholder.com/150',
+      link: '/journal',
+    },
+    {
+      title: 'Memory Vault',
+      desc: 'Preserve milestones, emotions, and photos in one space you can revisit anytime.',
+      img: 'https://via.placeholder.com/150',
+      link: '/memory-vault',
+    },
+    {
+      title: 'Ayurveda',
+      desc: 'Indian wisdom for your trimester or postpartum — food, herbs & rituals personalised to you.',
+      img: 'https://via.placeholder.com/150',
+    },
+    {
+      title: 'Maternal Yoga',
+      desc: 'Stage-wise yoga routines to nurture your strength, peace and connection.',
+      img: 'https://via.placeholder.com/150',
+    },
   ];
 
   return (
     <div className="min-h-screen bg-rose-50 relative overflow-x-hidden">
       <nav className="bg-white shadow-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center border-b border-rose-200">
-        <h1 className="text-2xl font-extrabold text-rose-600 tracking-wide">Janani Aarogya</h1>
+        <h1 className="text-2xl font-extrabold text-rose-600 tracking-wide">
+          Janani Aarogya
+        </h1>
         <div className="flex gap-4 items-center text-sm font-semibold text-gray-700">
-          {streak > 0 && <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs">🔥 {streak}-day Streak</span>}
-          <button onClick={() => navigate('/journal')} className="hover:text-rose-600">Journal</button>
-          <button onClick={() => navigate('/memory-vault')} className="hover:text-rose-600">Memory Vault</button>
-          <button onClick={() => navigate(getAyurvedaPath())} className="hover:text-rose-600">Ayurveda</button>
-          <button onClick={() => navigate(getYogaPath())} className="hover:text-rose-600">Yoga</button>
-          <button onClick={() => navigate('/profile')} className="w-8 h-8 bg-rose-100 text-rose-700 rounded-full flex items-center justify-center hover:ring hover:ring-rose-300">👤</button>
+          {streak > 0 && (
+            <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs">
+              🔥 {streak}-day Streak
+            </span>
+          )}
+          <button onClick={() => navigate('/journal')} className="hover:text-rose-600">
+            Journal
+          </button>
+          <button
+            onClick={() => navigate('/memory-vault')}
+            className="hover:text-rose-600"
+          >
+            Memory Vault
+          </button>
+          <button
+            onClick={() => navigate(getAyurvedaPath())}
+            className="hover:text-rose-600"
+          >
+            Ayurveda
+          </button>
+          <button onClick={() => navigate(getYogaPath())} className="hover:text-rose-600">
+            Yoga
+          </button>
+          <button
+            onClick={() => navigate('/profile')}
+            className="w-8 h-8 bg-rose-100 text-rose-700 rounded-full flex items-center justify-center hover:ring hover:ring-rose-300"
+          >
+            👤
+          </button>
         </div>
       </nav>
 
@@ -165,10 +240,12 @@ function Dashboard() {
             A gentle companion for every Indian mother
           </h2>
           <p className="text-gray-700 mb-2 leading-relaxed">
-            Janani Aarogya blends AI with ancient Indian care wisdom to support rural mothers — across pre-pregnancy, pregnancy, and postpartum.
+            Janani Aarogya blends AI with ancient Indian care wisdom to support
+            rural mothers — across pre-pregnancy, pregnancy, and postpartum.
           </p>
           <p className="text-gray-700">
-            Voice-first, language-aware and deeply personal. From Ayurveda to memories, it walks with you.
+            Voice-first, language-aware and deeply personal. From Ayurveda to
+            memories, it walks with you.
           </p>
         </motion.div>
         <motion.img
@@ -181,7 +258,32 @@ function Dashboard() {
         />
       </motion.section>
 
-      {/* ✅ Add your existing components below */}
+      {/* --- Countdown Banner --- */}
+      {daysLeft !== null && (
+        <div className="max-w-4xl mx-auto mt-8 px-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+            {daysLeft > 0 && (
+              <p className="text-blue-700 font-semibold">
+                🩺 {daysLeft}{' '}
+                {daysLeft === 1 ? 'day' : 'days'} left until your doctor visit on{' '}
+                {dayjs(reminderDate).format('D MMM YYYY')}
+              </p>
+            )}
+            {daysLeft === 0 && (
+              <p className="text-green-700 font-semibold">
+                🩺 Today is your scheduled doctor visit!
+              </p>
+            )}
+            {daysLeft < 0 && (
+              <p className="text-gray-600">
+                🩺 Your scheduled visit date has passed.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Existing components below */}
       <div className="mt-8 px-4">
         <div className="flex justify-center">
           <InputSection onReply={setAiReply} />
@@ -197,7 +299,9 @@ function Dashboard() {
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {/* Checklist */}
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold text-pink-600 mb-3">🌸 Daily Wellness Checklist</h2>
+            <h2 className="text-lg font-semibold text-pink-600 mb-3">
+              🌸 Daily Wellness Checklist
+            </h2>
             <ul className="space-y-2">
               {CHECK_ITEMS.map((item, idx) => (
                 <li key={idx} className="flex items-center gap-3">
@@ -216,7 +320,11 @@ function Dashboard() {
                     }}
                     className="w-5 h-5 text-pink-500 focus:ring-pink-400"
                   />
-                  <span className={checks[idx] ? 'line-through text-gray-400' : 'text-gray-700'}>
+                  <span
+                    className={
+                      checks[idx] ? 'line-through text-gray-400' : 'text-gray-700'
+                    }
+                  >
                     {item}
                   </span>
                 </li>
@@ -226,10 +334,14 @@ function Dashboard() {
 
           {/* Reminder */}
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-pink-600 mb-3">🗓️ Doctor‑Visit Reminder</h3>
+            <h3 className="text-lg font-semibold text-pink-600 mb-3">
+              🗓️ Doctor‑Visit Reminder
+            </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Visit Date</label>
+                <label className="block text-sm font-medium mb-1">
+                  Visit Date
+                </label>
                 <input
                   type="date"
                   value={reminderDate}
@@ -256,7 +368,11 @@ function Dashboard() {
                 Save Reminder
               </button>
               {msg && (
-                <p className={`text-sm ${msg.type === 'success' ? 'text-green-600' : 'text-red-500'}`}>
+                <p
+                  className={`text-sm ${
+                    msg.type === 'success' ? 'text-green-600' : 'text-red-500'
+                  }`}
+                >
                   {msg.text}
                 </p>
               )}
@@ -266,18 +382,29 @@ function Dashboard() {
 
         {streak > 0 && (
           <div className="mt-6 max-w-xl mx-auto bg-white border-2 border-yellow-300 rounded-lg shadow-md p-6 text-center animate-pulse">
-            <h2 className="text-xl font-bold text-yellow-600 mb-1">🔥 You're on a Streak!</h2>
-            <p className="text-lg text-gray-700">Day {streak} of consistency</p>
-            <p className="text-sm text-gray-500 mt-1">Keep going, you're doing amazing 💪</p>
+            <h2 className="text-xl font-bold text-yellow-600 mb-1">
+              🔥 You're on a Streak!
+            </h2>
+            <p className="text-lg text-gray-700">
+              Day {streak} of consistency
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Keep going, you're doing amazing 💪
+            </p>
           </div>
         )}
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto px-4">
           {features.map(({ title, desc, img }) => (
-            <div key={title} className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition duration-300">
+            <div
+              key={title}
+              className="bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transition duration-300"
+            >
               <img src={img} alt={title} className="w-full h-32 object-cover" />
               <div className="p-4">
-                <h3 className="text-lg font-semibold mb-1 text-pink-600">{title}</h3>
+                <h3 className="text-lg font-semibold mb-1 text-pink-600">
+                  {title}
+                </h3>
                 <p className="text-sm text-gray-600 mb-2">{desc}</p>
                 <button
                   onClick={() => handleNavigate(title)}
@@ -293,7 +420,12 @@ function Dashboard() {
 
       {showConfetti && (
         <div className="fixed inset-0 z-50 pointer-events-none">
-          <Confetti width={width} height={height} numberOfPieces={280} recycle={false} />
+          <Confetti
+            width={width}
+            height={height}
+            numberOfPieces={280}
+            recycle={false}
+          />
         </div>
       )}
     </div>
