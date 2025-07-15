@@ -15,9 +15,15 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../firebase';
 import { getGeminiReply } from '../services/geminiApi';
 
+// Helper to skip trivial messages like "hi"
+const isTrivial = (text) =>
+  !text ||
+  text.trim().length < 3 ||
+  /^(hi|hello|hey|namaste|hola)$/i.test(text.trim());
+
 const JournalPage = () => {
   const [user, setUser] = useState(null);
-  const [lang, setLang] = useState(null); // ❌ not from localStorage
+  const [lang, setLang] = useState(null);
   const [entries, setEntries] = useState([]);
   const [todayJournal, setTodayJournal] = useState(null);
   const [creating, setCreating] = useState(false);
@@ -26,7 +32,7 @@ const JournalPage = () => {
 
   const todayISO = new Date().toISOString().split('T')[0];
 
-  // 1️⃣ Auth + Fetch Lang & Journal
+  // 1️⃣ Load authenticated user + language + journal
   useEffect(() => {
     const unsub = onAuthStateChanged(getAuth(), async (u) => {
       if (!u) return;
@@ -35,7 +41,9 @@ const JournalPage = () => {
       try {
         const userDoc = await getDoc(doc(db, 'users', u.uid));
         if (userDoc.exists()) {
-          const langFromDb = userDoc.data().languageCode || 'en';
+          const langFromDb = userDoc.data().languageShort || 'en';
+
+          console.log('📣 Language loaded:', langFromDb); // 🔍 DEBUG
           setLang(langFromDb);
         }
 
@@ -52,7 +60,7 @@ const JournalPage = () => {
     return () => unsub();
   }, []);
 
-  // 2️⃣ Fetch entries for today
+  // 2️⃣ Fetch today's entries
   useEffect(() => {
     if (!user) return;
 
@@ -75,9 +83,10 @@ const JournalPage = () => {
     fetchTodayEntries();
   }, [user]);
 
-  // 3️⃣ Create journal (in Firestore lang)
+  // 3️⃣ Create today's journal using actual conversations
   const createJournal = async () => {
-    if (entries.length === 0) {
+    
+    if (!entries.length) {
       setError('Please interact at least once today to generate your journal.');
       return;
     }
@@ -87,31 +96,49 @@ const JournalPage = () => {
       return;
     }
 
-    setCreating(true);
-    setError('');
-    setMessage('');
+    const meaningful = entries.filter(
+      (e) => !isTrivial(e.input) && !isTrivial(e.response)
+    );
+
+    if (!meaningful.length) {
+      setError(
+        'Today’s messages are just greetings. Have a deeper chat, then try again!'
+      );
+      return;
+    }
+
+    const combined = meaningful
+      .map((e) => `Q: ${e.input}\nA: ${e.response}`)
+      .join('\n\n');
+
+    const prompt = `
+You are helping an expectant mother keep a pregnancy journal.
+
+Rules:
+- You must write **only in ${lang}**. Do not mix with other languages.
+- You must write fully and ONLY in native ${lang} script.
+- Never mix Roman script or English.
+- Never translate or explain anything in English except when the user language is english.
+- Use ONLY what she actually shared today.
+- If the conversation is SHORT (under 4 lines), respond with just 1–2 heartfelt sentences.
+- If it’s longer, you may use a gentle, lyrical tone (max ~120 words).
+- Never switch languages — use ${lang} throughout.
+- Never invent new events or feelings.
+-if the user shares something about her baby, give story like emotional feeling, but in a short way.
+Mother's conversation today:
+${combined}
+    `.trim();
+console.log('📤 Prompt to Gemini:', prompt);
+console.log('🌐 Language being sent:', lang);
+
+    console.log('📤 Prompt sent to Gemini:\n', prompt); // 🔍 DEBUG
 
     try {
-      const combined = entries
-        .map(e => `Q: ${e.input}\nA: ${e.response}`)
-        .join('\n\n');
+      setCreating(true);
+      setError('');
+      setMessage('');
 
-      const prompt = `
-You are writing a deeply emotional pregnancy journal — as if it’s written by a mother to her unborn child.
-
-🪔 Guidelines:
-- Write entirely in ${lang}
-- Do not translate or repeat lines
-- Use gentle metaphors (moonlight, heartbeat, warm cocoon, monsoon breeze)
-- Keep it short, heart‑touching, and poetic — like a lullaby
-- Conclude with this single note line:
-Note: This journal entry is crafted to reflect the emotional world of a mother. Some poetic license is used to convey depth and tenderness.
-
-Today the mother shared:
-${combined}
-`;
-
-      const diary = await getGeminiReply(prompt, lang);
+      const diary = await getGeminiReply(prompt, lang, 'journal');
 
       await setDoc(
         doc(db, 'users', user.uid, 'journals', todayISO),
@@ -121,7 +148,7 @@ ${combined}
       setTodayJournal(diary);
       setMessage('✅ Journal created!');
     } catch (err) {
-      console.error(err);
+      console.error('❌ Error creating journal:', err);
       setError('Error generating journal. Please try again.');
     } finally {
       setCreating(false);
