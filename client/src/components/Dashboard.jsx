@@ -1,4 +1,4 @@
-  // src/components/Dashboard.jsx
+// src/components/Dashboard.jsx
   import React, { useEffect, useState } from 'react';
   import { useNavigate } from 'react-router-dom';
   import InputSection from './InputSection';

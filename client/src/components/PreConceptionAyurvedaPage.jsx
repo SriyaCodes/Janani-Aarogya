@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { getAuth } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { FaHeart, FaBookmark, FaLeaf, FaSeedling } from 'react-icons/fa';
-import translations from './Pretranslations';
+import {FaSeedling, FaShareAlt, FaBookmark, FaLeaf } from 'react-icons/fa';
+import translations from './PreAyurTranslations';
 
 const PreConceptionAyurvedaPage = () => {
   const [userData, setUserData] = useState(null);
@@ -881,127 +881,139 @@ const PreConceptionAyurvedaPage = () => {
   };
 
  
-  const remedies = ayurvedicRemedies[language] || ayurvedicRemedies['en-IN'];
-
-  // Fetch user data
-  useEffect(() => {
-    const fetchUserData = async () => {
+  
+     const remedies = ayurvedicRemedies[language] || ayurvedicRemedies['en-IN'];
+  
+    // Fetch user data
+    useEffect(() => {
+      const fetchUserData = async () => {
+        if (auth.currentUser) {
+          const docRef = doc(db, 'users', auth.currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setUserData(docSnap.data());
+            setLanguage(docSnap.data().language || 'en-IN');
+            setBookmarked(docSnap.data().bookmarkedRemedies || []);
+          }
+        }
+      };
+      fetchUserData();
+    }, [auth.currentUser]);
+  
+    const toggleBookmark = async (remedyId) => {
+      const newBookmarked = bookmarked.includes(remedyId)
+        ? bookmarked.filter(id => id !== remedyId)
+        : [...bookmarked, remedyId];
+      
+      setBookmarked(newBookmarked);
+      
       if (auth.currentUser) {
-        const docRef = doc(db, 'users', auth.currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserData(docSnap.data());
-          setLanguage(docSnap.data().language || 'en-IN');
-          setBookmarked(docSnap.data().bookmarkedRemedies || []);
+        try {
+          await updateDoc(doc(db, 'users', auth.currentUser.uid), {
+            bookmarkedRemedies: newBookmarked
+          });
+        } catch (error) {
+          console.error("Error updating bookmarks:", error);
         }
       }
     };
-    fetchUserData();
-  }, [auth.currentUser]);
-
-  const toggleBookmark = async (remedyId) => {
-    const newBookmarked = bookmarked.includes(remedyId)
-      ? bookmarked.filter(id => id !== remedyId)
-      : [...bookmarked, remedyId];
-    
-    setBookmarked(newBookmarked);
-    
-    if (auth.currentUser) {
-      try {
-        await updateDoc(doc(db, 'users', auth.currentUser.uid), {
-          bookmarkedRemedies: newBookmarked
-        });
-      } catch (error) {
-        console.error("Error updating bookmarks:", error);
-      }
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-teal-50 p-4 md:p-8">
-      <motion.header
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8 text-center"
-      >
-        <h1 className="text-3xl font-bold text-teal-800 mb-2">{t.heading}</h1>
-        <p className="text-gray-600">{t.subheading}</p>
-      </motion.header>
-
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        {remedies.map((remedy) => (
-          <motion.div
-            key={remedy.id}
-            className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
-          >
-            <div className="h-48 bg-green-100 flex items-center justify-center relative">
-              <img
-                src={remedy.image}
-                alt={remedy.title}
-                className="h-full w-full object-cover"
-              />
-              <button
-                className={`absolute top-4 right-4 p-2 rounded-full ${
-                  bookmarked.includes(remedy.id) ? 'text-teal-600' : 'text-gray-400'
-                }`}
-                onClick={() => toggleBookmark(remedy.id)}
-              >
-                <FaBookmark className="text-2xl" />
-              </button>
-            </div>
-            <div className="p-5">
-              <h3 className="text-xl font-semibold text-teal-700 mb-2">{remedy.title}</h3>
-              <p className="text-gray-600 mb-3">{remedy.description}</p>
-              
-              <div className="flex items-center mb-3">
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2 flex items-center">
-                  <FaLeaf className="mr-1" /> {remedy.frequency}
-                </span>
-                <span className="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded flex items-center">
-                  <FaSeedling className="mr-1" /> Ayurvedic Remedy
-                </span>
-              </div>
-
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">Benefits</h4>
-              <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
-                {remedy.benefits.map((benefit, i) => <li key={i}>{benefit}</li>)}
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">Ingredients</h4>
-              <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
-                {remedy.ingredients.map((ingredient, i) => <li key={i}>{ingredient}</li>)}
-              </ul>
-
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">Preparation</h4>
-              <ol className="list-decimal pl-5 space-y-1 text-gray-700 mb-4">
-                {remedy.preparation.map((step, i) => <li key={i}>{step}</li>)}
-              </ol>
-
-              <h4 className="text-lg font-semibold text-gray-800 mb-2">Precautions</h4>
-              <p className="text-red-600">{remedy.precautions}</p>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      <div className="mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
-        <h2 className="text-xl font-semibold text-teal-800 mb-4">Ayurvedic Principles</h2>
-        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <p className="text-green-800">
-            Ayurveda emphasizes balancing the three doshas (Vata, Pitta, Kapha) for optimal reproductive health. 
-            These remedies are formulated to nourish the reproductive tissues (Shukra Dhatu) and create an optimal 
-            environment for conception according to ancient Ayurvedic wisdom.
+  
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-teal-50 p-4 md:p-8">
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 text-center"
+        >
+          <h1 className="text-3xl font-bold text-teal-800 mb-2">
+            {t.title}
+          </h1>
+          <p className="text-gray-600">
+            {t.subtitle}
           </p>
+        </motion.header>
+  
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {remedies.map((remedy) => (
+            <motion.div
+              key={remedy.id}
+              className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
+            >
+              <div className="h-48 bg-green-100 flex items-center justify-center relative">
+                <img
+                  src={remedy.image}
+                  alt={remedy.title}
+                  className="h-full w-full object-cover"
+                />
+                <button
+                  className={`absolute top-4 right-4 p-2 rounded-full ${
+                    bookmarked.includes(remedy.id) ? 'text-teal-600' : 'text-gray-400'
+                  }`}
+                  onClick={() => toggleBookmark(remedy.id)}
+                >
+                  <FaBookmark className="text-2xl" />
+                </button>
+              </div>
+              <div className="p-5">
+                <h3 className="text-xl font-semibold text-teal-700 mb-2">{remedy.title}</h3>
+                <p className="text-gray-600 mb-3">{remedy.description}</p>
+                
+                <div className="flex items-center mb-3">
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2 flex items-center">
+                    <FaLeaf className="mr-1" /> {remedy.duration}
+                  </span>
+                </div>
+  
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">{t.benefits}</h4>
+                <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
+                  {remedy.benefits.map((benefit, i) => <li key={i}>{benefit}</li>)}
+                </ul>
+  
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">{t.ingredients}</h4>
+                <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
+                  {remedy.ingredients.map((ingredient, i) => <li key={i}>{ingredient}</li>)}
+                </ul>
+  
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">{t.preparation}</h4>
+                <ol className="list-decimal pl-5 space-y-1 text-gray-700 mb-4">
+                  {remedy.preparation.map((step, i) => <li key={i}>{step}</li>)}
+                </ol>
+  
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">{t.precautions}</h4>
+                <p className="text-red-600">{remedy.precautions}</p>
+  
+                <div className="flex space-x-3 mt-4">
+                  <button className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-lg font-medium transition">
+                    {t.addToToday}
+                  </button>
+                  <button className="p-2 bg-gray-100 rounded-lg">
+                    <FaShareAlt className="text-teal-600" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+  
+        <div className="mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
+          <h2 className="text-xl font-semibold text-teal-800 mb-4">
+            {t.todayTipTitle}
+          </h2>
+          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+            <p className="text-green-800">
+              {t.todayTip}
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
+  
 
 export default PreConceptionAyurvedaPage;
 
