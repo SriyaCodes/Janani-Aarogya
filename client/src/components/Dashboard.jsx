@@ -15,12 +15,12 @@
   import jrnlImg from '../assets/jrnl.jpg';
   import ayurvedaImg from '../assets/ayurveda.png';
 
-  // ✅ keep keys all‑lowercase and exactly the same string
+ 
   const FEATURE_IMAGES = {
     journal:jrnlImg,
     memoryvault:vaultImg,
     ayurveda: ayurvedaImg,
-    yoga:yogaImg        // renamed from “maternalYoga”
+    yoga:yogaImg        
   };
 
 
