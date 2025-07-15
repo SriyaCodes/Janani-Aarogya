@@ -4,9 +4,9 @@ import { getAuth } from 'firebase/auth';
 import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Player } from '@lottiefiles/react-lottie-player';
-import { FaHeart, FaBookmark, FaRegClock, FaSeedling } from 'react-icons/fa';
+import { FaHeart, FaBookmark, FaRegClock, FaChild } from 'react-icons/fa';
 
-const PreConceptionYogaPage = () => {
+const PostYogaPage = () => {
   const [selectedPose, setSelectedPose] = useState(null);
   const [userData, setUserData] = useState(null);
   const [language, setLanguage] = useState('en-IN');
@@ -30,123 +30,118 @@ const PreConceptionYogaPage = () => {
     fetchUserData();
   }, [auth.currentUser]);
 
-  // Pre-conception yoga data
+  // Post-pregnancy yoga data
   const yogaData = {
     'en-IN': [
       {
         id: 1,
-        title: 'Fertility-Boosting Butterfly Pose',
+        title: 'Gentle Pelvic Tilts',
         benefits: [
-          'Stimulates reproductive organs',
-          'Improves blood flow to pelvis',
-          'Reduces stress hormones',
-          'Balances menstrual cycle'
+          'Strengthens abdominal muscles',
+          'Improves pelvic alignment',
+          'Reduces lower back pain'
         ],
         duration: '5 mins',
         level: 'Beginner',
-        category: 'fertility',
+        category: 'core',
         steps: [
-          'Sit with soles of feet together',
-          'Hold ankles and gently flap knees',
-          'Inhale: Lengthen spine upward',
-          'Exhale: Fold forward slightly',
-          'Continue for 20-30 flaps'
+          'Lie on your back with knees bent',
+          'Flatten lower back against the floor',
+          'Tilt pelvis slightly upward',
+          'Hold for 3 breaths and release',
+          'Repeat 8-10 times'
         ],
         animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-        precautions: 'Avoid if you have hip injuries'
+        precautions: 'Avoid if you have diastasis recti'
       },
       {
         id: 2,
-        title: 'Hormone-Balancing Cobra',
+        title: 'Seated Meditation',
         benefits: [
-          'Massages adrenal glands',
-          'Strengthens uterine muscles',
-          'Relieves menstrual cramps',
-          'Enhances ovarian function'
+          'Reduces stress and anxiety',
+          'Improves emotional balance',
+          'Enhances milk production'
         ],
-        duration: '3 mins',
-        level: 'Beginner',
-        category: 'hormonal',
-        steps: [
-          'Lie on stomach, palms under shoulders',
-          'Inhale: Lift chest gently',
-          'Keep pelvis grounded',
-          'Hold for 3-5 breaths',
-          'Release slowly'
-        ],
-        animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-        precautions: 'Don\'t overarch if back pain exists'
-      },
-      {
-        id: 3,
-        title: 'Stress-Relieving Child\'s Pose',
-        benefits: [
-          'Calms nervous system',
-          'Reduces cortisol levels',
-          'Promotes relaxation',
-          'Improves sleep quality'
-        ],
-        duration: '7 mins',
+        duration: '10 mins',
         level: 'All Levels',
         category: 'relaxation',
         steps: [
-          'Kneel with big toes touching',
-          'Spread knees hip-width apart',
-          'Fold forward, arms extended',
-          'Forehead rests on mat',
-          'Breathe deeply'
+          'Sit comfortably with spine straight',
+          'Place hands on lap or knees',
+          'Close eyes and focus on breath',
+          'Breathe deeply for 5 counts',
+          'Exhale slowly for 7 counts'
+        ],
+        animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
+        precautions: 'Use cushion for support if needed'
+      },
+      {
+        id: 3,
+        title: 'Cat-Cow Stretch',
+        benefits: [
+          'Relieves back tension',
+          'Massages internal organs',
+          'Improves spinal flexibility'
+        ],
+        duration: '7 mins',
+        level: 'Beginner',
+        category: 'flexibility',
+        steps: [
+          'Come to hands and knees position',
+          'Inhale: Arch back, lift head (Cow)',
+          'Exhale: Round spine, tuck chin (Cat)',
+          'Move slowly with your breath',
+          'Repeat 8-10 times'
         ],
         animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-        precautions: 'Use pillow under forehead if needed'
+        precautions: 'Go gently if you had C-section'
       }
     ],
     'hi-IN': [
       {
         id: 1,
-        title: 'प्रजनन बढ़ाने वाला तितली आसन',
+        title: 'कोमल श्रोणि झुकाव',
         benefits: [
-          'प्रजनन अंगों को उत्तेजित करता है',
-          'श्रोणि में रक्त प्रवाह बढ़ाता है',
-          'तनाव हार्मोन को कम करता है',
-          'मासिक धर्म को नियमित करता है'
+          'पेट की मांसपेशियों को मजबूत करता है',
+          'श्रोणि संरेखण में सुधार करता है',
+          'कमर दर्द को कम करता है'
         ],
         duration: '5 मिनट',
         level: 'शुरुआती',
-        category: 'fertility',
+        category: 'core',
         steps: [
-          'पैरों के तलवे मिलाकर बैठें',
-          'टखनों को पकड़कर घुटनों को फड़फड़ाएं',
-          'सांस लें: रीढ़ को लंबा करें',
-          'सांस छोड़ें: आगे की ओर झुकें',
-          '20-30 बार दोहराएं'
+          'पीठ के बल लेटकर घुटनों को मोड़ें',
+          'निचली पीठ को फर्श पर सपाट करें',
+          'श्रोणि को थोड़ा ऊपर की ओर झुकाएं',
+          '3 सांसों तक रोककर रखें और छोड़ें',
+          '8-10 बार दोहराएं'
         ],
         animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-        precautions: 'कूल्हे में चोट हो तो न करें'
+        precautions: 'डायस्टेसिस रेक्टी हो तो न करें'
       },
       // ... more in Hindi
     ],
     'ta-IN': [
       {
         id: 1,
-        title: 'கருவுறுதலை ஊக்குவிக்கும் பட்டாம்பூச்சி போஸ்',
+        title: 'மென்மையான இடுப்பு சாய்வு',
         benefits: [
-          'பிறப்பு உறுப்புகளை தூண்டுகிறது',
-          'இடுப்புக்கு இரத்த ஓட்டத்தை மேம்படுத்துகிறது',
-          'மன அழுத்த ஹார்மோன்களை குறைக்கிறது',
-          'மாதவிடாய் சுழற்சியை சீராக்குகிறது'
+          'வயிற்று தசைகளை வலுப்படுத்துகிறது',
+          'இடுப்பு சீரமைப்பை மேம்படுத்துகிறது',
+          'கீழ் முதுகு வலியை குறைக்கிறது'
         ],
         duration: '5 நிமிடங்கள்',
         level: 'தொடக்கநிலை',
-        category: 'fertility',
+        category: 'core',
         steps: [
-          'பாதங்களை ஒன்றாக இணைத்து உட்காரவும்',
-          'கணுக்கால்களை பிடித்து மெதுவாக முழங்கால்களை அசைக்கவும்',
-          'மூச்சிழுக்க: முதுகெலும்பை நீட்டவும்',
-          'மூச்சுவிட: சிறிது முன்னே வளைக்கவும்',
-          '20-30 முறை திரும்ப செய்யவும்'
+          'முதுகில் படுத்து முழங்கால்களை வளைக்கவும்',
+          'கீழ் முதுகை தரையில் சமப்படுத்தவும்',
+          'இடுப்பை சிறிது மேல்நோக்கி சாய்த்து',
+          '3 மூச்சுகள் வரை பிடித்து விட்டுவிடவும்',
+          '8-10 முறை திரும்ப செய்யவும்'
         ],
         animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-        precautions: 'இடுப்பு காயம் இருந்தால் தவிர்க்கவும்'
+        precautions: 'டயாஸ்டேசிஸ் ரெக்டி இருந்தால் தவிர்க்கவும்'
       },
       // ... more in Tamil
     ]
@@ -198,7 +193,7 @@ const PreConceptionYogaPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-50 p-4 md:p-8">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
@@ -206,15 +201,15 @@ const PreConceptionYogaPage = () => {
         transition={{ duration: 0.5 }}
         className="mb-8 text-center"
       >
-        <h1 className="text-3xl font-bold text-purple-800 mb-2">
-          {language === 'hi-IN' ? 'गर्भधारण पूर्व योग' : 
-           language === 'ta-IN' ? 'கருத்தரிப்புக்கு முன் யோகா' : 
-           'Pre-Conception Yoga'}
+        <h1 className="text-3xl font-bold text-indigo-800 mb-2">
+          {language === 'hi-IN' ? 'प्रसवोत्तर योग' : 
+           language === 'ta-IN' ? 'பிரசவத்திற்குப் பின் யோகா' : 
+           'Post-Pregnancy Yoga'}
         </h1>
         <p className="text-gray-600">
-          {language === 'hi-IN' ? 'प्रजनन स्वास्थ्य और हार्मोन संतुलन के लिए' : 
-           language === 'ta-IN' ? 'கருவுறுதல் ஆரோக்கியம் மற்றும் ஹார்மோன் சமநிலைக்காக' : 
-           'For reproductive health and hormonal balance'}
+          {language === 'hi-IN' ? 'धीरे-धीरे शक्ति और लचीलापन बढ़ाएं' : 
+           language === 'ta-IN' ? 'படிப்படியாக வலிமை மற்றும் நெகிழ்வுத்தன்மையை அதிகரிக்கவும்' : 
+           'Gently rebuild strength and flexibility'}
         </p>
       </motion.header>
 
@@ -226,7 +221,7 @@ const PreConceptionYogaPage = () => {
         transition={{ delay: 0.2 }}
       >
         <button
-          className={`px-4 py-2 rounded-full whitespace-nowrap mr-2 ${activeTab === 'all' ? 'bg-purple-600 text-white' : 'bg-white text-purple-600'}`}
+          className={`px-4 py-2 rounded-full whitespace-nowrap mr-2 ${activeTab === 'all' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600'}`}
           onClick={() => setActiveTab('all')}
         >
           {language === 'hi-IN' ? 'सभी' : 
@@ -234,28 +229,28 @@ const PreConceptionYogaPage = () => {
            'All'}
         </button>
         <button
-          className={`px-4 py-2 rounded-full whitespace-nowrap mr-2 ${activeTab === 'fertility' ? 'bg-purple-600 text-white' : 'bg-white text-purple-600'}`}
-          onClick={() => setActiveTab('fertility')}
+          className={`px-4 py-2 rounded-full whitespace-nowrap mr-2 ${activeTab === 'core' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600'}`}
+          onClick={() => setActiveTab('core')}
         >
-          {language === 'hi-IN' ? 'प्रजनन' : 
-           language === 'ta-IN' ? 'கருவுறுதல்' : 
-           'Fertility'}
+          {language === 'hi-IN' ? 'कोर' : 
+           language === 'ta-IN' ? 'கோர்' : 
+           'Core'}
         </button>
         <button
-          className={`px-4 py-2 rounded-full whitespace-nowrap mr-2 ${activeTab === 'hormonal' ? 'bg-purple-600 text-white' : 'bg-white text-purple-600'}`}
-          onClick={() => setActiveTab('hormonal')}
-        >
-          {language === 'hi-IN' ? 'हार्मोनल' : 
-           language === 'ta-IN' ? 'ஹார்மோன்' : 
-           'Hormonal'}
-        </button>
-        <button
-          className={`px-4 py-2 rounded-full whitespace-nowrap ${activeTab === 'relaxation' ? 'bg-purple-600 text-white' : 'bg-white text-purple-600'}`}
+          className={`px-4 py-2 rounded-full whitespace-nowrap mr-2 ${activeTab === 'relaxation' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600'}`}
           onClick={() => setActiveTab('relaxation')}
         >
           {language === 'hi-IN' ? 'आराम' : 
            language === 'ta-IN' ? 'ஓய்வு' : 
            'Relaxation'}
+        </button>
+        <button
+          className={`px-4 py-2 rounded-full whitespace-nowrap ${activeTab === 'flexibility' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600'}`}
+          onClick={() => setActiveTab('flexibility')}
+        >
+          {language === 'hi-IN' ? 'लचीलापन' : 
+           language === 'ta-IN' ? 'நெகிழ்வுத்தன்மை' : 
+           'Flexibility'}
         </button>
       </motion.div>
 
@@ -274,7 +269,7 @@ const PreConceptionYogaPage = () => {
             whileTap={{ scale: 0.98 }}
             className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
           >
-            <div className="h-48 bg-purple-100 flex items-center justify-center relative">
+            <div className="h-48 bg-blue-100 flex items-center justify-center relative">
               <Player
                 autoplay
                 loop
@@ -282,26 +277,26 @@ const PreConceptionYogaPage = () => {
                 style={{ height: '100%', width: '100%' }}
               />
               <button
-                className={`absolute top-4 right-4 p-2 rounded-full ${bookmarked.includes(pose.id) ? 'text-purple-600' : 'text-gray-400'}`}
+                className={`absolute top-4 right-4 p-2 rounded-full ${bookmarked.includes(pose.id) ? 'text-indigo-600' : 'text-gray-400'}`}
                 onClick={() => toggleBookmark(pose.id)}
               >
                 <FaBookmark className="text-2xl" />
               </button>
             </div>
             <div className="p-5">
-              <h3 className="text-xl font-semibold text-purple-700 mb-2">{pose.title}</h3>
+              <h3 className="text-xl font-semibold text-indigo-700 mb-2">{pose.title}</h3>
               
               <div className="flex items-center mb-3">
-                <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded mr-2 flex items-center">
+                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded mr-2 flex items-center">
                   <FaRegClock className="mr-1" /> {pose.duration}
                 </span>
-                <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded flex items-center">
-                  <FaSeedling className="mr-1" /> {pose.level}
+                <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded flex items-center">
+                  <FaChild className="mr-1" /> {pose.level}
                 </span>
               </div>
               
               <button
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg font-medium transition"
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg font-medium transition"
                 onClick={() => setSelectedPose(pose)}
               >
                 {language === 'hi-IN' ? 'विवरण देखें' : 
@@ -330,7 +325,7 @@ const PreConceptionYogaPage = () => {
               className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="h-56 bg-purple-100 relative">
+              <div className="h-56 bg-blue-100 relative">
                 <Player
                   autoplay
                   loop
@@ -348,9 +343,9 @@ const PreConceptionYogaPage = () => {
               </div>
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-2xl font-bold text-purple-800">{selectedPose.title}</h2>
+                  <h2 className="text-2xl font-bold text-indigo-800">{selectedPose.title}</h2>
                   <button 
-                    className={`p-2 ${bookmarked.includes(selectedPose.id) ? 'text-purple-600' : 'text-gray-400'}`}
+                    className={`p-2 ${bookmarked.includes(selectedPose.id) ? 'text-indigo-600' : 'text-gray-400'}`}
                     onClick={() => toggleBookmark(selectedPose.id)}
                   >
                     <FaBookmark className="text-xl" />
@@ -358,11 +353,11 @@ const PreConceptionYogaPage = () => {
                 </div>
                 
                 <div className="flex mb-4">
-                  <span className="text-sm bg-purple-100 text-purple-800 px-3 py-1 rounded-full mr-2 flex items-center">
+                  <span className="text-sm bg-blue-100 text-blue-800 px-3 py-1 rounded-full mr-2 flex items-center">
                     <FaRegClock className="mr-1" /> {selectedPose.duration}
                   </span>
-                  <span className="text-sm bg-pink-100 text-pink-800 px-3 py-1 rounded-full flex items-center">
-                    <FaSeedling className="mr-1" /> {selectedPose.level}
+                  <span className="text-sm bg-purple-100 text-purple-800 px-3 py-1 rounded-full flex items-center">
+                    <FaChild className="mr-1" /> {selectedPose.level}
                   </span>
                 </div>
 
@@ -402,7 +397,7 @@ const PreConceptionYogaPage = () => {
                 </div>
 
                 <button
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-medium transition"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-medium transition"
                   onClick={async () => {
                     if (auth.currentUser) {
                       try {
@@ -410,8 +405,7 @@ const PreConceptionYogaPage = () => {
                           yogaHistory: arrayUnion({
                             pose: selectedPose.title,
                             date: new Date().toISOString(),
-                            duration: selectedPose.duration,
-                            category: 'pre-conception'
+                            duration: selectedPose.duration
                           })
                         });
                       } catch (error) {
@@ -433,16 +427,16 @@ const PreConceptionYogaPage = () => {
 
       {/* Daily Tip */}
       <div className="mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
-        <h2 className="text-xl font-semibold text-purple-800 mb-4">
+        <h2 className="text-xl font-semibold text-indigo-800 mb-4">
           {language === 'hi-IN' ? 'आज का योग टिप' : 
            language === 'ta-IN' ? 'இன்றைய யோகா உதவிக்குறிப்பு' : 
            'Today\'s Yoga Tip'}
         </h2>
-        <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-          <p className="text-purple-800">
-            {language === 'hi-IN' ? 'गर्भधारण से 3 महीने पहले नियमित रूप से योग करें। सुबह 5-7 बजे (ब्रह्म मुहूर्त) का समय सबसे अच्छा माना जाता है।' : 
-             language === 'ta-IN' ? 'கருத்தரிப்பதற்கு 3 மாதங்களுக்கு முன்பு தினமும் யோகா செய்யவும். காலை 5-7 மணி (பிரம்ம முகூர்த்தம்) சிறந்த நேரம்.' : 
-             'Practice yoga regularly 3 months before conception. Early morning 5-7 AM (Brahma Muhurta) is considered most beneficial.'}
+        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+          <p className="text-blue-800">
+            {language === 'hi-IN' ? 'प्रसव के बाद पहले 6 सप्ताह तक केवल कोमल योग मुद्राएं ही करें। अपने शरीर को धीरे-धीरे मजबूत होने दें।' : 
+             language === 'ta-IN' ? 'பிரசவத்திற்குப் பின் முதல் 6 வாரங்களுக்கு மென்மையான யோகாசனங்களை மட்டுமே செய்யவும். உங்கள் உடல் படிப்படியாக வலுப்படையட்டும்.' : 
+             'For the first 6 weeks after delivery, only practice gentle yoga poses. Let your body strengthen gradually.'}
           </p>
         </div>
       </div>
@@ -450,4 +444,4 @@ const PreConceptionYogaPage = () => {
   );
 };
 
-export default PreConceptionYogaPage;
+export default PostYogaPage;

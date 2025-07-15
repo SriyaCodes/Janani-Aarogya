@@ -115,160 +115,7 @@ const PregAyurvedaPage = () => {
         precautions: 'Limit to 2 cups per day'
       }
     ],
-    2: [ // Second Trimester
-      {
-        id: 201,
-        title: 'Golden Milk for Immunity',
-        description: 'Nutrient-rich drink for second trimester wellness',
-        benefits: [
-          'Supports bone development',
-          'Enhances immunity',
-          'Reduces inflammation',
-          'Promotes restful sleep'
-        ],
-        ingredients: [
-          '1 cup warm milk (or almond milk)',
-          '½ tsp turmeric powder',
-          '¼ tsp cinnamon',
-          'Pinch of black pepper',
-          '1 tsp ghee',
-          '1 tsp honey'
-        ],
-        preparation: [
-          'Heat milk gently (do not boil)',
-          'Mix all dry ingredients',
-          'Add to warm milk and stir well',
-          'Add ghee and honey last',
-          'Drink warm before bedtime'
-        ],
-        duration: '2-3 times per week',
-        precautions: 'Consult doctor if on blood thinners'
-      },
-      {
-        id: 202,
-        title: 'Shatavari Kalpa',
-        description: 'Traditional tonic for maternal health',
-        benefits: [
-          'Nourishes reproductive tissues',
-          'Supports hormonal balance',
-          'Enhances milk production',
-          'Reduces pregnancy fatigue'
-        ],
-        ingredients: [
-          '1 tsp Shatavari powder',
-          '1 tsp ghee',
-          '1 tsp honey',
-          '1 cup warm milk'
-        ],
-        preparation: [
-          'Mix Shatavari powder with ghee and honey',
-          'Add to warm milk and stir well',
-          'Drink in the morning on empty stomach'
-        ],
-        duration: 'Daily for 1 month',
-        precautions: 'Avoid if experiencing diarrhea'
-      },
-      {
-        id: 203,
-        title: 'Iron-Rich Beetroot Juice',
-        description: 'Natural prevention for pregnancy anemia',
-        benefits: [
-          'Boosts hemoglobin levels',
-          'Improves blood circulation',
-          'Rich in folate',
-          'Supports fetal growth'
-        ],
-        ingredients: [
-          '1 medium beetroot',
-          '1 carrot',
-          '1 inch ginger',
-          '1 tsp lemon juice'
-        ],
-        preparation: [
-          'Juice all ingredients together',
-          'Add lemon juice',
-          'Drink fresh in the morning',
-          'Can dilute with water if too strong'
-        ],
-        duration: '3 times per week',
-        precautions: 'Avoid if blood pressure is low'
-      }
-    ],
-    3: [ // Third Trimester
-      {
-        id: 301,
-        title: 'Dates & Almond Tonic',
-        description: 'Energy booster for third trimester preparation',
-        benefits: [
-          'Natural source of iron',
-          'Prepares uterus for labor',
-          'Provides sustained energy',
-          'Supports fetal brain development'
-        ],
-        ingredients: [
-          '2-3 soaked dates',
-          '5-6 soaked almonds',
-          '1 cup warm milk',
-          'Pinch of cardamom powder',
-          '1 tsp ghee'
-        ],
-        preparation: [
-          'Blend soaked dates and almonds with milk',
-          'Strain if preferred smooth texture',
-          'Add cardamom and ghee',
-          'Drink in the morning'
-        ],
-        duration: 'Daily in last 6 weeks',
-        precautions: 'Reduce if experiencing excessive weight gain'
-      },
-      {
-        id: 302,
-        title: 'Raspberry Leaf Tea',
-        description: 'Prepares uterus for smooth delivery',
-        benefits: [
-          'Tones uterine muscles',
-          'Reduces labor duration',
-          'Rich in vitamins and minerals',
-          'Eases postpartum recovery'
-        ],
-        ingredients: [
-          '1 tsp dried raspberry leaves',
-          '1 cup hot water',
-          '1 tsp honey (optional)'
-        ],
-        preparation: [
-          'Steep leaves in hot water for 10 minutes',
-          'Strain and add honey if desired',
-          'Drink warm in the morning'
-        ],
-        duration: 'Daily from 32 weeks',
-        precautions: 'Start with small amounts'
-      },
-      {
-        id: 303,
-        title: 'Ghee Massage Blend',
-        description: 'Perineal massage oil to prepare for birth',
-        benefits: [
-          'Increases tissue elasticity',
-          'Reduces tearing risk',
-          'Promotes healing',
-          'Soothes stretching discomfort'
-        ],
-        ingredients: [
-          '2 tbsp warm sesame oil',
-          '1 tbsp ghee',
-          '1 tsp turmeric powder'
-        ],
-        preparation: [
-          'Mix all ingredients gently',
-          'Warm slightly (body temperature)',
-          'Massage perineal area daily',
-          'Wipe excess after 20 minutes'
-        ],
-        duration: 'Daily from 34 weeks',
-        precautions: 'Discontinue if irritation occurs'
-      }
-    ]
+    
   },
     'hi-IN': {
   1: [ // First Trimester
@@ -319,11 +166,9 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'सप्ताह में 2-3 बार',
       precautions: 'यदि नारियल से एलर्जी हो तो सेवन न करें'
-    }
-  ],
-  2: [ // Second Trimester
+    },
     {
-      id: 201,
+      id: 103,
       title: 'इम्युनिटी के लिए हल्दी दूध',
       description: 'दूसरी तिमाही के स्वास्थ्य के लिए पौष्टिक पेय',
       benefits: [
@@ -351,34 +196,8 @@ const PregAyurvedaPage = () => {
       precautions: 'यदि रक्त पतला करने की दवा लें रहे हैं तो डॉक्टर से सलाह लें'
     }
   ],
-  3: [ // Third Trimester
-    {
-      id: 301,
-      title: 'खजूर और बादाम टॉनिक',
-      description: 'तीसरी तिमाही में ऊर्जा बढ़ाने के लिए टॉनिक',
-      benefits: [
-        'प्राकृतिक आयरन का स्रोत',
-        'गर्भाशय को प्रसव के लिए तैयार करता है',
-        'स्थायी ऊर्जा प्रदान करता है',
-        'भ्रूण के मस्तिष्क के विकास में सहायक'
-      ],
-      ingredients: [
-        '2-3 भीगे हुए खजूर',
-        '5-6 भीगे हुए बादाम',
-        '1 कप गर्म दूध',
-        'चुटकी भर इलायची पाउडर',
-        '1 छोटा चम्मच घी'
-      ],
-      preparation: [
-        'भीगे हुए खजूर और बादाम को दूध के साथ ब्लेंड करें',
-        'स्मूद टेक्सचर के लिए छान सकते हैं',
-        'इलायची और घी मिलाएं',
-        'सुबह सेवन करें'
-      ],
-      duration: 'अंतिम 6 हफ्तों में रोजाना',
-      precautions: 'यदि वजन अधिक बढ़ रहा हो तो मात्रा कम करें'
-    }
-  ]
+       
+  
 },
 
     'ta-IN': {
@@ -408,9 +227,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'முதலாம் மாதத்தில் தேவையானபோது',
       precautions: 'அதிகமாக குடிக்காமல் இருங்கள், தேக்கம் ஏற்படலாம்'
-    }
-  ],
-  2: [ // Second Trimester
+    },
     {
       id: 201,
       title: 'தங்க பாலுடன் பாதுகாப்பு',
@@ -438,9 +255,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'வாரத்திற்கு 2-3 முறை',
       precautions: 'இரத்தம் கொழுக்கும் மருந்து எடுத்தால் மருத்துவரிடம் ஆலோசனை செய்யவும்'
-    }
-  ],
-  3: [ // Third Trimester
+    },
     {
       id: 301,
       title: 'பேரிச்சம் பழம் மற்றும் பாதாம் டொனிக்',
@@ -467,7 +282,8 @@ const PregAyurvedaPage = () => {
       duration: 'இறுதி 6 வாரங்களில் தினசரி',
       precautions: 'அதிக எடையால் பாதிக்கப்படுவோர் அளவை குறைக்கவும்'
     }
-  ]
+  ],
+ 
 },'te-IN': {
   1: [ // First Trimester
     {
@@ -495,9 +311,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'మొదటి త్రైమాసికంలో అవసరమైనప్పుడు',
       precautions: 'గుండె మంట ఉంటే అధికంగా తీసుకోవద్దు'
-    }
-  ],
-  2: [ // Second Trimester
+    },
     {
       id: 201,
       title: 'తుర్మరిక్ పాల టానిక్',
@@ -525,10 +339,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'వారానికి 2-3 సార్లు',
       precautions: 'రక్తం కొరుకుల మందులు తీసుకుంటే వైద్యుడిని సంప్రదించండి'
-    }
-  ],
-  3: [ // Third Trimester
-    {
+    },{
       id: 301,
       title: 'ఖర్జూరం-బాదం టానిక్',
       description: 'మూడవ త్రైమాసికంలో శక్తిని అందించే పానీయం',
@@ -554,7 +365,8 @@ const PregAyurvedaPage = () => {
       duration: 'చివరి 6 వారాలలో ప్రతి రోజు',
       precautions: 'అధిక బరువు పెరుగుతున్నట్లయితే పరిమితంగా తీసుకోవాలి'
     }
-  ]
+  ],
+
 },'kn-IN': {
   1: [ // First Trimester
     {
@@ -582,10 +394,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'ಪ್ರಥಮ ತ್ರೈಮಾಸಿಕದ ವೇಳೆ ಅಗತ್ಯವಿದ್ದಾಗ',
       precautions: 'ಹೃದಯ ಜ್ವಲನೆ ಇರುವವರಿಗೆ ಹೆಚ್ಚು ಸೇವಿಸಬಾರದು'
-    }
-  ],
-  2: [ // Second Trimester
-    {
+    },{
       id: 201,
       title: 'ಹಾಲು-ಹಳದಿ ಪಾನೀಯ',
       description: 'ದ್ವಿತೀಯ ತ್ರೈಮಾಸಿಕದಲ್ಲಿ ಆರೋಗ್ಯಕ್ಕಾಗಿ ಪೋಷಕ ಪಾನೀಯ',
@@ -612,9 +421,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'ವಾರದಲ್ಲಿ 2-3 ಬಾರಿ',
       precautions: 'ರಕ್ತ ಜಂಘದ ಔಷಧಿಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳುತ್ತಿದ್ದರೆ ವೈದ್ಯರ ಸಲಹೆ ಪಡೆಯಿರಿ'
-    }
-  ],
-  3: [ // Third Trimester
+    },
     {
       id: 301,
       title: 'ಖರ್ಜೂರ ಮತ್ತು ಬಾದಾಮಿ ಪಾನೀಯ',
@@ -641,7 +448,8 @@ const PregAyurvedaPage = () => {
       duration: 'ಕೊನೆಯ 6 ವಾರಗಳಲ್ಲಿ ಪ್ರತಿದಿನ',
       precautions: 'ಹದಿನಿಂದ ಹೆಚ್ಚು ತೂಕ ಹೆಚ್ಚಾದರೆ ಪ್ರಮಾಣ ಕಡಿಮೆ ಮಾಡಿ'
     }
-  ]
+  ],
+ 
 },'mr-IN': {
   1: [ // First Trimester
     {
@@ -669,9 +477,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'प्रथम तिमाहीत गरजेनुसार',
       precautions: 'अतिसार असल्यास किंवा गॅस्ट्रिक समस्या असल्यास मर्यादित घ्या'
-    }
-  ],
-  2: [ // Second Trimester
+    },
     {
       id: 201,
       title: 'हळद दूध टॉनिक',
@@ -699,9 +505,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'आठवड्यातून 2-3 वेळा',
       precautions: 'रक्त पातळ करणारी औषधे घेत असल्यास डॉक्टरांचा सल्ला घ्या'
-    }
-  ],
-  3: [ // Third Trimester
+    },
     {
       id: 301,
       title: 'खजूर-बदाम टॉनिक',
@@ -728,7 +532,8 @@ const PregAyurvedaPage = () => {
       duration: 'शेवटच्या 6 आठवड्यांत रोज',
       precautions: 'तुमचं वजन खूप वाढत असेल तर प्रमाण मर्यादित ठेवा'
     }
-  ]
+  ],
+  
 },'bn-IN': {
   1: [ // First Trimester
     {
@@ -755,9 +560,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'প্রথম ত্রৈমাসিকে প্রয়োজনে',
       precautions: 'অতিরিক্ত খেলে গ্যাস্ট্রিক বা অম্বলের সমস্যা হতে পারে'
-    }
-  ],
-  2: [ // Second Trimester
+    },
     {
       id: 201,
       title: 'হলুদ দুধ টনিক',
@@ -785,9 +588,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'সপ্তাহে ২-৩ বার',
       precautions: 'রক্ত পাতলা করার ওষুধ খেলে চিকিৎসকের পরামর্শ নিন'
-    }
-  ],
-  3: [ // Third Trimester
+    },
     {
       id: 301,
       title: 'খেজুর-বাদাম টনিক',
@@ -814,7 +615,8 @@ const PregAyurvedaPage = () => {
       duration: 'শেষ ৬ সপ্তাহে প্রতিদিন',
       precautions: 'যদি ওজন দ্রুত বাড়ে তবে পরিমাণ কমান'
     }
-  ]
+  ],
+  
 },'gu-IN': {
   1: [ // First Trimester
     {
@@ -842,10 +644,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'પ્રથમ ત્રિમાસિક દરમિયાન જરૂરી હોય ત્યારે',
       precautions: 'જો એસિડિટીની સમસ્યા હોય તો વધુ ન પીવો'
-    }
-  ],
-  2: [ // Second Trimester
-    {
+    },{
       id: 201,
       title: 'હલદીતું દૂધ ટોનિક',
       description: 'બીજા ત્રિમાસિકમાં આરોગ્ય માટે પૌષ્ટિક પેય',
@@ -872,9 +671,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'અઠવાડિયામાં 2-3 વખત',
       precautions: 'જો તમારું બ્લડ થિનર ચલાવે છે તો ડૉક્ટરની સલાહ લો'
-    }
-  ],
-  3: [ // Third Trimester
+    },
     {
       id: 301,
       title: 'ખજૂર અને બદામનો ટોનિક',
@@ -901,7 +698,8 @@ const PregAyurvedaPage = () => {
       duration: 'છેલ્લા 6 અઠવાડિયામાં દરરોજ',
       precautions: 'વજન વધારે વધે તો માત્રા ઓછી કરો'
     }
-  ]
+  ],
+  
 },'ml-IN': {
   1: [ // First Trimester
     {
@@ -929,9 +727,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'ആവശ്യമുള്ളപ്പോൾ ആദ്യ ത്രൈമാസത്തിൽ',
       precautions: 'ആസിഡിറ്റിയുണ്ടെങ്കിൽ അതികം ഉപയോഗിക്കരുത്'
-    }
-  ],
-  2: [ // Second Trimester
+    },
     {
       id: 201,
       title: 'മഞ്ഞള്‍ പാല്‍ ടോണിക്',
@@ -959,10 +755,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'ആഴ്ചയില്‍ 2-3 തവണ',
       precautions: 'ബ്ലഡ് തിന്നര്‍ ഉപയോഗിക്കുന്നവര്‍ ഡോക്ടറുടെ ഉപദേശം തേടുക'
-    }
-  ],
-  3: [ // Third Trimester
-    {
+    },{
       id: 301,
       title: 'ഇന്ത്-ബദാം ടോണിക്',
       description: 'മൂന്നാം ത്രൈമാസത്തിൽ ഊര്‍ജം നൽകുന്ന പാനീയം',
@@ -988,7 +781,8 @@ const PregAyurvedaPage = () => {
       duration: 'അവസാന 6 ആഴ്ചകളിൽ ദിവസേന',
       precautions: 'അമിതമായ ഭാരം വന്നാൽ ഉപയോഗം കുറയ്ക്കുക'
     }
-  ]
+  ],
+  
 },'pa-IN': {
   1: [ // ਪਹਿਲੀ ਤਿਮਾਹੀ
     {
@@ -1016,9 +810,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'ਜਦੋਂ ਵੀ ਲੋੜ ਹੋਵੇ ਪਹਿਲੀ ਤਿਮਾਹੀ ਵਿੱਚ',
       precautions: 'ਜੇ ਐਸਿਡਿਟੀ ਹੋਵੇ ਤਾਂ ਵਧੀਕ ਨਾ ਪੀਓ'
-    }
-  ],
-  2: [ // ਦੂਜੀ ਤਿਮਾਹੀ
+    },
     {
       id: 201,
       title: 'ਹਲਦੀ ਵਾਲਾ ਦੁੱਧ',
@@ -1046,9 +838,7 @@ const PregAyurvedaPage = () => {
       ],
       duration: 'ਹਫ਼ਤੇ ਵਿੱਚ 2-3 ਵਾਰੀ',
       precautions: 'ਜੇ ਖੂਨ ਪਤਲਾ ਕਰਨ ਵਾਲੀ ਦਵਾਈ ਲੈ ਰਹੇ ਹੋ ਤਾਂ ਡਾਕਟਰ ਦੀ ਸਲਾਹ ਲਓ'
-    }
-  ],
-  3: [ // ਤੀਜੀ ਤਿਮਾਹੀ
+    },
     {
       id: 301,
       title: 'ਖਜੂਰ ਤੇ ਬਦਾਮ ਟੋਨਿਕ',
@@ -1147,7 +937,7 @@ const PregAyurvedaPage = () => {
 
         </p>
         
-        {/* Trimester Selector */}
+        {/* Trimester Selector
         <div className="flex justify-center mt-4">
           <div className="inline-flex rounded-md shadow-sm">
             {[1, 2, 3].map((num) => (
@@ -1166,7 +956,7 @@ const PregAyurvedaPage = () => {
               </button>
             ))}
           </div>
-        </div>
+        </div> */}
       </motion.header>
 
       {/* Remedies Grid */}
