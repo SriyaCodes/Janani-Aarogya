@@ -112,7 +112,7 @@ const JournalPage = () => {
       .join('\n\n');
 
     const prompt = `
-You are helping an expectant mother keep a pregnancy journal.
+You are helping an expectant mother keep a pregnancy journal. Give the journal in mothers point of view, helping her to preserve her pregnancy journey memories with emotion.
 
 Rules:
 - You must write **only in ${lang}**. Do not mix with other languages.
@@ -120,11 +120,12 @@ Rules:
 - Never mix Roman script or English.
 - Never translate or explain anything in English except when the user language is english.
 - Use ONLY what she actually shared today.
-- If the conversation is SHORT (under 4 lines), respond with just 1–2 heartfelt sentences.
-- If it’s longer, you may use a gentle, lyrical tone (max ~120 words).
+- if the conversation is zst a casual one like hi how are you , give output as something like" today,i interacted with janani aarogya and so on. make sure the lenght of response generated matches the user's interaction.
+- If it’s longer, you use a gentle, lyrical tone, showcasing the emotions of the mother(max ~120 words).
 - Never switch languages — use ${lang} throughout.
-- Never invent new events or feelings.
--if the user shares something about her baby, give story like emotional feeling, but in a short way.
+- Never invent new events or feelings. make use of feelings and events shared by user only.
+-if the user shares something about her baby, make sure u represent the emotional love towards her baby in a creative way. but mdont make it long.
+- make all the conversations eassy,creative and simple to underdtand.
 Mother's conversation today:
 ${combined}
     `.trim();
