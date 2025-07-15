@@ -6,6 +6,10 @@ import { db } from '../firebase';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { FaHeart, FaBookmark, FaShareAlt } from 'react-icons/fa';
 import translations from './Pregtranslations';
+import gingerlemonImg from '../assets/gingerlemon.jpg';   
+import coconutImg from '../assets/coconut.jpg';  
+import fennelteaImg from '../assets/fenneltea.jpg';
+
 const PregAyurvedaPage = () => {
   const [selectedRemedy, setSelectedRemedy] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -14,7 +18,6 @@ const PregAyurvedaPage = () => {
   const [trimester, setTrimester] = useState(1); // 1, 2, or 3
   const auth = getAuth();
 
-  // Fetch user data and language preference
   useEffect(() => {
     const fetchUserData = async () => {
       if (auth.currentUser) {
@@ -36,7 +39,11 @@ const PregAyurvedaPage = () => {
     };
     fetchUserData();
   }, [auth.currentUser]);
-
+const remedyImages = {
+  1: gingerlemonImg,
+  2: coconutImg,
+  3: fennelteaImg,
+};
   // Pregnancy Ayurvedic remedies organized by trimester and language
   const ayurvedicRemedies = {
     'en-IN': { // English
@@ -975,12 +982,11 @@ const PregAyurvedaPage = () => {
             className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
           >
             <div className="h-48 bg-green-100 flex items-center justify-center relative">
-              <Player
-                autoplay
-                loop
-                src={remedy.animation}
-                style={{ height: '100%', width: '100%' }}
-              />
+              <img
+  src={remedyImages[remedy.id]}
+  alt={remedy.title}
+  className="h-full w-full object-cover"
+/>
               <button
                 className={`absolute top-4 right-4 p-2 rounded-full ${bookmarked.includes(remedy.id) ? 'text-teal-600' : 'text-gray-400'}`}
                 onClick={() => toggleBookmark(remedy.id)}
