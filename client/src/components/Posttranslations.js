@@ -1,5 +1,7 @@
 export const translations = {
   "en-IN": {
+    title: "Postpartum Ayurvedic Remedies",
+    subtitle: "Traditional remedies for postpartum recovery",
     viewDetails: "View Details",
     benefits: "Benefits",
     ingredients: "Ingredients",
@@ -11,6 +13,8 @@ export const translations = {
     share: "Share",
   },
   "hi-IN": {
+    title: "प्रसवोत्तर आयुर्वेदिक उपचार",
+    subtitle: "प्रसव के बाद की रिकवरी के पारंपरिक उपाय",
     viewDetails: "विवरण देखें",
     benefits: "लाभ",
     ingredients: "सामग्री",
@@ -22,6 +26,8 @@ export const translations = {
     share: "साझा करें",
   },
   "ta-IN": {
+    title: "பிறப்புக்குப் பிந்தைய ஆயுர்வேதக் கருத்துகள்",
+    subtitle: "பிறப்புக்குப் பிந்தைய உடல் நலத்திற்கான பாரம்பரிய வைத்தியம்",
     viewDetails: "விவரங்களைக் காண்க",
     benefits: "நன்மைகள்",
     ingredients: "பொருட்கள்",
@@ -33,6 +39,8 @@ export const translations = {
     share: "பகிரவும்",
   },
   "te-IN": {
+    title: "ప్రసూతి తర్వాత ఆయుర్వేద చికిత్సలు",
+    subtitle: "ప్రసవానంతర కోలుకునే పారంపర్య మార్గాలు",
     viewDetails: "వివరాలను చూడండి",
     benefits: "ప్రయోజనాలు",
     ingredients: "పదార్థాలు",
@@ -44,6 +52,8 @@ export const translations = {
     share: "షేర్ చేయండి",
   },
   "kn-IN": {
+    title: "ಪ್ರಸವಾನಂತರ ಆಯುರ್ವೇದ ಚಿಕಿತ್ಸೆ",
+    subtitle: "ಪ್ರಸವದ ನಂತರದ ಪುನಶ್ಚೇತನಕ್ಕೆ ಪಾರಂಪರಿಕ ಪರಿಹಾರಗಳು",
     viewDetails: "ವಿವರಗಳನ್ನು ನೋಡಿ",
     benefits: "ಲಾಭಗಳು",
     ingredients: "ಪದಾರ್ಥಗಳು",
@@ -55,6 +65,8 @@ export const translations = {
     share: "ಹಂಚಿ",
   },
   "mr-IN": {
+    title: "प्रसवोत्तर आयुर्वेद उपचार",
+    subtitle: "प्रसवानंतर पुनर्प्राप्तीसाठी पारंपरिक उपाय",
     viewDetails: "तपशील पहा",
     benefits: "फायदे",
     ingredients: "साहित्य",
@@ -66,6 +78,8 @@ export const translations = {
     share: "शेअर करा",
   },
   "bn-IN": {
+    title: "প্রসূতি-পরবর্তী আয়ুর্বেদিক প্রতিকার",
+    subtitle: "প্রসূতির পর পুনরুদ্ধারের জন্য প্রাচীন উপায়",
     viewDetails: "বিস্তারিত দেখুন",
     benefits: "উপকারিতা",
     ingredients: "উপকরণ",
@@ -77,6 +91,8 @@ export const translations = {
     share: "শেয়ার করুন",
   },
   "gu-IN": {
+    title: "પ્રસૂતિ પછીના આયુર્વેદિક ઉપાય",
+    subtitle: "પ્રસૂતિ પછી પુનઃસ્થીતિ માટે પરંપરાગત ઉપાય",
     viewDetails: "વિગતો જુઓ",
     benefits: "લાભ",
     ingredients: "સામગ્રી",
@@ -88,6 +104,8 @@ export const translations = {
     share: "શેર કરો",
   },
   "ml-IN": {
+    title: "പ്രസവാനന്തര ആയുര്‍വേദ ചികിത്സകള്‍",
+    subtitle: "പ്രസവാനന്തര സുഖപ്രാപ്തിക്കായുള്ള പാരമ്പര്യ ചികിത്സ",
     viewDetails: "വിവരങ്ങൾ കാണുക",
     benefits: "ലാഭങ്ങൾ",
     ingredients: "ഘടകങ്ങൾ",
@@ -99,6 +117,8 @@ export const translations = {
     share: "പങ്കിടുക",
   },
   "pa-IN": {
+    title: "ਡਿਲਿਵਰੀ ਤੋਂ ਬਾਅਦ ਆਯੁਰਵੇਦਿਕ ਉਪਚਾਰ",
+    subtitle: "ਡਿਲਿਵਰੀ ਤੋਂ ਬਾਅਦ ਸਰੀਰ ਦੀ ਸਿਹਤ ਲਈ ਰਵਾਇਤੀ ਇਲਾਜ",
     viewDetails: "ਵੇਰਵੇਂ ਵੇਖੋ",
     benefits: "ਫਾਇਦੇ",
     ingredients: "ਸਾਮੱਗਰੀ",
@@ -110,3 +130,5 @@ export const translations = {
     share: "ਸਾਂਝਾ ਕਰੋ",
   }
 };
+
+export default translations;

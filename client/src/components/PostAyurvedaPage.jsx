@@ -1,35 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { getAuth } from 'firebase/auth';
-import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Player } from '@lottiefiles/react-lottie-player';
-import { FaHeart, FaBookmark, FaShareAlt } from 'react-icons/fa';
-import { translations } from './Posttranslations';
+import { FaShareAlt,FaBookmark, FaLeaf } from 'react-icons/fa';
+import translations from './Posttranslations';
+
 const PostAyurveda = () => {
-  const [selectedRemedy, setSelectedRemedy] = useState(null);
   const [userData, setUserData] = useState(null);
   const [language, setLanguage] = useState('en-IN');
   const [bookmarked, setBookmarked] = useState([]);
   const auth = getAuth();
-
-  // Fetch user data and language preference
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (auth.currentUser) {
-        const docRef = doc(db, 'users', auth.currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserData(docSnap.data());
-          setLanguage(docSnap.data().language || 'en-IN');
-          setBookmarked(docSnap.data().bookmarkedRemedies || []);
-        }
-      }
-    };
-    fetchUserData();
-  }, [auth.currentUser]);
-
-  // Post-delivery Ayurvedic remedies
+   const t = translations[language] || translations['en-IN'];
   const ayurvedicRemedies = {
     "en-IN": [
   {
@@ -59,7 +41,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "Daily for 40 days",
-    precautions: "Avoid if allergic to dairy"
+    precautions: "Avoid if allergic to dairy",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -84,7 +67,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "Every morning for 30 days",
-    precautions: "Excess may cause acidity in some individuals"
+    precautions: "Excess may cause acidity in some individuals",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -110,7 +94,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "Morning and evening for 3 weeks",
-    precautions: "Avoid if you have a high Pitta constitution or are prone to heat"
+    precautions: "Avoid if you have a high Pitta constitution or are prone to heat",
+    image:'/assets/brew.jpg'
   }
 ],
 
@@ -143,7 +128,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "40 दिनों तक रोजाना",
-    precautions: "यदि डेयरी से एलर्जी हो तो सेवन न करें"
+    precautions: "यदि डेयरी से एलर्जी हो तो सेवन न करें",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -168,7 +154,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "30 दिनों तक सुबह-सुबह",
-    precautions: "अगर एसिडिटी की समस्या हो तो कम मात्रा में लें"
+    precautions: "अगर एसिडिटी की समस्या हो तो कम मात्रा में लें",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -194,7 +181,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "3 हफ्तों तक सुबह और शाम",
-    precautions: "यदि शरीर में पित्त अधिक हो तो सेवन से बचें"
+    precautions: "यदि शरीर में पित्त अधिक हो तो सेवन से बचें",
+    image:'/assets/brew.jpg'
   }
 ],
 
@@ -226,7 +214,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "நாள்தோறும் 40 நாட்கள்",
-    precautions: "பாலில் அலர்ஜி உள்ளவர்கள் தவிர்க்கவும்"
+    precautions: "பாலில் அலர்ஜி உள்ளவர்கள் தவிர்க்கவும்",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -251,7 +240,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "தினமும் காலை 30 நாட்கள்",
-    precautions: "அதிகமாகக் குடித்தால் அமிலத்தன்மையை ஏற்படுத்தலாம்"
+    precautions: "அதிகமாகக் குடித்தால் அமிலத்தன்மையை ஏற்படுத்தலாம்",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -277,7 +267,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "மாலை மற்றும் காலை 3 வாரங்கள்",
-    precautions: "உடலில் அதிக உஷ்ணம் உள்ளவர்களுக்கு பரிந்துரை செய்யப்படவில்லை"
+    precautions: "உடலில் அதிக உஷ்ணம் உள்ளவர்களுக்கு பரிந்துரை செய்யப்படவில்லை",
+    image:'/assets/brew.jpg'
   }
 ],
 "te-IN": [
@@ -308,7 +299,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "రోజూ 40 రోజులు",
-    precautions: "పాలతో అలెర్జీ ఉంటే తీసుకోకండి"
+    precautions: "పాలతో అలెర్జీ ఉంటే తీసుకోకండి",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -332,7 +324,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "ప్రతి ఉదయం 30 రోజులు",
-    precautions: "అధికంగా తీసుకుంటే పేగులలో మంటలు రావచ్చు"
+    precautions: "అధికంగా తీసుకుంటే పేగులలో మంటలు రావచ్చు",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -358,7 +351,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "రోజూ రెండు సార్లు 3 వారాలు",
-    precautions: "తీవ్ర పిత్త దోషం ఉన్నవారు జాగ్రత్తగా వాడాలి"
+    precautions: "తీవ్ర పిత్త దోషం ఉన్నవారు జాగ్రత్తగా వాడాలి",
+    image:'/assets/brew.jpg'
   }
 ],
   "kn-IN": [
@@ -389,7 +383,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "ನಿತ್ಯ 40 ದಿನಗಳು",
-    precautions: "ಹಾಲಿಗೆ ಅಲರ್ಜಿ ಇದ್ದರೆ ತಿನ್ನಬಾರದು"
+    precautions: "ಹಾಲಿಗೆ ಅಲರ್ಜಿ ಇದ್ದರೆ ತಿನ್ನಬಾರದು",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -413,7 +408,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "ಪ್ರತಿ ಬೆಳಗ್ಗೆ 30 ದಿನಗಳ ಕಾಲ",
-    precautions: "ಅಧಿಕವಾದ ಪ್ರಮಾಣದಲ್ಲಿ ಸೇವಿಸಿದರೆ ಆಮ್ಲತೆ ಉಂಟಾಗಬಹುದು"
+    precautions: "ಅಧಿಕವಾದ ಪ್ರಮಾಣದಲ್ಲಿ ಸೇವಿಸಿದರೆ ಆಮ್ಲತೆ ಉಂಟಾಗಬಹುದು",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -439,7 +435,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "3 ವಾರಗಳ ಕಾಲ ಬೆಳಿಗ್ಗೆ ಮತ್ತು ಸಂಜೆ",
-    precautions: "ಪಿತ್ತದ ದೋಷವಿರುವವರು ಕಡಿಮೆ ಪ್ರಮಾಣದಲ್ಲಿ ತೆಗೆದುಕೊಳ್ಳುವುದು ಉತ್ತಮ"
+    precautions: "ಪಿತ್ತದ ದೋಷವಿರುವವರು ಕಡಿಮೆ ಪ್ರಮಾಣದಲ್ಲಿ ತೆಗೆದುಕೊಳ್ಳುವುದು ಉತ್ತಮ",
+    image:'/assets/brew.jpg'
   }
 ],
 "mr-IN": [
@@ -470,7 +467,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "दररोज ४० दिवस",
-    precautions: "दुधास अ‍ॅलर्जी असल्यास टाळा"
+    precautions: "दुधास अ‍ॅलर्जी असल्यास टाळा",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -495,7 +493,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "दररोज सकाळी ३० दिवस",
-    precautions: "अतिसेवन केल्यास अ‍ॅसिडिटी होऊ शकते"
+    precautions: "अतिसेवन केल्यास अ‍ॅसिडिटी होऊ शकते",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -521,7 +520,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "3 आठवडे, सकाळ-संध्याकाळ",
-    precautions: "अतितप्त प्रकृती असलेल्या महिलांनी कमी प्रमाणात घ्यावे"
+    precautions: "अतितप्त प्रकृती असलेल्या महिलांनी कमी प्रमाणात घ्यावे",
+    image:'/assets/brew.jpg'
   }
 ],"bn-IN": [
   {
@@ -551,7 +551,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "৪০ দিন প্রতিদিন",
-    precautions: "দুধে অ্যালার্জি থাকলে এড়িয়ে চলুন"
+    precautions: "দুধে অ্যালার্জি থাকলে এড়িয়ে চলুন",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -575,7 +576,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "প্রতিদিন সকালে ৩০ দিন",
-    precautions: "অতিরিক্ত সেবনে গ্যাসট্রিক সমস্যা হতে পারে"
+    precautions: "অতিরিক্ত সেবনে গ্যাসট্রিক সমস্যা হতে পারে",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -600,7 +602,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "প্রতিদিন ৩ সপ্তাহ, দিনে ২ বার",
-    precautions: "যাদের শরীর খুব গরম হয়, তারা কম মাত্রায় গ্রহণ করুন"
+    precautions: "যাদের শরীর খুব গরম হয়, তারা কম মাত্রায় গ্রহণ করুন",
+    image:'/assets/brew.jpg'
   }
 ],
 "gu-IN": [
@@ -631,7 +634,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "દરરોજ ૪૦ દિવસ માટે",
-    precautions: "દૂધની એલર્જી હોય તો ટાળો"
+    precautions: "દૂધની એલર્જી હોય તો ટાળો",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -656,7 +660,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "દરરોજ ૩૦ દિવસ",
-    precautions: "ઘણું પીવાથી પેટમાં અગ્નિ થઈ શકે છે"
+    precautions: "ઘણું પીવાથી પેટમાં અગ્નિ થઈ શકે છે",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -681,7 +686,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "૩ અઠવાડિયા સુધી, રોજે ૨ વખત",
-    precautions: "પિત્તવાળાને ઓછી માત્રામાં લેવો"
+    precautions: "પિત્તવાળાને ઓછી માત્રામાં લેવો",
+    image:'/assets/brew.jpg'
   }
 ],"ml-IN": [
   {
@@ -711,7 +717,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "പ്രതിദിനം 40 ദിവസത്തേക്ക്",
-    precautions: "പാലിനോടുള്ള അലർജിയുള്ളവർ ഒഴിവാക്കുക"
+    precautions: "പാലിനോടുള്ള അലർജിയുള്ളവർ ഒഴിവാക്കുക",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -735,7 +742,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "പ്രതിദിനം 30 ദിവസം",
-    precautions: "അധികം കുടിക്കരുത് – ഗാസ്ട്രിക് പ്രശ്നങ്ങൾ ഉണ്ടാകാം"
+    precautions: "അധികം കുടിക്കരുത് – ഗാസ്ട്രിക് പ്രശ്നങ്ങൾ ഉണ്ടാകാം",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -760,7 +768,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "3 ആഴ്ചകൾ, ദിവസേന 2 പ്രാവശ്യം",
-    precautions: "പിത്തം കൂടുന്നവരുടെ അതിരുവിട്ട ഉപയോഗം ഒഴിവാക്കുക"
+    precautions: "പിത്തം കൂടുന്നവരുടെ അതിരുവിട്ട ഉപയോഗം ഒഴിവാക്കുക",
+    image:'/assets/brew.jpg'
   }
 ],"pa-IN": [
   {
@@ -790,7 +799,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets1.lottiefiles.com/packages/lf20_5itouocj.json",
     duration: "ਰੋਜ਼ਾਨਾ 40 ਦਿਨਾਂ ਲਈ",
-    precautions: "ਜੇ ਤੁਸੀਂ ਦੁੱਧ ਨਾਲ ਐਲਰਜਿਕ ਹੋ ਤਾਂ ਨਾ ਪੀਓ"
+    precautions: "ਜੇ ਤੁਸੀਂ ਦੁੱਧ ਨਾਲ ਐਲਰਜਿਕ ਹੋ ਤਾਂ ਨਾ ਪੀਓ",
+    image:'/assets/goldenmilk.jpg'
   },
   {
     id: 2,
@@ -814,7 +824,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets9.lottiefiles.com/private_files/lf30_saujcahz.json",
     duration: "ਰੋਜ਼ ਸਵੇਰੇ 30 ਦਿਨ",
-    precautions: "ਵੱਧ ਖਪਤ ਨਾਲ ਅਮਲ, ਅਜੀਰਨ ਹੋ ਸਕਦਾ ਹੈ"
+    precautions: "ਵੱਧ ਖਪਤ ਨਾਲ ਅਮਲ, ਅਜੀਰਨ ਹੋ ਸਕਦਾ ਹੈ",
+    image : "/assets/ajwain.jpg"
   },
   {
     id: 3,
@@ -839,7 +850,8 @@ const PostAyurveda = () => {
     ],
     animation: "https://assets7.lottiefiles.com/packages/lf20_q5pk6p1k.json",
     duration: "3 ਹਫਤੇ, ਦਿਨ ਵਿੱਚ 2 ਵਾਰੀ",
-    precautions: "ਜਿਨ੍ਹਾਂ ਨੂੰ ਪਿੱਤ ਵਧਦਾ ਹੈ ਉਹ ਘੱਟ ਵਰਤੋਂ ਕਰੋ"
+    precautions: "ਜਿਨ੍ਹਾਂ ਨੂੰ ਪਿੱਤ ਵਧਦਾ ਹੈ ਉਹ ਘੱਟ ਵਰਤੋਂ ਕਰੋ",
+    image:'/assets/brew.jpg'
   }
 ]
 
@@ -852,30 +864,23 @@ const PostAyurveda = () => {
 
   };
 
-  // Get remedies for current language
-  const remedies = ayurvedicRemedies[language] || ayurvedicRemedies['en-IN'];
+   const remedies = ayurvedicRemedies[language] || ayurvedicRemedies['en-IN'];
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (auth.currentUser) {
+        const docRef = doc(db, 'users', auth.currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserData(docSnap.data());
+          setLanguage(docSnap.data().language || 'en-IN');
+          setBookmarked(docSnap.data().bookmarkedRemedies || []);
+        }
       }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
+    };
+    fetchUserData();
+  }, [auth.currentUser]);
 
   const toggleBookmark = async (remedyId) => {
     const newBookmarked = bookmarked.includes(remedyId)
@@ -896,27 +901,22 @@ const PostAyurveda = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 p-4 md:p-8">
-      {/* Header */}
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-teal-50 p-4 md:p-8">
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="mb-8 text-center"
       >
-        <h1 className="text-3xl font-bold text-orange-800 mb-2">
-          {translations[language]?.viewDetails || "View Details"}
-
+        <h1 className="text-3xl font-bold text-teal-800 mb-2">
+          {t.title}
         </h1>
         <p className="text-gray-600">
-          {translations[language]?.viewDetails || "View Details"}
-
+          {t.subtitle}
         </p>
       </motion.header>
 
-      {/* Remedies Grid */}
       <motion.div
-        variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -924,166 +924,71 @@ const PostAyurveda = () => {
         {remedies.map((remedy) => (
           <motion.div
             key={remedy.id}
-            variants={itemVariants}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
             className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
           >
-            <div className="h-48 bg-amber-100 flex items-center justify-center relative">
-              <Player
-                autoplay
-                loop
-                src={remedy.animation}
-                style={{ height: '100%', width: '100%' }}
+            <div className="h-48 bg-green-100 flex items-center justify-center relative">
+              <img
+                src={remedy.image}
+                alt={remedy.title}
+                className="h-full w-full object-cover"
               />
               <button
-                className={`absolute top-4 right-4 p-2 rounded-full ${bookmarked.includes(remedy.id) ? 'text-amber-600' : 'text-gray-400'}`}
+                className={`absolute top-4 right-4 p-2 rounded-full ${
+                  bookmarked.includes(remedy.id) ? 'text-teal-600' : 'text-gray-400'
+                }`}
                 onClick={() => toggleBookmark(remedy.id)}
               >
                 <FaBookmark className="text-2xl" />
               </button>
             </div>
             <div className="p-5">
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="text-xl font-semibold text-orange-700">{remedy.title}</h3>
-                <button className="text-amber-500">
-                  <FaHeart />
-                </button>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">{remedy.description}</p>
+              <h3 className="text-xl font-semibold text-teal-700 mb-2">{remedy.title}</h3>
+              <p className="text-gray-600 mb-3">{remedy.description}</p>
               
               <div className="flex items-center mb-3">
-                <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded mr-2">
-                  {remedy.duration}
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2 flex items-center">
+                  <FaLeaf className="mr-1" /> {remedy.duration}
                 </span>
               </div>
-              
-              <button
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white py-2 rounded-lg font-medium transition"
-                onClick={() => setSelectedRemedy(remedy)}
-              >
-                {translations[language]?.viewDetails || "View Details"}
 
-              </button>
+              <h4 className="text-lg font-semibold text-gray-800 mb-2">{t.benefits}</h4>
+              <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
+                {remedy.benefits.map((benefit, i) => <li key={i}>{benefit}</li>)}
+              </ul>
+
+              <h4 className="text-lg font-semibold text-gray-800 mb-2">{t.ingredients}</h4>
+              <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
+                {remedy.ingredients.map((ingredient, i) => <li key={i}>{ingredient}</li>)}
+              </ul>
+
+              <h4 className="text-lg font-semibold text-gray-800 mb-2">{t.preparation}</h4>
+              <ol className="list-decimal pl-5 space-y-1 text-gray-700 mb-4">
+                {remedy.preparation.map((step, i) => <li key={i}>{step}</li>)}
+              </ol>
+
+              <h4 className="text-lg font-semibold text-gray-800 mb-2">{t.precautions}</h4>
+              <p className="text-red-600">{remedy.precautions}</p>
+
+              <div className="flex space-x-3 mt-4">
+                <button className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-lg font-medium transition">
+                  {t.addToToday}
+                </button>
+                <button className="p-2 bg-gray-100 rounded-lg">
+                  <FaShareAlt className="text-teal-600" />
+                </button>
+              </div>
             </div>
           </motion.div>
         ))}
       </motion.div>
 
-      {/* Remedy Detail Modal */}
-      <AnimatePresence>
-        {selectedRemedy && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setSelectedRemedy(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 50 }}
-              className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="h-56 bg-amber-100 relative">
-                <Player
-                  autoplay
-                  loop
-                  src={selectedRemedy.animation}
-                  style={{ height: '100%', width: '100%' }}
-                />
-                <button
-                  className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md"
-                  onClick={() => setSelectedRemedy(null)}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-2xl font-bold text-orange-800">{selectedRemedy.title}</h2>
-                  <button 
-                    className={`p-2 ${bookmarked.includes(selectedRemedy.id) ? 'text-amber-600' : 'text-gray-400'}`}
-                    onClick={() => toggleBookmark(selectedRemedy.id)}
-                  >
-                    <FaBookmark className="text-xl" />
-                  </button>
-                </div>
-                
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {translations[language]?.viewDetails || "View Details"}
-
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {selectedRemedy.benefits.map((benefit, index) => (
-                      <li key={index} className="text-gray-700">{benefit}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {translations[language]?.viewDetails || "View Details"}
-
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {selectedRemedy.ingredients.map((ingredient, index) => (
-                      <li key={index} className="text-gray-700">{ingredient}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                   {translations[language]?.viewDetails || "View Details"}
-
-                  </h3>
-                  <ol className="list-decimal pl-5 space-y-2">
-                    {selectedRemedy.preparation.map((step, index) => (
-                      <li key={index} className="text-gray-700">{step}</li>
-                    ))}
-                  </ol>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {translations[language]?.viewDetails || "View Details"}
-
-                  </h3>
-                  <p className="text-red-600">{selectedRemedy.precautions}</p>
-                </div>
-
-                <div className="flex space-x-3">
-                  <button className="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-lg font-medium transition">
-                    {translations[language]?.viewDetails || "View Details"}
-
-                  </button>
-                  <button className="p-3 bg-gray-100 rounded-lg">
-                    <FaShareAlt className="text-amber-600" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Daily Tips Section */}
       <div className="mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
-        <h2 className="text-xl font-semibold text-orange-800 mb-4">
-          {translations[language]?.viewDetails || "View Details"}
-
+        <h2 className="text-xl font-semibold text-teal-800 mb-4">
+          {t.todayTipTitle}
         </h2>
-        <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
-          <p className="text-amber-800">
-            {translations[language]?.viewDetails || "View Details"}
-
-
+        <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+          <p className="text-green-800">
+            {t.todayTip}
           </p>
         </div>
       </div>

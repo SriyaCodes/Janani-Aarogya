@@ -1,42 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { getAuth } from 'firebase/auth';
-import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Player } from '@lottiefiles/react-lottie-player';
-import { FaHeart, FaBookmark, FaShareAlt } from 'react-icons/fa';
+import { FaBookmark, FaLeaf, FaBaby } from 'react-icons/fa';
 import translations from './Pregtranslations';
 
-
 const PregAyurvedaPage = () => {
-  const [selectedRemedy, setSelectedRemedy] = useState(null);
   const [userData, setUserData] = useState(null);
   const [language, setLanguage] = useState('en-IN');
   const [bookmarked, setBookmarked] = useState([]);
-  const [trimester, setTrimester] = useState(1); // 1, 2, or 3
+  const [trimester, setTrimester] = useState(1);
   const auth = getAuth();
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (auth.currentUser) {
-        const docRef = doc(db, 'users', auth.currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUserData(docSnap.data());
-          setLanguage(docSnap.data().language || 'en-IN');
-          setBookmarked(docSnap.data().bookmarkedRemedies || []);
-          
-          // Calculate trimester based on pregnancy start date if available
-          if (docSnap.data().pregnancyStartDate) {
-            const pregnancyStart = new Date(docSnap.data().pregnancyStartDate);
-            const weeksPregnant = Math.floor((new Date() - pregnancyStart) / (7 * 24 * 60 * 60 * 1000));
-            setTrimester(weeksPregnant < 13 ? 1 : weeksPregnant < 27 ? 2 : 3);
-          }
-        }
-      }
-    };
-    fetchUserData();
-  }, [auth.currentUser]);
 
   // Pregnancy Ayurvedic remedies organized by trimester and language
   const ayurvedicRemedies = {
@@ -66,7 +41,8 @@ const PregAyurvedaPage = () => {
           'Sip slowly throughout the day'
         ],
         duration: 'As needed during first trimester',
-        precautions: 'Avoid excessive amounts if you have heartburn'
+        precautions: 'Avoid excessive amounts if you have heartburn',
+        image:'/assets/gingerlemon.jpg'
       },
       {
         id: 102,
@@ -89,7 +65,8 @@ const PregAyurvedaPage = () => {
           'Can be consumed 2-3 times weekly'
         ],
         duration: '2-3 times per week',
-        precautions: 'Avoid if allergic to coconut'
+        precautions: 'Avoid if allergic to coconut',
+        image:'/assets/coconut.jpg'
       },
       {
         id: 103,
@@ -145,7 +122,8 @@ const PregAyurvedaPage = () => {
         'दिन भर धीरे-धीरे पीएं'
       ],
       duration: 'पहली तिमाही के दौरान आवश्यकता अनुसार',
-      precautions: 'यदि एसिडिटी हो तो अधिक मात्रा में सेवन न करें'
+      precautions: 'यदि एसिडिटी हो तो अधिक मात्रा में सेवन न करें',
+      image:'/assets/gingerlemon.jpg'
     },
     {
       id: 102,
@@ -168,7 +146,8 @@ const PregAyurvedaPage = () => {
         'सप्ताह में 2-3 बार सेवन कर सकते हैं'
       ],
       duration: 'सप्ताह में 2-3 बार',
-      precautions: 'यदि नारियल से एलर्जी है तो सेवन न करें'
+      precautions: 'यदि नारियल से एलर्जी है तो सेवन न करें',
+       image:'/assets/coconut.jpg'
     },
     {
       id: 103,
@@ -192,7 +171,8 @@ const PregAyurvedaPage = () => {
         'भोजन के बाद पीएं'
       ],
       duration: 'हर भोजन के बाद प्रतिदिन',
-      precautions: 'दिन में अधिकतम 2 कप तक सीमित रखें'
+      precautions: 'दिन में अधिकतम 2 कप तक सीमित रखें',
+      image:'/assets/fenneltea.jpg'
     }
   ]
 
@@ -226,7 +206,8 @@ const PregAyurvedaPage = () => {
         'நாள்நாளாக மெதுவாக குடிக்கவும்'
       ],
       duration: 'முதல் காலத்தில் தேவைப்படும் போதே',
-      precautions: 'அதிகமாக எடுத்துக்கொள்வதை தவிர்க்கவும், அமிலத்தன்மை இருந்தால்'
+      precautions: 'அதிகமாக எடுத்துக்கொள்வதை தவிர்க்கவும், அமிலத்தன்மை இருந்தால்',
+      image:'/assets/gingerlemon.jpg'
     },
     {
       id: 102,
@@ -249,7 +230,8 @@ const PregAyurvedaPage = () => {
         'வாரம் 2-3 முறை குடிக்கலாம்'
       ],
       duration: 'வாரத்திற்கு 2-3 முறை',
-      precautions: 'தேங்காய்க்கு அலர்ஜி இருந்தால் தவிர்க்கவும்'
+      precautions: 'தேங்காய்க்கு அலர்ஜி இருந்தால் தவிர்க்கவும்',
+       image:'/assets/coconut.jpg'
     },
     {
       id: 103,
@@ -273,7 +255,8 @@ const PregAyurvedaPage = () => {
         'உணவுக்குப் பிறகு குடிக்கவும்'
       ],
       duration: 'உணவுக்குப் பிறகு தினமும்',
-      precautions: 'ஒரு நாளில் அதிகபட்சம் 2 கப்புகள் மட்டும்'
+      precautions: 'ஒரு நாளில் அதிகபட்சம் 2 கப்புகள் மட்டும்',
+      image:'/assets/fenneltea.jpg'
     }
   ]
  
@@ -303,7 +286,8 @@ const PregAyurvedaPage = () => {
         'రోజంతా నెమ్మదిగా తాగాలి'
       ],
       duration: 'మొదటి త్రైమాసికంలో అవసరమైనప్పుడు',
-      precautions: 'హార్ట్ బర్న్ ఉంటే అధికంగా తీసుకోవడం నివారించండి'
+      precautions: 'హార్ట్ బర్న్ ఉంటే అధికంగా తీసుకోవడం నివారించండి',
+      image:'/assets/gingerlemon.jpg'
     },
     {
       id: 102,
@@ -326,7 +310,8 @@ const PregAyurvedaPage = () => {
         'వారం లో 2-3 సార్లు తాగవచ్చు'
       ],
       duration: 'వారం లో 2-3 సార్లు',
-      precautions: 'కొబ్బరికి అలర్జీ ఉంటే తాగవద్దు'
+      precautions: 'కొబ్బరికి అలర్జీ ఉంటే తాగవద్దు',
+       image:'/assets/coconut.jpg'
     },
     {
       id: 103,
@@ -350,7 +335,8 @@ const PregAyurvedaPage = () => {
         'ఆహారం తర్వాత తాగాలి'
       ],
       duration: 'ప్రతి రోజు భోజనాల తర్వాత',
-      precautions: 'రోజుకు 2 కప్పులకు మించకుండా పరిమితం చేయాలి'
+      precautions: 'రోజుకు 2 కప్పులకు మించకుండా పరిమితం చేయాలి',
+      image:'/assets/fenneltea.jpg'
     }
   ]
 }
@@ -380,7 +366,8 @@ const PregAyurvedaPage = () => {
         'ನಿಧಾನವಾಗಿ ಕುಡಿಯಿರಿ'
       ],
       duration: 'ಅವಶ್ಯಕತೆ ಇದ್ದಾಗ ಮೊದಲ ತ್ರೈಮಾಸಿಕದಲ್ಲಿ',
-      precautions: 'ಹೃದಯದ ಉರಿಗಸಿಕೆ ಇದ್ದರೆ ಹೆಚ್ಚು ಸೇವಿಸಬೇಡಿ'
+      precautions: 'ಹೃದಯದ ಉರಿಗಸಿಕೆ ಇದ್ದರೆ ಹೆಚ್ಚು ಸೇವಿಸಬೇಡಿ',
+      image:'/assets/gingerlemon.jpg'
     },
     {
       id: 102,
@@ -403,7 +390,8 @@ const PregAyurvedaPage = () => {
         'ವಾರದಲ್ಲಿ 2-3 ಬಾರಿ ಸೇವಿಸಬಹುದು'
       ],
       duration: 'ವಾರದಲ್ಲಿ 2-3 ಬಾರಿ',
-      precautions: 'ತೆಂಗಿನಕ್ಕೇನಾದರೂ ಅಲರ್ಜಿ ಇದ್ದರೆ ಸೇವಿಸಬೇಡಿ'
+      precautions: 'ತೆಂಗಿನಕ್ಕೇನಾದರೂ ಅಲರ್ಜಿ ಇದ್ದರೆ ಸೇವಿಸಬೇಡಿ',
+       image:'/assets/coconut.jpg'
     },
     {
       id: 103,
@@ -427,7 +415,8 @@ const PregAyurvedaPage = () => {
         'ಊಟದ ನಂತರ ಕುಡಿಯಿರಿ'
       ],
       duration: 'ದಿನವೂ ಊಟದ ನಂತರ',
-      precautions: 'ದಿನಕ್ಕೆ 2 ಕಪ್‌ಗಿಂತ ಹೆಚ್ಚು ಕುಡಿಯಬೇಡಿ'
+      precautions: 'ದಿನಕ್ಕೆ 2 ಕಪ್‌ಗಿಂತ ಹೆಚ್ಚು ಕುಡಿಯಬೇಡಿ',
+      image:'/assets/fenneltea.jpg'
     }
   ]
 }
@@ -457,7 +446,8 @@ const PregAyurvedaPage = () => {
         'हळूहळू दिवसभर प्यावं'
       ],
       duration: 'पहिल्या तिमाहीत आवश्यकतेनुसार',
-      precautions: 'जर अ‍ॅसिडिटी असेल तर जास्त प्रमाणात घेऊ नका'
+      precautions: 'जर अ‍ॅसिडिटी असेल तर जास्त प्रमाणात घेऊ नका',
+      image:'/assets/gingerlemon.jpg'
     },
     {
       id: 102,
@@ -480,7 +470,8 @@ const PregAyurvedaPage = () => {
         'आठवड्यातून 2-3 वेळा घेता येईल'
       ],
       duration: 'आठवड्यातून 2-3 वेळा',
-      precautions: 'जर नारळाची अ‍ॅलर्जी असेल तर टाळा'
+      precautions: 'जर नारळाची अ‍ॅलर्जी असेल तर टाळा',
+       image:'/assets/coconut.jpg'
     },
     {
       id: 103,
@@ -504,7 +495,8 @@ const PregAyurvedaPage = () => {
         'जेवणानंतर प्यावं'
       ],
       duration: 'दररोज जेवणानंतर',
-      precautions: 'दिवसातून 2 कपांपेक्षा जास्त घेऊ नका'
+      precautions: 'दिवसातून 2 कपांपेक्षा जास्त घेऊ नका',
+      image:'/assets/fenneltea.jpg'
     }
   ]
 }
@@ -534,7 +526,8 @@ const PregAyurvedaPage = () => {
         'সারা দিন আস্তে আস্তে পান করুন'
       ],
       duration: 'প্রয়োজন অনুযায়ী প্রথম ত্রৈমাসিকে',
-      precautions: 'যদি গ্যাস্ট্রিক বা অম্লতা থাকে তবে অতিরিক্ত সেবন করবেন না'
+      precautions: 'যদি গ্যাস্ট্রিক বা অম্লতা থাকে তবে অতিরিক্ত সেবন করবেন না',
+      image:'/assets/gingerlemon.jpg'
     },
     {
       id: 102,
@@ -557,7 +550,8 @@ const PregAyurvedaPage = () => {
         'সপ্তাহে ২-৩ বার সেবন করতে পারেন'
       ],
       duration: 'সপ্তাহে ২-৩ বার',
-      precautions: 'যদি নারকেল অ্যালার্জি থাকে তবে এড়িয়ে চলুন'
+      precautions: 'যদি নারকেল অ্যালার্জি থাকে তবে এড়িয়ে চলুন',
+       image:'/assets/coconut.jpg'
     },
     {
       id: 103,
@@ -581,7 +575,8 @@ const PregAyurvedaPage = () => {
         'খাবারের পর পান করুন'
       ],
       duration: 'প্রতিদিন খাবারের পর',
-      precautions: 'দিনে ২ কাপের বেশি পান করবেন না'
+      precautions: 'দিনে ২ কাপের বেশি পান করবেন না',
+      image:'/assets/fenneltea.jpg'
     }
   ]
 }
@@ -611,7 +606,8 @@ const PregAyurvedaPage = () => {
         'ધીરે ધીરે દિવસ દરમિયાન પીવો'
       ],
       duration: 'પ્રથમ ત્રિમાસિક દરમ્યાન જરૂર મુજબ',
-      precautions: 'જ્યારેએસીડીટી હોય ત્યારે વધુ માત્રામાં ન પીવો'
+      precautions: 'જ્યારેએસીડીટી હોય ત્યારે વધુ માત્રામાં ન પીવો',
+      image:'/assets/gingerlemon.jpg'
     },
     {
       id: 102,
@@ -634,7 +630,8 @@ const PregAyurvedaPage = () => {
         'અઠવાડિયે ૨-૩ વાર પીશો'
       ],
       duration: 'અઠવાડિયે ૨-૩ વખત',
-      precautions: 'જો નાળિયેરથી એલર્જી હોય તો ટાળો'
+      precautions: 'જો નાળિયેરથી એલર્જી હોય તો ટાળો',
+       image:'/assets/coconut.jpg'
     },
     {
       id: 103,
@@ -658,7 +655,8 @@ const PregAyurvedaPage = () => {
         'ભોજન પછી પીવો'
       ],
       duration: 'દરરોજ ભોજન પછી',
-      precautions: 'દિવસમાં ૨ કપથી વધુ ન પીવો'
+      precautions: 'દિવસમાં ૨ કપથી વધુ ન પીવો',
+      image:'/assets/fenneltea.jpg'
     }
   ]
 }
@@ -688,7 +686,8 @@ const PregAyurvedaPage = () => {
         'ദിവസം മുഴുവൻ സൂക്ഷ്മമായി കുടിക്കുക'
       ],
       duration: 'ആവശ്യമായതും നേരത്തെയുള്ള ഗര്‍ഭകാലത്ത് ഉപയോഗിക്കാവുന്നത്',
-      precautions: 'ഹാര്‍ട്‌ബേണ് ഉള്ളവര്‍ അധികമായി കഴിക്കരുത്'
+      precautions: 'ഹാര്‍ട്‌ബേണ് ഉള്ളവര്‍ അധികമായി കഴിക്കരുത്',
+      image:'/assets/gingerlemon.jpg'
     },
     {
       id: 102,
@@ -711,7 +710,8 @@ const PregAyurvedaPage = () => {
         'ആഴ്ചയില്‍ 2-3 തവണ കഴിക്കാവുന്നതാണ്'
       ],
       duration: 'ആഴ്ചയില്‍ 2-3 തവണ',
-      precautions: 'തേങ്ങക്കായിലോ അതിന്റെ ഉത്പന്നങ്ങളിലോ അലര്‍ജിയുള്ളവര്‍ ഒഴിവാക്കുക'
+      precautions: 'തേങ്ങക്കായിലോ അതിന്റെ ഉത്പന്നങ്ങളിലോ അലര്‍ജിയുള്ളവര്‍ ഒഴിവാക്കുക',
+       image:'/assets/coconut.jpg'
     },
     {
       id: 103,
@@ -735,7 +735,8 @@ const PregAyurvedaPage = () => {
         'ഭക്ഷണത്തിനു ശേഷം കുടിക്കുക'
       ],
       duration: 'ദിവസേന ഭക്ഷണത്തിനു ശേഷം',
-      precautions: 'ഒരു ദിവസം 2 കപ്പിൽ കൂടുതലായി ഒഴിവാക്കുക'
+      precautions: 'ഒരു ദിവസം 2 കപ്പിൽ കൂടുതലായി ഒഴിവാക്കുക',
+      image:'/assets/fenneltea.jpg'
     }
   ]
 }
@@ -766,7 +767,8 @@ const PregAyurvedaPage = () => {
         'ਸਾਰੇ ਦਿਨ ਹੌਲੀ-ਹੌਲੀ ਪੀਓ'
       ],
       duration: 'ਪਹਿਲੀ ਤਿਮਾਹੀ ਦੌਰਾਨ ਲੋੜ ਮੁਤਾਬਕ',
-      precautions: 'ਜੇ ਤੂੰ ਐਸਿਡਿਟੀ ਜਾਂ ਸੀਨੇ ਦੀ ਜਲਨ ਤੋਂ ਪੀੜਤ ਹੈਂ ਤਾਂ ਜ਼ਿਆਦਾ ਨਾ ਲੈਣ'
+      precautions: 'ਜੇ ਤੂੰ ਐਸਿਡਿਟੀ ਜਾਂ ਸੀਨੇ ਦੀ ਜਲਨ ਤੋਂ ਪੀੜਤ ਹੈਂ ਤਾਂ ਜ਼ਿਆਦਾ ਨਾ ਲੈਣ',
+      image:'/assets/gingerlemon.jpg'
     },
     {
       id: 102,
@@ -789,7 +791,8 @@ const PregAyurvedaPage = () => {
         'ਹਫ਼ਤੇ ਵਿੱਚ 2-3 ਵਾਰੀ ਲੈ ਸਕਦੇ ਹੋ'
       ],
       duration: 'ਹਫ਼ਤੇ ਵਿੱਚ 2-3 ਵਾਰੀ',
-      precautions: 'ਜੇ ਨਾਰੀਅਲ ਨਾਲ ਅਲਰਜੀ ਹੈ ਤਾਂ ਨਾ ਲਵੋ'
+      precautions: 'ਜੇ ਨਾਰੀਅਲ ਨਾਲ ਅਲਰਜੀ ਹੈ ਤਾਂ ਨਾ ਲਵੋ',
+       image:'/assets/coconut.jpg'
     },
     {
       id: 103,
@@ -813,7 +816,8 @@ const PregAyurvedaPage = () => {
         'ਭੋਜਨ ਤੋਂ ਬਾਅਦ ਪੀਓ'
       ],
       duration: 'ਰੋਜ਼ਾਨਾ ਭੋਜਨ ਤੋਂ ਬਾਅਦ',
-      precautions: 'ਰੋਜ਼ 2 ਕੱਪ ਤੋਂ ਵੱਧ ਨਾ ਲਵੋ'
+      precautions: 'ਰੋਜ਼ 2 ਕੱਪ ਤੋਂ ਵੱਧ ਨਾ ਲਵੋ',
+      image:'/assets/fenneltea.jpg'
     }
   ]
 }
@@ -826,30 +830,29 @@ const PregAyurvedaPage = () => {
 
   };
 
-  // Get remedies for current language and trimester
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (auth.currentUser) {
+        const docRef = doc(db, 'users', auth.currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserData(docSnap.data());
+          setLanguage(docSnap.data().language || 'en-IN');
+          setBookmarked(docSnap.data().bookmarkedRemedies || []);
+          
+          if (docSnap.data().pregnancyStartDate) {
+            const pregnancyStart = new Date(docSnap.data().pregnancyStartDate);
+            const weeksPregnant = Math.floor((new Date() - pregnancyStart) / (7 * 24 * 60 * 60 * 1000));
+            setTrimester(weeksPregnant < 13 ? 1 : weeksPregnant < 27 ? 2 : 3);
+          }
+        }
+      }
+    };
+    fetchUserData();
+  }, [auth.currentUser]);
+
   const remedies = ayurvedicRemedies[language]?.[trimester] || ayurvedicRemedies['en-IN'][trimester];
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
 
   const toggleBookmark = async (remedyId) => {
     const newBookmarked = bookmarked.includes(remedyId)
@@ -871,7 +874,6 @@ const PregAyurvedaPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-teal-50 p-4 md:p-8">
-      {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -880,38 +882,20 @@ const PregAyurvedaPage = () => {
       >
         <h1 className="text-3xl font-bold text-teal-800 mb-2">
           {translations[language]?.heading || translations['en-IN'].heading}
-
         </h1>
         <p className="text-gray-600">
-          {translations[language]?.heading || translations['en-IN'].heading}
-
+          {translations[language]?.subheading || translations['en-IN'].subheading}
         </p>
         
-        {/* Trimester Selector
+        {/* Trimester Selector */}
         <div className="flex justify-center mt-4">
           <div className="inline-flex rounded-md shadow-sm">
-            {[1, 2, 3].map((num) => (
-              <button
-                key={num}
-                onClick={() => setTrimester(num)}
-                className={`px-4 py-2 text-sm font-medium ${trimester === num 
-                  ? 'bg-teal-600 text-white' 
-                  : 'bg-white text-teal-700 hover:bg-teal-50'} 
-                  ${num === 1 ? 'rounded-l-lg' : ''} 
-                  ${num === 3 ? 'rounded-r-lg' : ''} 
-                  border border-teal-200`}
-              >
-                {translations[language]?.heading || translations['en-IN'].heading}
-
-              </button>
-            ))}
+           
           </div>
-        </div> */}
+        </div>
       </motion.header>
 
-      {/* Remedies Grid */}
       <motion.div
-        variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -919,168 +903,65 @@ const PregAyurvedaPage = () => {
         {remedies.map((remedy) => (
           <motion.div
             key={remedy.id}
-            variants={itemVariants}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
             className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
           >
             <div className="h-48 bg-green-100 flex items-center justify-center relative">
               <img
-  src={remedy.image}
-  alt={remedy.title}
-  className="h-full w-full object-cover"
-/>
+                src={remedy.image}
+                alt={remedy.title}
+                className="h-full w-full object-cover"
+              />
               <button
-                className={`absolute top-4 right-4 p-2 rounded-full ${bookmarked.includes(remedy.id) ? 'text-teal-600' : 'text-gray-400'}`}
+                className={`absolute top-4 right-4 p-2 rounded-full ${
+                  bookmarked.includes(remedy.id) ? 'text-teal-600' : 'text-gray-400'
+                }`}
                 onClick={() => toggleBookmark(remedy.id)}
               >
                 <FaBookmark className="text-2xl" />
               </button>
             </div>
             <div className="p-5">
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="text-xl font-semibold text-teal-700">{remedy.title}</h3>
-                <button className="text-green-500">
-                  <FaHeart />
-                </button>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">{remedy.description}</p>
+              <h3 className="text-xl font-semibold text-teal-700 mb-2">{remedy.title}</h3>
+              <p className="text-gray-600 mb-3">{remedy.description}</p>
               
               <div className="flex items-center mb-3">
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2">
-                  {remedy.duration}
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2 flex items-center">
+                  <FaLeaf className="mr-1" /> {remedy.duration}
+                </span>
+                <span className="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded flex items-center">
+                  <FaBaby className="mr-1" /> {translations[language]?.[`trimester${trimester}`] || translations['en-IN'][`trimester${trimester}`]}
                 </span>
               </div>
-              
-              <button
-                className="w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-lg font-medium transition"
-                onClick={() => setSelectedRemedy(remedy)}
-              >
-               {translations[language]?.heading || translations['en-IN'].heading}
 
-              </button>
+              <h4 className="text-lg font-semibold text-gray-800 mb-2">Benefits</h4>
+              <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
+                {remedy.benefits.map((benefit, i) => <li key={i}>{benefit}</li>)}
+              </ul>
+
+              <h4 className="text-lg font-semibold text-gray-800 mb-2">Ingredients</h4>
+              <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
+                {remedy.ingredients.map((ingredient, i) => <li key={i}>{ingredient}</li>)}
+              </ul>
+
+              <h4 className="text-lg font-semibold text-gray-800 mb-2">Preparation</h4>
+              <ol className="list-decimal pl-5 space-y-1 text-gray-700 mb-4">
+                {remedy.preparation.map((step, i) => <li key={i}>{step}</li>)}
+              </ol>
+
+              <h4 className="text-lg font-semibold text-gray-800 mb-2">Precautions</h4>
+              <p className="text-red-600">{remedy.precautions}</p>
             </div>
           </motion.div>
         ))}
       </motion.div>
 
-      {/* Remedy Detail Modal */}
-      <AnimatePresence>
-        {selectedRemedy && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setSelectedRemedy(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 50 }}
-              className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="h-56 bg-green-100 relative">
-                <Player
-                  autoplay
-                  loop
-                  src={selectedRemedy.animation}
-                  style={{ height: '100%', width: '100%' }}
-                />
-                <button
-                  className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md"
-                  onClick={() => setSelectedRemedy(null)}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h2 className="text-2xl font-bold text-teal-800">{selectedRemedy.title}</h2>
-                  <button 
-                    className={`p-2 ${bookmarked.includes(selectedRemedy.id) ? 'text-teal-600' : 'text-gray-400'}`}
-                    onClick={() => toggleBookmark(selectedRemedy.id)}
-                  >
-                    <FaBookmark className="text-xl" />
-                  </button>
-                </div>
-                
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {translations[language]?.heading || translations['en-IN'].heading}
-
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {selectedRemedy.benefits.map((benefit, index) => (
-                      <li key={index} className="text-gray-700">{benefit}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {translations[language]?.heading || translations['en-IN'].heading}
-
-                  </h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {selectedRemedy.ingredients.map((ingredient, index) => (
-                      <li key={index} className="text-gray-700">{ingredient}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {translations[language]?.heading || translations['en-IN'].heading}
-
-                  </h3>
-                  <ol className="list-decimal pl-5 space-y-2">
-                    {selectedRemedy.preparation.map((step, index) => (
-                      <li key={index} className="text-gray-700">{step}</li>
-                    ))}
-                  </ol>
-                </div>
-
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {translations[language]?.heading || translations['en-IN'].heading}
-
-                  </h3>
-                  <p className="text-red-600">{selectedRemedy.precautions}</p>
-                </div>
-
-                <div className="flex space-x-3">
-                  <button className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg font-medium transition">
-                    {translations[language]?.heading || translations['en-IN'].heading}
-
-                  </button>
-                  <button className="p-3 bg-gray-100 rounded-lg">
-                    <FaShareAlt className="text-teal-600" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Daily Tips Section */}
       <div className="mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
         <h2 className="text-xl font-semibold text-teal-800 mb-4">
-          {translations[language]?.heading || translations['en-IN'].heading}
-
+          {translations[language]?.tipsTitle || translations['en-IN'].tipsTitle}
         </h2>
         <div className="bg-green-50 p-4 rounded-lg border border-green-200">
           <p className="text-green-800">
             {translations[language]?.tips?.[trimester] || translations['en-IN'].tips[trimester]}
-
-            {translations[language]?.tips?.[trimester] || translations['en-IN'].tips[trimester]}
-
-            {translations[language]?.tips?.[trimester] || translations['en-IN'].tips[trimester]}
-
           </p>
         </div>
       </div>
