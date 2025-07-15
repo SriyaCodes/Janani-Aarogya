@@ -6,6 +6,11 @@ import { db } from '../firebase';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { FaHeart, FaBookmark, FaLeaf, FaSeedling,FaShareAlt } from 'react-icons/fa';
 import translations from './Pretranslations';
+// PreConceptionAyurvedaPage.jsx
+import churnaImg from '../assets/churna.jpg';   // fertility‑boosting churna
+import detoxteaImg from '../assets/detoxtea.jpg';   // detox tea
+import ladduImg from '../assets/laddu.jpg';   // reproductive laddu
+
 const PreConceptionAyurvedaPage = () => {
   const [selectedRemedy, setSelectedRemedy] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -23,6 +28,11 @@ const t = translations[language] || translations['en-IN'];
       }
     }
   };
+const remedyImages = {
+  1: churnaImg,
+  2: detoxteaImg,
+  3: ladduImg,
+};
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -32,8 +42,9 @@ const t = translations[language] || translations['en-IN'];
       transition: {
         duration: 0.5
       }
-    }
+    }  
   };
+  const step3Animation = 'https://assets10.lottiefiles.com/packages/lf20_step3.json';
 
   // Fetch user data
   useEffect(() => {
@@ -904,33 +915,22 @@ const t = translations[language] || translations['en-IN'];
 
 
 
-
-
-
   };
 
   const remedies = ayurvedicRemedies[language] || ayurvedicRemedies['en-IN'];
 
-  return (
+ return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-teal-50 p-4 md:p-8">
-      {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="mb-8 text-center"
       >
-        <h1 className="text-3xl font-bold text-teal-800 mb-2">
-          {t.heading}
-
-        </h1>
-        <p className="text-gray-600">
-          {t.heading}
-
-        </p>
+        <h1 className="text-3xl font-bold text-teal-800 mb-2">{t.heading}</h1>
+        <p className="text-gray-600">{t.heading}</p>
       </motion.header>
 
-      {/* Remedies Grid */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -946,14 +946,16 @@ const t = translations[language] || translations['en-IN'];
             className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
           >
             <div className="h-48 bg-green-100 flex items-center justify-center relative">
-              <Player
-                autoplay
-                loop
-                src={remedy.animation}
-                style={{ height: '100%', width: '100%' }}
-              />
+              <img
+  src={remedyImages[remedy.id]}
+  alt={remedy.title}
+  className="h-full w-full object-cover"
+/>
+
               <button
-                className={`absolute top-4 right-4 p-2 rounded-full ${bookmarked.includes(remedy.id) ? 'text-teal-600' : 'text-gray-400'}`}
+                className={`absolute top-4 right-4 p-2 rounded-full ${
+                  bookmarked.includes(remedy.id) ? 'text-teal-600' : 'text-gray-400'
+                }`}
                 onClick={() => toggleBookmark(remedy.id)}
               >
                 <FaBookmark className="text-2xl" />
@@ -967,31 +969,27 @@ const t = translations[language] || translations['en-IN'];
                 </button>
               </div>
               <p className="text-sm text-gray-600 mb-4">{remedy.description}</p>
-              
+
               <div className="flex items-center mb-3">
                 <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2 flex items-center">
                   <FaLeaf className="mr-1" /> {remedy.frequency}
                 </span>
                 <span className="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded flex items-center">
-                  <FaSeedling className="mr-1" /> 
-                  {t.heading}
-
+                  <FaSeedling className="mr-1" /> {t.heading}
                 </span>
               </div>
-              
+
               <button
                 className="w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-lg font-medium transition"
                 onClick={() => setSelectedRemedy(remedy)}
               >
                 {t.heading}
-
               </button>
             </div>
           </motion.div>
         ))}
       </motion.div>
 
-      {/* Remedy Detail Modal */}
       <AnimatePresence>
         {selectedRemedy && (
           <motion.div
@@ -1009,12 +1007,12 @@ const t = translations[language] || translations['en-IN'];
               onClick={(e) => e.stopPropagation()}
             >
               <div className="h-56 bg-green-100 relative">
-                <Player
-                  autoplay
-                  loop
-                  src={selectedRemedy.animation}
-                  style={{ height: '100%', width: '100%' }}
-                />
+                <img
+  src={remedyImages[selectedRemedy.id]}
+  alt={selectedRemedy.title}
+  className="h-full w-full object-cover"
+/>
+
                 <button
                   className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md"
                   onClick={() => setSelectedRemedy(null)}
@@ -1027,19 +1025,16 @@ const t = translations[language] || translations['en-IN'];
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <h2 className="text-2xl font-bold text-teal-800">{selectedRemedy.title}</h2>
-                  <button 
+                  <button
                     className={`p-2 ${bookmarked.includes(selectedRemedy.id) ? 'text-teal-600' : 'text-gray-400'}`}
                     onClick={() => toggleBookmark(selectedRemedy.id)}
                   >
                     <FaBookmark className="text-xl" />
                   </button>
                 </div>
-                
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {t.heading}
 
-                  </h3>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">{t.heading}</h3>
                   <ul className="list-disc pl-5 space-y-1">
                     {selectedRemedy.benefits.map((benefit, index) => (
                       <li key={index} className="text-gray-700">{benefit}</li>
@@ -1048,10 +1043,7 @@ const t = translations[language] || translations['en-IN'];
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {t.heading}
-
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">{t.heading}</h3>
                   <ul className="list-disc pl-5 space-y-1">
                     {selectedRemedy.ingredients.map((ingredient, index) => (
                       <li key={index} className="text-gray-700">{ingredient}</li>
@@ -1060,10 +1052,7 @@ const t = translations[language] || translations['en-IN'];
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {t.heading}
-
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">{t.heading}</h3>
                   <ol className="list-decimal pl-5 space-y-2">
                     {selectedRemedy.preparation.map((step, index) => (
                       <li key={index} className="text-gray-700">{step}</li>
@@ -1072,17 +1061,13 @@ const t = translations[language] || translations['en-IN'];
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                    {t.heading}
-
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">{t.heading}</h3>
                   <p className="text-red-600">{selectedRemedy.precautions}</p>
                 </div>
 
                 <div className="flex space-x-3">
                   <button className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg font-medium transition">
                     {t.heading}
-
                   </button>
                   <button className="p-3 bg-gray-100 rounded-lg">
                     <FaShareAlt className="text-teal-600" />
@@ -1094,17 +1079,10 @@ const t = translations[language] || translations['en-IN'];
         )}
       </AnimatePresence>
 
-      {/* Daily Tip */}
       <div className="mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
-        <h2 className="text-xl font-semibold text-teal-800 mb-4">
-          {t.heading}
-
-        </h2>
+        <h2 className="text-xl font-semibold text-teal-800 mb-4">{t.heading}</h2>
         <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-          <p className="text-green-800">
-             {t.heading}
-
-          </p>
+          <p className="text-green-800">{t.heading}</p>
         </div>
       </div>
     </div>

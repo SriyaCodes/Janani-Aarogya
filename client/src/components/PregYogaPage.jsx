@@ -56,7 +56,8 @@ const PregYogaPage = () => {
         'Repeat 5-8 times gently'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'Avoid if experiencing dizziness'
+      precautions: 'Avoid if experiencing dizziness',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -78,7 +79,8 @@ const PregYogaPage = () => {
         'Stay in this position for 5–7 minutes'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'Use support under belly if needed'
+      precautions: 'Use support under belly if needed',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -100,7 +102,8 @@ const PregYogaPage = () => {
         'Rest hands on legs or floor without strain'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'Avoid rounding the spine or overreaching'
+      precautions: 'Avoid rounding the spine or overreaching',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },'hi-IN': {
@@ -125,7 +128,8 @@ const PregYogaPage = () => {
         '5-8 बार धीरे-धीरे दोहराएं'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'अगर चक्कर आए तो न करें'
+      precautions: 'अगर चक्कर आए तो न करें',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -147,7 +151,8 @@ const PregYogaPage = () => {
         '5–7 मिनट तक इसी स्थिति में रहें'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'पेट के नीचे तकिया रखें यदि ज़रूरत हो'
+      precautions: 'पेट के नीचे तकिया रखें यदि ज़रूरत हो',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -169,7 +174,8 @@ const PregYogaPage = () => {
         'हाथों को पैरों या ज़मीन पर रखें, जोर न डालें'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'रीढ़ को झुकाने या अधिक झुकाव से बचें'
+      precautions: 'रीढ़ को झुकाने या अधिक झुकाव से बचें',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },'ta-IN': {
@@ -194,7 +200,8 @@ const PregYogaPage = () => {
         '5-8 முறை மெதுவாக மீண்டும் செய்யவும்'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'தலைச்சுற்றல் இருந்தால் தவிர்க்கவும்'
+      precautions: 'தலைச்சுற்றல் இருந்தால் தவிர்க்கவும்',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -216,7 +223,8 @@ const PregYogaPage = () => {
         '5–7 நிமிடங்கள் அந்த நிலையை தக்கவைக்கவும்'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'தேவைப்பட்டால் வயிற்றுக்கு கீழே ஆதரவாக தலையணை பயன்படுத்தவும்'
+      precautions: 'தேவைப்பட்டால் வயிற்றுக்கு கீழே ஆதரவாக தலையணை பயன்படுத்தவும்',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -238,7 +246,8 @@ const PregYogaPage = () => {
         'கைகளை கால்களில் அல்லது தரையில் வைத்து அமைதியாக இருங்கள்'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'முதுகை வளைத்தல் மற்றும் அதிகமாக முன்நகர்வதை தவிர்க்கவும்'
+      precautions: 'முதுகை வளைத்தல் மற்றும் அதிகமாக முன்நகர்வதை தவிர்க்கவும்',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },'te-IN': {
@@ -263,7 +272,8 @@ const PregYogaPage = () => {
         '5-8 సార్లు మెల్లగా పునరావృతం చేయండి'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'తలనొప్పి లేదా మైకము ఉంటే నివారించండి'
+      precautions: 'తలనొప్పి లేదా మైకము ఉంటే నివారించండి',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -285,7 +295,8 @@ const PregYogaPage = () => {
         '5–7 నిమిషాల పాటు అదే స్థితిలో ఉండండి'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'అవసరమైతే పొత్తికడుపు క్రింద మద్దతు ఇవ్వండి'
+      precautions: 'అవసరమైతే పొత్తికడుపు క్రింద మద్దతు ఇవ్వండి',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -307,7 +318,8 @@ const PregYogaPage = () => {
         'చేతులను కాళ్లపై లేదా నేలపై మోపి ఉండండి'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'వెన్నెముకను బలంగా వంచకండి లేదా అతిగా ముందుకు పోకండి'
+      precautions: 'వెన్నెముకను బలంగా వంచకండి లేదా అతిగా ముందుకు పోకండి',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },'kn-IN': {
@@ -332,7 +344,8 @@ const PregYogaPage = () => {
         '5-8 ಬಾರಿ ಈ ಕ್ರಿಯೆಯನ್ನು ಪುನರಾವರ್ತಿಸಿ'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'ತಲೆ ಸುತ್ತುವಂತಹ ಅನುಭವ ಬಂದರೆ ತಪ್ಪಿಸಲು'
+      precautions: 'ತಲೆ ಸುತ್ತುವಂತಹ ಅನುಭವ ಬಂದರೆ ತಪ್ಪಿಸಲು',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -354,7 +367,8 @@ const PregYogaPage = () => {
         '5–7 ನಿಮಿಷಗಳ ಕಾಲ ಆ ಸ್ಥಿತಿಯಲ್ಲಿರಿರಿ'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'ಅವಶ್ಯಕತೆಯಿದ್ದರೆ ಹೊಟ್ಟೆಕೆಳಗೆ ಬೆಂಬಲವನ್ನು ನೀಡಿ'
+      precautions: 'ಅವಶ್ಯಕತೆಯಿದ್ದರೆ ಹೊಟ್ಟೆಕೆಳಗೆ ಬೆಂಬಲವನ್ನು ನೀಡಿ',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -376,7 +390,8 @@ const PregYogaPage = () => {
         'ಕೈಗಳನ್ನು ಕಾಲುಗಳ ಮೇಲೆ ಅಥವಾ ನೆಲದ ಮೇಲೆ ಇಡಿ'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'ಹಿಡಿದಮೂಳೆಯೊಡನೆ ಹೆಚ್ಚು ಮುರಿಯಬೇಡಿ ಅಥವಾ ಹಗ್ಗದಂತೆ ಒತ್ತಬೇಡಿ'
+      precautions: 'ಹಿಡಿದಮೂಳೆಯೊಡನೆ ಹೆಚ್ಚು ಮುರಿಯಬೇಡಿ ಅಥವಾ ಹಗ್ಗದಂತೆ ಒತ್ತಬೇಡಿ',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },'mr-IN': {
@@ -401,7 +416,8 @@ const PregYogaPage = () => {
         '5–8 वेळा पुन्हा करा'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'चक्कर येत असल्यास टाळा'
+      precautions: 'चक्कर येत असल्यास टाळा',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -423,7 +439,8 @@ const PregYogaPage = () => {
         'या स्थितीत 5–7 मिनिटे राहा'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'हवे असल्यास पोटाखाली उशी ठेवा'
+      precautions: 'हवे असल्यास पोटाखाली उशी ठेवा',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -445,7 +462,8 @@ const PregYogaPage = () => {
         'हात मांडीवर किंवा जमिनीवर ठेवा'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'पाठ जास्त वाकवू नका किंवा ताण देऊ नका'
+      precautions: 'पाठ जास्त वाकवू नका किंवा ताण देऊ नका',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },'bn-IN': {
@@ -470,7 +488,8 @@ const PregYogaPage = () => {
         '৫–৮ বার ধীরে করুন'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'চোখে ঝাপসা দেখলে বা মাথা ঘোরালে এড়িয়ে চলুন'
+      precautions: 'চোখে ঝাপসা দেখলে বা মাথা ঘোরালে এড়িয়ে চলুন',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -492,7 +511,8 @@ const PregYogaPage = () => {
         '৫–৭ মিনিট এই অবস্থায় থাকুন'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'প্রয়োজনে পেটের নিচে বালিশ দিন'
+      precautions: 'প্রয়োজনে পেটের নিচে বালিশ দিন',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -514,7 +534,8 @@ const PregYogaPage = () => {
         'হাত পায়ে বা মাটিতে রাখুন, যেন চাপ না পড়ে'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'পিঠ অতিরিক্ত বাঁকাবেন না বা অপ্রয়োজনীয়ভাবে টান দেবেন না'
+      precautions: 'পিঠ অতিরিক্ত বাঁকাবেন না বা অপ্রয়োজনীয়ভাবে টান দেবেন না',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },'gu-IN': {
@@ -539,7 +560,8 @@ const PregYogaPage = () => {
         '૫–૮ વખત પુનરાવૃત્તિ કરો'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'ચક્કર આવતું હોય તો ટાળો'
+      precautions: 'ચક્કર આવતું હોય તો ટાળો',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -561,7 +583,8 @@ const PregYogaPage = () => {
         '૫–૭ મિનિટ સુધી આ સ્થિતિમાં રહો'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'જરૂર હોય તો પેટ નીચે સહારો આપો'
+      precautions: 'જરૂર હોય તો પેટ નીચે સહારો આપો',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -583,7 +606,8 @@ const PregYogaPage = () => {
         'હાથ પાંસે અથવા જમીન પર મૂકો — દબાણ ન આવવું જોઈએ'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'પીઠ ગોળ ન કરો કે વધારે આગળ ન વાળો'
+      precautions: 'પીઠ ગોળ ન કરો કે વધારે આગળ ન વાળો',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },'ml-IN': {
@@ -608,7 +632,8 @@ const PregYogaPage = () => {
         '5–8 തവണ മെല്ലെ ആവർത്തിക്കുക'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'ചക്രം വന്നാല്‍ ചെയ്യരുത്'
+      precautions: 'ചക്രം വന്നാല്‍ ചെയ്യരുത്',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -630,7 +655,8 @@ const PregYogaPage = () => {
         '5–7 മിനിറ്റ് ഈ നിലയില്‍ ഇരിക്കുക'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'വയറിന് താഴെ തുണി വെക്കാവുന്നതാണ്'
+      precautions: 'വയറിന് താഴെ തുണി വെക്കാവുന്നതാണ്',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -652,7 +678,8 @@ const PregYogaPage = () => {
         'കൈകള്‍ കാല്‍മുട്ടിലോ നിലത്തോ ഇടുക'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'പിറകു വളയരുത് അല്ലെങ്കില്‍ അതിരു കടക്കരുത്'
+      precautions: 'പിറകു വളയരുത് അല്ലെങ്കില്‍ അതിരു കടക്കരുത്',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },'pa-IN': {
@@ -677,7 +704,8 @@ const PregYogaPage = () => {
         'ਇਹ ਕ੍ਰਿਆ 5-8 ਵਾਰ ਦੁਹਰਾਓ'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-      precautions: 'ਚੱਕਰ ਆਉਣ ਦੀ ਸਥਿਤੀ ਵਿੱਚ ਨਾ ਕਰੋ'
+      precautions: 'ਚੱਕਰ ਆਉਣ ਦੀ ਸਥਿਤੀ ਵਿੱਚ ਨਾ ਕਰੋ',
+      image:'/assets/catcow.jpg'
     },
     {
       id: 102,
@@ -699,7 +727,8 @@ const PregYogaPage = () => {
         '5-7 ਮਿੰਟ ਇਸ ਅਵਸਥਾ ਵਿੱਚ ਰਹੋ'
       ],
       animation: 'https://assets6.lottiefiles.com/packages/lf20_ihqvye2h.json',
-      precautions: 'ਲੋੜ ਪਏ ਤਾਂ ਪੇਟ ਹੇਠਾਂ ਸਹਾਰਾ ਵਰਤੋ'
+      precautions: 'ਲੋੜ ਪਏ ਤਾਂ ਪੇਟ ਹੇਠਾਂ ਸਹਾਰਾ ਵਰਤੋ',
+      image:'/assets/sidelying.png'
     },
     {
       id: 103,
@@ -721,7 +750,8 @@ const PregYogaPage = () => {
         'ਹੱਥਾਂ ਨੂੰ ਲੱਤਾਂ ਜਾਂ ਫਰਸ਼ ਤੇ ਆਰਾਮ ਨਾਲ ਰੱਖੋ'
       ],
       animation: 'https://assets9.lottiefiles.com/packages/lf20_q6zrppfj.json',
-      precautions: 'ਰੀੜ੍ਹ ਨੂੰ ਵੱਧ ਨਾ ਖਿੱਚੋ ਜਾਂ ਜ਼ਬਰਦਸਤੀ ਨਾ ਕਰੋ'
+      precautions: 'ਰੀੜ੍ਹ ਨੂੰ ਵੱਧ ਨਾ ਖਿੱਚੋ ਜਾਂ ਜ਼ਬਰਦਸਤੀ ਨਾ ਕਰੋ',
+      image : 'assets/seatedforward.jpg'
     }
   ]
 },
@@ -767,12 +797,11 @@ return (
           className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
         >
           <div className="h-48 bg-pink-100 flex items-center justify-center relative">
-            <Player
-              autoplay
-              loop
-              src={pose.animation}
-              style={{ height: '100%', width: '100%' }}
-            />
+             <img
+    src={pose.image}
+    alt={pose.title}
+    className="h-full w-full object-cover"
+  />
           </div>
           <div className="p-5">
             <h3 className="text-xl font-semibold text-purple-700 mb-2">{pose.title}</h3>

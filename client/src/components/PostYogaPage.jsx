@@ -49,7 +49,8 @@ const PostYogaPage = () => {
           'Repeat 8-10 times'
         ],
         animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-        precautions: 'Avoid if you have diastasis recti'
+        precautions: 'Avoid if you have diastasis recti',
+        image:'/assets/pelvic.jpg'
       },
       {
         id: 2,
@@ -69,7 +70,8 @@ const PostYogaPage = () => {
           'Exhale slowly for 7 counts'
         ],
         animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-        precautions: 'Use cushion for support if needed'
+        precautions: 'Use cushion for support if needed',
+        image :'/assets/meditation.jpg'
       },
       {
         id: 3,
@@ -89,7 +91,8 @@ const PostYogaPage = () => {
           'Repeat 8-10 times'
         ],
         animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-        precautions: 'Go gently if you had C-section'
+        precautions: 'Go gently if you had C-section',
+        image : '/assets/catcow-stretch.jpg'
       }
     ],'hi-IN': [
   {
@@ -110,7 +113,8 @@ const PostYogaPage = () => {
       '8-10 बार दोहराएं'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'अगर आपको डायस्टेसिस रेक्टी है तो यह न करें'
+    precautions: 'अगर आपको डायस्टेसिस रेक्टी है तो यह न करें',
+    image:'/assets/pelvic.jpg'
   },
   {
     id: 2,
@@ -130,7 +134,8 @@ const PostYogaPage = () => {
       '7 तक धीरे-धीरे सांस छोड़ें'
     ],
     animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-    precautions: 'जरूरत हो तो सहारे के लिए कुशन का उपयोग करें'
+    precautions: 'जरूरत हो तो सहारे के लिए कुशन का उपयोग करें',
+    image :'/assets/meditation.jpg'
   },
   {
     id: 3,
@@ -150,7 +155,8 @@ const PostYogaPage = () => {
       '8-10 बार दोहराएं'
     ],
     animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-    precautions: 'अगर सी-सेक्शन हुआ हो तो सावधानी से करें'
+    precautions: 'अगर सी-सेक्शन हुआ हो तो सावधानी से करें',
+    image : '/assets/catcow-stretch.jpg'
   }
 ],'ta-IN': [
   {
@@ -171,7 +177,8 @@ const PostYogaPage = () => {
       '8-10 முறை மீண்டும் செய்யவும்'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'உங்களிடம் டையாஸ்டாசிஸ் ரெக்டி இருந்தால் தவிர்க்கவும்'
+    precautions: 'உங்களிடம் டையாஸ்டாசிஸ் ரெக்டி இருந்தால் தவிர்க்கவும்',
+    image:'/assets/pelvic.jpg'
   },
   {
     id: 2,
@@ -191,7 +198,8 @@ const PostYogaPage = () => {
       '7 எண்ணிக்கைக்கு மெதுவாக வெளியே மூச்சை விடவும்'
     ],
     animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-    precautions: 'தேவையெனில் மெத்தை போன்ற துணைக்கு அமரவும்'
+    precautions: 'தேவையெனில் மெத்தை போன்ற துணைக்கு அமரவும்',
+    image :'/assets/meditation.jpg'
   },
   {
     id: 3,
@@ -211,7 +219,8 @@ const PostYogaPage = () => {
       '8-10 முறை மீண்டும் செய்யவும்'
     ],
     animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-    precautions: 'சி-செக்ஷன் செய்திருந்தால் மெதுவாக செய்யவும்'
+    precautions: 'சி-செக்ஷன் செய்திருந்தால் மெதுவாக செய்யவும்',
+    image : '/assets/catcow-stretch.jpg'
   }
 ],'te-IN': [
   {
@@ -232,7 +241,8 @@ const PostYogaPage = () => {
       '8-10 సార్లు పునరావృతం చేయండి'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'డయాస్టేసిస్ రెక్టి ఉంటే ఈ వ్యాయామాన్ని నివారించండి'
+    precautions: 'డయాస్టేసిస్ రెక్టి ఉంటే ఈ వ్యాయామాన్ని నివారించండి',
+    image:'/assets/pelvic.jpg'
   },
   {
     id: 2,
@@ -252,7 +262,8 @@ const PostYogaPage = () => {
       '7 సంఖ్యల వరకు మెల్లగా ఊపిరి విడిచిపెట్టండి'
     ],
     animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-    precautions: 'అవసరమైతే మద్దతు కోసం దిండును ఉపయోగించండి'
+    precautions: 'అవసరమైతే మద్దతు కోసం దిండును ఉపయోగించండి',
+    image :'/assets/meditation.jpg'
   },
   {
     id: 3,
@@ -272,7 +283,8 @@ const PostYogaPage = () => {
       '8-10 సార్లు పునరావృతం చేయండి'
     ],
     animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-    precautions: 'సిజేరియన్ జరిగితే నెమ్మదిగా చేయాలి'
+    precautions: 'సిజేరియన్ జరిగితే నెమ్మదిగా చేయాలి',
+    image : '/assets/catcow-stretch.jpg'
   }
 ]
 ,
@@ -295,7 +307,8 @@ const PostYogaPage = () => {
       '8-10 ಬಾರಿ ಪುನರಾವರ್ತಿಸಿ'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'ನಿಮಗೆ ಡಯಾಸ್ಟಾಸಿಸ್ ರೆಕ್ಟಿ ಇದ್ದರೆ ಈ ಅಭ್ಯಾಸವನ್ನು ತಪ್ಪಿಸಿ'
+    precautions: 'ನಿಮಗೆ ಡಯಾಸ್ಟಾಸಿಸ್ ರೆಕ್ಟಿ ಇದ್ದರೆ ಈ ಅಭ್ಯಾಸವನ್ನು ತಪ್ಪಿಸಿ',
+    image:'/assets/pelvic.jpg'
   },
   {
     id: 2,
@@ -315,7 +328,8 @@ const PostYogaPage = () => {
       '7 ಎಣಿಕೆಗೆ ಮೆಲ್ಮೆಲವಾಗಿ ಉಸಿರೆರೆಳಿಸಿ'
     ],
     animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-    precautions: 'ಆವಶ್ಯಕತೆ ಇದ್ದರೆ ಬೆಂಬಲಕ್ಕಾಗಿ ತುಷಣಿಯನ್ನು ಬಳಸಬಹುದು'
+    precautions: 'ಆವಶ್ಯಕತೆ ಇದ್ದರೆ ಬೆಂಬಲಕ್ಕಾಗಿ ತುಷಣಿಯನ್ನು ಬಳಸಬಹುದು',
+    image :'/assets/meditation.jpg'
   },
   {
     id: 3,
@@ -335,7 +349,8 @@ const PostYogaPage = () => {
       '8-10 ಬಾರಿ ಪುನರಾವರ್ತಿಸಿ'
     ],
     animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-    precautions: 'ಸಿಜೇರಿಯನ್ ಹೆರಿಗೆ ಇದ್ದರೆ ನಿಧಾನವಾಗಿ ಮಾಡಿ'
+    precautions: 'ಸಿಜೇರಿಯನ್ ಹೆರಿಗೆ ಇದ್ದರೆ ನಿಧಾನವಾಗಿ ಮಾಡಿ',
+    image : '/assets/catcow-stretch.jpg'
   }
 ],'mr-IN': [
   {
@@ -356,7 +371,8 @@ const PostYogaPage = () => {
       '8-10 वेळा पुन्हा करा'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'डायस्टेसिस रेक्टी असल्यास टाळा'
+    precautions: 'डायस्टेसिस रेक्टी असल्यास टाळा',
+    image:'/assets/pelvic.jpg'
   },
   {
     id: 2,
@@ -376,7 +392,8 @@ const PostYogaPage = () => {
       '7 मोजेपर्यंत सावकाश श्वास सोडा'
     ],
     animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-    precautions: 'गरज असल्यास आधारासाठी उशी वापरा'
+    precautions: 'गरज असल्यास आधारासाठी उशी वापरा',
+    image :'/assets/meditation.jpg'
   },
   {
     id: 3,
@@ -396,7 +413,8 @@ const PostYogaPage = () => {
       '8-10 वेळा पुन्हा करा'
     ],
     animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-    precautions: 'सी-सेक्शन झाल्यास हळू करा'
+    precautions: 'सी-सेक्शन झाल्यास हळू करा',
+    image : '/assets/catcow-stretch.jpg'
   }
 ],'bn-IN': [
   {
@@ -417,7 +435,8 @@ const PostYogaPage = () => {
       '৮-১০ বার পুনরাবৃত্তি করুন'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'আপনার ডায়াসটেসিস রেক্টি থাকলে এই ব্যায়াম এড়িয়ে চলুন'
+    precautions: 'আপনার ডায়াসটেসিস রেক্টি থাকলে এই ব্যায়াম এড়িয়ে চলুন',
+    image:'/assets/pelvic.jpg'
   },
   {
     id: 2,
@@ -437,7 +456,8 @@ const PostYogaPage = () => {
       '৭ গোনা পর্যন্ত ধীরে ধীরে শ্বাস ছাড়ুন'
     ],
     animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-    precautions: 'প্রয়োজনে সাপোর্টের জন্য কুশন ব্যবহার করুন'
+    precautions: 'প্রয়োজনে সাপোর্টের জন্য কুশন ব্যবহার করুন',
+    image :'/assets/meditation.jpg'
   },
   {
     id: 3,
@@ -457,7 +477,8 @@ const PostYogaPage = () => {
       '৮-১০ বার পুনরাবৃত্তি করুন'
     ],
     animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-    precautions: 'সিজারিয়ান হয়ে থাকলে ধীরে ধীরে করুন'
+    precautions: 'সিজারিয়ান হয়ে থাকলে ধীরে ধীরে করুন',
+    image : '/assets/catcow-stretch.jpg'
   }
 ],'gu-IN': [
   {
@@ -478,7 +499,8 @@ const PostYogaPage = () => {
       '8-10 વાર પુનરાવૃત્તિ કરો'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'જો તમને ડાયાસ્ટેસિસ રેક્ટી હોય તો ટાળો'
+    precautions: 'જો તમને ડાયાસ્ટેસિસ રેક્ટી હોય તો ટાળો',
+    image:'/assets/pelvic.jpg'
   },
   {
     id: 2,
@@ -498,7 +520,8 @@ const PostYogaPage = () => {
       '7 સુધી ધીમે ધીમે શ્વાસ છોડો'
     ],
     animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-    precautions: 'આવશ્યકતા હોય તો સાથ માટે તકિયાનો ઉપયોગ કરો'
+    precautions: 'આવશ્યકતા હોય તો સાથ માટે તકિયાનો ઉપયોગ કરો',
+    image :'/assets/meditation.jpg'
   },
   {
     id: 3,
@@ -518,7 +541,8 @@ const PostYogaPage = () => {
       '8-10 વાર પુનરાવૃત્તિ કરો'
     ],
     animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-    precautions: 'સી-સેક્શન થયેલ હોય તો ધીમે કરો'
+    precautions: 'સી-સેક્શન થયેલ હોય તો ધીમે કરો',
+    image : '/assets/catcow-stretch.jpg'
   }
 ],'ml-IN': [
   {
@@ -539,7 +563,8 @@ const PostYogaPage = () => {
       '8-10 തവണ ആവർത്തിക്കുക'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'ഡയാസ്ടേസിസ് റെക്റ്റി ഉള്ളവരാണെങ്കിൽ ഒഴിവാക്കുക'
+    precautions: 'ഡയാസ്ടേസിസ് റെക്റ്റി ഉള്ളവരാണെങ്കിൽ ഒഴിവാക്കുക',
+    image:'/assets/pelvic.jpg'
   },
   {
     id: 2,
@@ -559,7 +584,8 @@ const PostYogaPage = () => {
       '7 എണ്ണം വരെ ശ്വാസം വിരൽച്ചായി വിട്ടുവെക്കുക'
     ],
     animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-    precautions: 'ആവശ്യമെങ്കിൽ തുണിയുടെ മേൽ ഇരിക്കുക'
+    precautions: 'ആവശ്യമെങ്കിൽ തുണിയുടെ മേൽ ഇരിക്കുക',
+    image :'/assets/meditation.jpg'
   },
   {
     id: 3,
@@ -579,7 +605,8 @@ const PostYogaPage = () => {
       '8-10 തവണ ആവർത്തിക്കുക'
     ],
     animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-    precautions: 'സി-സെക്ഷൻ നടത്തിയിട്ടുണ്ടെങ്കിൽ സൂക്ഷ്മത പുലർത്തുക'
+    precautions: 'സി-സെക്ഷൻ നടത്തിയിട്ടുണ്ടെങ്കിൽ സൂക്ഷ്മത പുലർത്തുക',
+    image : '/assets/catcow-stretch.jpg'
   }
 ],'pa-IN': [
   {
@@ -600,7 +627,8 @@ const PostYogaPage = () => {
       '8-10 ਵਾਰੀ ਦੁਹਰਾਓ'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'ਜੇ ਤੁਸੀਂ ਡਾਇਅਸਟੇਸਿਸ ਰੈਕਟੀ ਨਾਲ ਪੀੜਤ ਹੋ ਤਾਂ ਇਹ ਨਾ ਕਰੋ'
+    precautions: 'ਜੇ ਤੁਸੀਂ ਡਾਇਅਸਟੇਸਿਸ ਰੈਕਟੀ ਨਾਲ ਪੀੜਤ ਹੋ ਤਾਂ ਇਹ ਨਾ ਕਰੋ',
+    image:'/assets/pelvic.jpg'
   },
   {
     id: 2,
@@ -620,7 +648,8 @@ const PostYogaPage = () => {
       '7 ਗਿਣਤੀ ਲਈ ਹੌਲੀ ਹੌਲੀ ਛੱਡੋ'
     ],
     animation: 'https://assets8.lottiefiles.com/packages/lf20_3rwqjbjm.json',
-    precautions: 'ਜ਼ਰੂਰਤ ਹੋਵੇ ਤਾਂ ਸਹਾਰੇ ਲਈ ਗੱਦਾ ਵਰਤੋ'
+    precautions: 'ਜ਼ਰੂਰਤ ਹੋਵੇ ਤਾਂ ਸਹਾਰੇ ਲਈ ਗੱਦਾ ਵਰਤੋ',
+    image :'/assets/meditation.jpg'
   },
   {
     id: 3,
@@ -640,7 +669,8 @@ const PostYogaPage = () => {
       '8-10 ਵਾਰੀ ਦੁਹਰਾਓ'
     ],
     animation: 'https://assets9.lottiefiles.com/packages/lf20_skaukw.json',
-    precautions: 'ਜੇ ਸੀ-ਸੈਕਸ਼ਨ ਹੋਇਆ ਹੋਵੇ ਤਾਂ ਆਹਿਸਤਾ ਕਰੋ'
+    precautions: 'ਜੇ ਸੀ-ਸੈਕਸ਼ਨ ਹੋਇਆ ਹੋਵੇ ਤਾਂ ਆਹਿਸਤਾ ਕਰੋ',
+    image : '/assets/catcow-stretch.jpg'
   }
 ]
 
@@ -673,7 +703,11 @@ const PostYogaPage = () => {
         {poses.map((pose) => (
           <motion.div key={pose.id} className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="h-48 bg-blue-100 flex items-center justify-center relative">
-              <Player autoplay loop src={pose.animation} style={{ height: '100%', width: '100%' }} />
+              <img
+    src={pose.image}
+    alt={pose.title}
+    className="h-full w-full object-cover"
+  />
             </div>
             <div className="p-5">
               <h3 className="text-xl font-semibold text-indigo-700 mb-2">{pose.title}</h3>

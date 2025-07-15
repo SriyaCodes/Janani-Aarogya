@@ -6,6 +6,8 @@ import { db } from '../firebase';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { FaHeart, FaBookmark, FaShareAlt } from 'react-icons/fa';
 import translations from './Pregtranslations';
+
+
 const PregAyurvedaPage = () => {
   const [selectedRemedy, setSelectedRemedy] = useState(null);
   const [userData, setUserData] = useState(null);
@@ -14,7 +16,6 @@ const PregAyurvedaPage = () => {
   const [trimester, setTrimester] = useState(1); // 1, 2, or 3
   const auth = getAuth();
 
-  // Fetch user data and language preference
   useEffect(() => {
     const fetchUserData = async () => {
       if (auth.currentUser) {
@@ -112,7 +113,8 @@ const PregAyurvedaPage = () => {
           'Drink after meals'
         ],
         duration: 'Daily after meals',
-        precautions: 'Limit to 2 cups per day'
+        precautions: 'Limit to 2 cups per day',
+        image:'/assets/fenneltea.jpg'
       }
     ],
     
@@ -923,12 +925,11 @@ const PregAyurvedaPage = () => {
             className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
           >
             <div className="h-48 bg-green-100 flex items-center justify-center relative">
-              <Player
-                autoplay
-                loop
-                src={remedy.animation}
-                style={{ height: '100%', width: '100%' }}
-              />
+              <img
+  src={remedy.image}
+  alt={remedy.title}
+  className="h-full w-full object-cover"
+/>
               <button
                 className={`absolute top-4 right-4 p-2 rounded-full ${bookmarked.includes(remedy.id) ? 'text-teal-600' : 'text-gray-400'}`}
                 onClick={() => toggleBookmark(remedy.id)}

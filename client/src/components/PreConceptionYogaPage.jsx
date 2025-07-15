@@ -47,7 +47,8 @@ const PreConceptionYogaPage = () => {
       'Continue for 20-30 flaps'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'Avoid if you have hip injuries'
+    precautions: 'Avoid if you have hip injuries',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -69,7 +70,8 @@ const PreConceptionYogaPage = () => {
       'Exhale and gently lower down'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'Avoid if you have recent neck or back injury'
+    precautions: 'Avoid if you have recent neck or back injury',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -91,7 +93,8 @@ const PreConceptionYogaPage = () => {
       'Hold the pose for several minutes'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'Use bolster under back if you feel strain'
+    precautions: 'Use bolster under back if you feel strain',
+    image:'/assets/inclined.jpg'
   }
 ],'hi-IN': [
   {
@@ -114,7 +117,8 @@ const PreConceptionYogaPage = () => {
       '20-30 बार दोहराएं'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'यदि कूल्हे में चोट हो तो न करें'
+    precautions: 'यदि कूल्हे में चोट हो तो न करें',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -136,7 +140,8 @@ const PreConceptionYogaPage = () => {
       'सांस छोड़ते हुए धीरे से नीचे लाएं'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'यदि गर्दन या पीठ में हाल ही में चोट लगी हो तो न करें'
+    precautions: 'यदि गर्दन या पीठ में हाल ही में चोट लगी हो तो न करें',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -158,7 +163,8 @@ const PreConceptionYogaPage = () => {
       'इस स्थिति में कुछ मिनट तक रहें'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'यदि पीठ में तनाव महसूस हो तो बॉल्स्टर का उपयोग करें'
+    precautions: 'यदि पीठ में तनाव महसूस हो तो बॉल्स्टर का उपयोग करें',
+    image:'/assets/inclined.jpg'
   }
 ],'ta-IN': [
   {
@@ -181,7 +187,8 @@ const PreConceptionYogaPage = () => {
       '20-30 முறை செய்யவும்'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'இடுப்பு பகுதியில் காயம் இருந்தால் தவிர்க்கவும்'
+    precautions: 'இடுப்பு பகுதியில் காயம் இருந்தால் தவிர்க்கவும்',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -203,7 +210,8 @@ const PreConceptionYogaPage = () => {
       'மூச்சுவிட்டு மெதுவாக கீழே இறக்கவும்'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'முதுகு அல்லது கழுத்து காயமுள்ளவர்கள் தவிர்க்க வேண்டும்'
+    precautions: 'முதுகு அல்லது கழுத்து காயமுள்ளவர்கள் தவிர்க்க வேண்டும்',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -225,7 +233,8 @@ const PreConceptionYogaPage = () => {
       'இந்த நிலையில் சில நிமிடங்கள் இருப்பதுதான் சிறந்தது'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'பின்னால் அழுத்தம் இருந்தால் பேலஸ்டர் பயன்படுத்தலாம்'
+    precautions: 'பின்னால் அழுத்தம் இருந்தால் பேலஸ்டர் பயன்படுத்தலாம்',
+    image:'/assets/inclined.jpg'
   }
 ],'te-IN': [
   {
@@ -248,7 +257,8 @@ const PreConceptionYogaPage = () => {
       '20-30 సార్లు పునరావృతం చేయండి'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'నడుము లేదా కూర్మం సమస్య ఉంటే నివారించాలి'
+    precautions: 'నడుము లేదా కూర్మం సమస్య ఉంటే నివారించాలి',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -270,7 +280,8 @@ const PreConceptionYogaPage = () => {
       'నిష్వాసం వదిలి మళ్లీ కిందకి వంగండి'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'తాజాగా మెడ లేదా వెన్నెముక గాయమైతే చేయకండి'
+    precautions: 'తాజాగా మెడ లేదా వెన్నెముక గాయమైతే చేయకండి',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -292,7 +303,8 @@ const PreConceptionYogaPage = () => {
       'ఈ స్థితిలో కొన్ని నిమిషాలు ఉండండి'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'వెనుక బరువు అనిపిస్తే ప్యాడ్ లేదా గద్దను వాడండి'
+    precautions: 'వెనుక బరువు అనిపిస్తే ప్యాడ్ లేదా గద్దను వాడండి',
+    image:'/assets/inclined.jpg'
   }
 ],'kn-IN': [
   {
@@ -315,7 +327,8 @@ const PreConceptionYogaPage = () => {
       '20-30 ಬಾರಿ ಪುನರಾವರ್ತಿಸಿ'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'ನಡುರಿನ ಗಾಯವಿದ್ದರೆ ಈ ಆಸನವನ್ನ ತಪ್ಪಿಸಿ'
+    precautions: 'ನಡುರಿನ ಗಾಯವಿದ್ದರೆ ಈ ಆಸನವನ್ನ ತಪ್ಪಿಸಿ',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -337,7 +350,8 @@ const PreConceptionYogaPage = () => {
       'ಉಸಿರೆಳೆಯುತ್ತಾ ನಿಧಾನವಾಗಿ ಕೆಳಕ್ಕೆ ಇಳಿಸಿ'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'ಬೆ recente back ಅಥವಾ ಮೆದೇಗೆ ಗಾಯವಿದ್ದರೆ ತಪ್ಪಿಸಿ'
+    precautions: 'ಬೆ recente back ಅಥವಾ ಮೆದೇಗೆ ಗಾಯವಿದ್ದರೆ ತಪ್ಪಿಸಿ',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -359,7 +373,8 @@ const PreConceptionYogaPage = () => {
       'ಈ ಸ್ಥಿತಿಯಲ್ಲಿ ಕೆಲವು ನಿಮಿಷಗಳ ಕಾಲ ಇರಿ'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'ಬದಿಯಲ್ಲಿ ನೋವಿದ್ದರೆ ಬೆನ್ನಿಗಡಿ ದಿಂಬು ಬಳಸಿ'
+    precautions: 'ಬದಿಯಲ್ಲಿ ನೋವಿದ್ದರೆ ಬೆನ್ನಿಗಡಿ ದಿಂಬು ಬಳಸಿ',
+    image:'/assets/inclined.jpg'
   }
 ],'mr-IN': [
   {
@@ -382,7 +397,8 @@ const PreConceptionYogaPage = () => {
       '20-30 वेळा करा'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'जर कंबरेत दुखत असेल तर हे आसन टाळा'
+    precautions: 'जर कंबरेत दुखत असेल तर हे आसन टाळा',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -404,7 +420,8 @@ const PreConceptionYogaPage = () => {
       'श्वास सोडत हळूहळू खाली या'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'कंबर किंवा मानेत दुखापत असल्यास करू नका'
+    precautions: 'कंबर किंवा मानेत दुखापत असल्यास करू नका',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -426,7 +443,8 @@ const PreConceptionYogaPage = () => {
       'काही मिनिटांपर्यंत ही स्थिती ठेवा'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'पाठीवर ताण जाणवत असल्यास आधार द्या'
+    precautions: 'पाठीवर ताण जाणवत असल्यास आधार द्या',
+    image:'/assets/inclined.jpg'
   }
 ],'bn-IN': [
   {
@@ -449,7 +467,8 @@ const PreConceptionYogaPage = () => {
       '২০–৩০ বার করুন'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'কোমরের ইনজুরি থাকলে এড়িয়ে চলুন'
+    precautions: 'কোমরের ইনজুরি থাকলে এড়িয়ে চলুন',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -471,7 +490,8 @@ const PreConceptionYogaPage = () => {
       'শ্বাস ছেড়ে ধীরে ধীরে নিচে নামুন'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'ঘাড় বা পিঠের সাম্প্রতিক আঘাত থাকলে করবেন না'
+    precautions: 'ঘাড় বা পিঠের সাম্প্রতিক আঘাত থাকলে করবেন না',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -493,7 +513,8 @@ const PreConceptionYogaPage = () => {
       'কয়েক মিনিট ধরে এই অবস্থায় থাকুন'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'পিঠে চাপ অনুভব করলে বালিশ বা বোলস্টার ব্যবহার করুন'
+    precautions: 'পিঠে চাপ অনুভব করলে বালিশ বা বোলস্টার ব্যবহার করুন',
+    image:'/assets/inclined.jpg'
   }
 ],'gu-IN': [
   {
@@ -516,7 +537,8 @@ const PreConceptionYogaPage = () => {
       '૨૦–૩૦ વાર પુનરાવૃત્તિ કરો'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'હિપ ઈજાની સ્થિતિમાં ટાળો'
+    precautions: 'હિપ ઈજાની સ્થિતિમાં ટાળો',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -538,7 +560,8 @@ const PreConceptionYogaPage = () => {
       'સાંસ છોડી ધીમે થી પાછા નીચે આવો'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'જાડા અથવા પીઠની તાજી ઈજા હોય તો ટાળો'
+    precautions: 'જાડા અથવા પીઠની તાજી ઈજા હોય તો ટાળો',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -560,7 +583,8 @@ const PreConceptionYogaPage = () => {
       'કેટલાક મિનિટ સુધી આ સ્થિતિ જાળવો'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'પીઠ પર તાણ જણાય તો બલસ્ટરનો ઉપયોગ કરો'
+    precautions: 'પીઠ પર તાણ જણાય તો બલસ્ટરનો ઉપયોગ કરો',
+    image:'/assets/inclined.jpg'
   }
 ],'ml-IN': [
   {
@@ -583,7 +607,8 @@ const PreConceptionYogaPage = () => {
       '20–30 തവണ ആവർത്തിക്കുക'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'ഹിപ്പ് ഏരിയയിൽ പരിക്കുണ്ടെങ്കിൽ ഒഴിവാക്കുക'
+    precautions: 'ഹിപ്പ് ഏരിയയിൽ പരിക്കുണ്ടെങ്കിൽ ഒഴിവാക്കുക',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -605,7 +630,8 @@ const PreConceptionYogaPage = () => {
       'ശ്വാസം വിടുക: പതുക്കെ താഴെ ഇറങ്ങുക'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'പിത്തോ കശേരുക്കളിൽ പരിക്കുള്ളവർ ഒഴിവാക്കുക'
+    precautions: 'പിത്തോ കശേരുക്കളിൽ പരിക്കുള്ളവർ ഒഴിവാക്കുക',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -627,7 +653,8 @@ const PreConceptionYogaPage = () => {
       'അവസ്ഥ കുറേ മിനിറ്റുകൾ തുടരുക'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'കിടക്കുന്ന സമയത്ത് പിന്നിൽ അമർച്ച ഉണ്ടെങ്കിൽ ബോൾസ്റ്റർ ഉപയോഗിക്കുക'
+    precautions: 'കിടക്കുന്ന സമയത്ത് പിന്നിൽ അമർച്ച ഉണ്ടെങ്കിൽ ബോൾസ്റ്റർ ഉപയോഗിക്കുക',
+    image:'/assets/inclined.jpg'
   }
 ],'pa-IN': [
   {
@@ -650,7 +677,8 @@ const PreConceptionYogaPage = () => {
       '20–30 ਵਾਰ ਦੁਹਰਾਓ'
     ],
     animation: 'https://assets5.lottiefiles.com/packages/lf20_5itouocj.json',
-    precautions: 'ਜੇਕਰ ਕਮਰ ਜਾਂ ਹਿਪ ਵਿੱਚ ਚੋਟ ਹੋਵੇ ਤਾਂ ਇਹ ਨਾ ਕਰੋ'
+    precautions: 'ਜੇਕਰ ਕਮਰ ਜਾਂ ਹਿਪ ਵਿੱਚ ਚੋਟ ਹੋਵੇ ਤਾਂ ਇਹ ਨਾ ਕਰੋ',
+    image:'/assets/butterfly.jpg'
   },
   {
     id: 2,
@@ -672,7 +700,8 @@ const PreConceptionYogaPage = () => {
       'ਸਾਹ ਛੱਡਦੇ ਹੋਏ ਹੌਲੀ-ਹੌਲੀ ਹੇਠਾਂ ਆ ਜਾਓ'
     ],
     animation: 'https://assets9.lottiefiles.com/private_files/lf30_editor_zckc9auu.json',
-    precautions: 'ਜੇ ਪਿੱਠ ਜਾਂ ਗਰਦਨ ਵਿੱਚ ਨਵੀ ਚੋਟ ਹੋਵੇ ਤਾਂ ਇਹ ਨਾ ਕਰੋ'
+    precautions: 'ਜੇ ਪਿੱਠ ਜਾਂ ਗਰਦਨ ਵਿੱਚ ਨਵੀ ਚੋਟ ਹੋਵੇ ਤਾਂ ਇਹ ਨਾ ਕਰੋ',
+    image:'/assets/bridge.jpg'
   },
   {
     id: 3,
@@ -694,7 +723,8 @@ const PreConceptionYogaPage = () => {
       'ਕਈ ਮਿੰਟਾਂ ਲਈ ਇਹ ਪੋਜ਼ ਬਣਾਈ ਰੱਖੋ'
     ],
     animation: 'https://assets7.lottiefiles.com/packages/lf20_5vfzbt7e.json',
-    precautions: 'ਜੇ ਪਿੱਠ ਉੱਤੇ ਦਬਾਅ ਮਹਿਸੂਸ ਹੋਵੇ ਤਾਂ ਹੇਠਾਂ ਬਾਲਸਟਰ ਰੱਖੋ'
+    precautions: 'ਜੇ ਪਿੱਠ ਉੱਤੇ ਦਬਾਅ ਮਹਿਸੂਸ ਹੋਵੇ ਤਾਂ ਹੇਠਾਂ ਬਾਲਸਟਰ ਰੱਖੋ',
+    image:'/assets/inclined.jpg'
   }
 ]
 
@@ -815,12 +845,11 @@ return (
           className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
         >
           <div className="h-48 bg-purple-100 flex items-center justify-center relative">
-            <Player
-              autoplay
-              loop
-              src={pose.animation}
-              style={{ height: '100%', width: '100%' }}
-            />
+           <img
+    src={pose.image}
+    alt={pose.title}
+    className="h-full w-full object-cover"
+  />
           </div>
           <div className="p-5">
             <h3 className="text-xl font-semibold text-purple-700 mb-2">{pose.title}</h3>
