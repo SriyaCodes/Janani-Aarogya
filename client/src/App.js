@@ -20,24 +20,41 @@ import PostAyurvedaPage from './components/PostAyurvedaPage';
 
 function App() {
   const user = JSON.parse(localStorage.getItem('user'));
-  const isNewUser = !user?.stage || !user?.language;
+  const isNewUser = !user?.language || !user?.stage;
 
   return (
     <Router>
       <Routes>
-        {/* Auth & Onboarding */}
+        {/* Default Route: Show Signup */}
+        <Route path="/" element={<Signup />} />
+
+        {/* Auth Routes */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/language-selector" element={<LanguageSelector />} />
-        <Route path="/stage-selector" element={<StageSelector />} />
 
-        {/* Main App Pages */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        {/* Onboarding */}
+        <Route
+          path="/language-selector"
+          element={user ? <LanguageSelector /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/stage-selector"
+          element={user ? <StageSelector /> : <Navigate to="/login" />}
+        />
+
+        {/* Main Dashboard */}
+        <Route
+          path="/dashboard"
+          element={user ? <Dashboard /> : <Navigate to="/login" />}
+        />
+
+        {/* Pages */}
         <Route path="/yoga" element={<YogaPage />} />
         <Route path="/ayurveda" element={<AyurvedaPage />} />
         <Route path="/memory-vault" element={<MemoryVault />} />
         <Route path="/journal" element={<JournalPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+
         {/* Stage-specific Yoga & Ayurveda */}
         <Route path="/preconception-yoga" element={<PreConceptionYogaPage />} />
         <Route path="/pregnancy-yoga" element={<PregYogaPage />} />
@@ -46,17 +63,8 @@ function App() {
         <Route path="/pregnancy-ayurveda" element={<PregAyurvedaPage />} />
         <Route path="/post-ayurveda" element={<PostAyurvedaPage />} />
 
-        {/* Default Redirect */}
-        <Route
-          path="/"
-          element={
-            user ? (
-              isNewUser ? <Navigate to="/language-selector" /> : <Navigate to="/dashboard" />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+        {/* Catch-all: If route doesn't match, redirect to signup */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );
