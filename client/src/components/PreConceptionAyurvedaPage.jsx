@@ -7,9 +7,8 @@ import { Player } from '@lottiefiles/react-lottie-player';
 import { FaHeart, FaBookmark, FaLeaf, FaSeedling,FaShareAlt } from 'react-icons/fa';
 import translations from './Pretranslations';
 // PreConceptionAyurvedaPage.jsx
-import churnaImg from '../assets/churna.jpg';   // fertility‑boosting churna
-import detoxteaImg from '../assets/detoxtea.jpg';   // detox tea
-import ladduImg from '../assets/laddu.jpg';   // reproductive laddu
+
+
 
 const PreConceptionAyurvedaPage = () => {
   const [selectedRemedy, setSelectedRemedy] = useState(null);
@@ -28,11 +27,7 @@ const t = translations[language] || translations['en-IN'];
       }
     }
   };
-const remedyImages = {
-  1: churnaImg,
-  2: detoxteaImg,
-  3: ladduImg,
-};
+
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
@@ -947,7 +942,7 @@ const remedyImages = {
           >
             <div className="h-48 bg-green-100 flex items-center justify-center relative">
               <img
-  src={remedyImages[remedy.id]}
+
   alt={remedy.title}
   className="h-full w-full object-cover"
 />
@@ -1008,7 +1003,7 @@ const remedyImages = {
             >
               <div className="h-56 bg-green-100 relative">
                 <img
-  src={remedyImages[selectedRemedy.id]}
+ 
   alt={selectedRemedy.title}
   className="h-full w-full object-cover"
 />
