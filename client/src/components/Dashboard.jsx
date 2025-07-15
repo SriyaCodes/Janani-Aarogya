@@ -10,6 +10,11 @@ import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 import { motion } from 'framer-motion';
 import HeroImage from '../assets/logo.png';
+import vaultImg from '../assets/vault.png';
+import yogaImg from '../assets/yoga.webp';
+import jrnlImg from '../assets/jrnl.jpg';
+import ayurvedaImg from '../assets/ayurveda.png';
+
 
 function Dashboard() {
   const [aiReply, setAiReply] = useState('');
@@ -159,31 +164,31 @@ function Dashboard() {
     const link = features.find((f) => f.title === title)?.link;
     if (link) navigate(link);
   };
+const features = [
+  {
+    title: 'Journal',
+    desc: 'Daily emotional summaries powered by AI, helping you track mood shifts and celebrate small wins.',
+    img: jrnlImg,
+    link: '/journal',
+  },
+  {
+    title: 'Memory Vault',
+    desc: 'Preserve milestones, emotions, and photos in one space you can revisit anytime.',
+    img: vaultImg,
+    link: '/memory-vault',
+  },
+  {
+    title: 'Ayurveda',
+    desc: 'Indian wisdom for your trimester or postpartum — food, herbs & rituals personalised to you.',
+    img: ayurvedaImg,
+  },
+  {
+    title: 'Maternal Yoga',
+    desc: 'Stage-wise yoga routines to nurture your strength, peace and connection.',
+    img: yogaImg,
+  },
+];
 
-  const features = [
-    {
-      title: 'Journal',
-      desc: 'Daily emotional summaries powered by AI, helping you track mood shifts and celebrate small wins.',
-      img: 'https://via.placeholder.com/150',
-      link: '/journal',
-    },
-    {
-      title: 'Memory Vault',
-      desc: 'Preserve milestones, emotions, and photos in one space you can revisit anytime.',
-      img: 'https://via.placeholder.com/150',
-      link: '/memory-vault',
-    },
-    {
-      title: 'Ayurveda',
-      desc: 'Indian wisdom for your trimester or postpartum — food, herbs & rituals personalised to you.',
-      img: 'https://via.placeholder.com/150',
-    },
-    {
-      title: 'Maternal Yoga',
-      desc: 'Stage-wise yoga routines to nurture your strength, peace and connection.',
-      img: 'https://via.placeholder.com/150',
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-rose-50 relative overflow-x-hidden">
