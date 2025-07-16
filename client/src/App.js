@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import LanguageSelector from './components/LanguageSelector';
@@ -19,13 +19,20 @@ import PregAyurvedaPage from './components/PregAyurvedaPage';
 import PostAyurvedaPage from './components/PostAyurvedaPage';
 
 function App() {
-  const user = JSON.parse(localStorage.getItem('user'));
-  const isNewUser = !user?.language || !user?.stage;
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem('user')));
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUser(JSON.parse(localStorage.getItem('user')));
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   return (
     <Router>
       <Routes>
-        {/* Default Route: Show Signup */}
+        {/* Default Route */}
         <Route path="/" element={<Signup />} />
 
         {/* Auth Routes */}
@@ -52,7 +59,10 @@ function App() {
         <Route path="/yoga" element={<YogaPage />} />
         <Route path="/ayurveda" element={<AyurvedaPage />} />
         <Route path="/memory-vault" element={<MemoryVault />} />
-        <Route path="/journal" element={<JournalPage />} />
+        <Route
+          path="/journal"
+          element={user ? <JournalPage /> : <Navigate to="/login" />}
+        />
         <Route path="/profile" element={<ProfilePage />} />
 
         {/* Stage-specific Yoga & Ayurveda */}
@@ -63,7 +73,7 @@ function App() {
         <Route path="/pregnancy-ayurveda" element={<PregAyurvedaPage />} />
         <Route path="/post-ayurveda" element={<PostAyurvedaPage />} />
 
-        {/* Catch-all: If route doesn't match, redirect to signup */}
+        {/* Catch-all Route */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
