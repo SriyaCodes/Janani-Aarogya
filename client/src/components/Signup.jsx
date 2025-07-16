@@ -4,7 +4,7 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import signupImage from "../assets/signupimage.png";
-import bgCurves from "../assets/bg.jpg"; 
+import bgCurves from "../assets/bg.jpg";
 
 function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -21,17 +21,23 @@ function Signup() {
 
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
 
-      await setDoc(doc(db, "users", user.uid), {
+      const newUserData = {
         uid: user.uid,
         name,
         email,
-        language: "",
-        stage: "",
+        language: "", // will be set in next step
+        stage: "",    // will be set later
         createdAt: serverTimestamp(),
-      });
+      };
 
-      localStorage.setItem("user", JSON.stringify({ uid: user.uid, email, name }));
+      await setDoc(doc(db, "users", user.uid), newUserData);
 
+      // 🌐 Save to localStorage
+      localStorage.setItem("user", JSON.stringify(newUserData));
+      localStorage.setItem("lang", "");   // explicitly store empty lang
+      localStorage.setItem("stage", "");  // explicitly store empty stage
+
+      // ⛳ Redirect to language selector
       navigate("/language-selector");
     } catch (error) {
       alert("Signup failed: " + error.message);
