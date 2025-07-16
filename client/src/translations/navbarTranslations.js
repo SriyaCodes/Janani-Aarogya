@@ -90,7 +90,7 @@ const navbarTranslations = {
     ayurveda: "ਆਯੁਰਵੇਦ",
     yoga: "ਯੋਗ",
     dayStreak: "ਦਿਨਾਂ ਦੀ ਲੜੀ"
-  }
+  } 
 };
 
 export default navbarTranslations;
