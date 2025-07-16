@@ -125,6 +125,7 @@ function StageSelector() {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, { stage });
 
@@ -144,6 +145,12 @@ function StageSelector() {
       await updateDoc(userRef, { stage });
 
 >>>>>>> Stashed changes
+=======
+      // Firestore update
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, { stage });
+
+>>>>>>> Stashed changes
       // Update localStorage user object too
       const userData = JSON.parse(localStorage.getItem("user")) || {};
       userData.stage = stage;
@@ -151,6 +158,9 @@ function StageSelector() {
 
       // Navigate to dashboard
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -172,6 +182,7 @@ function StageSelector() {
   };
 
   return (
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
     <motion.div
@@ -199,6 +210,8 @@ function StageSelector() {
         {lang.stages.map((s) => (
           <motion.button
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-rose-50 to-pink-100 p-6">

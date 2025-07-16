@@ -27,8 +27,16 @@ function LanguageSelector() {
     try {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
       localStorage.setItem('lang', langCode);
 
+=======
+      // ✅ Store in localStorage (used by Navbar & Gemini prompts)
+      localStorage.setItem('lang', langCode);
+      localStorage.setItem('langShort', langCode.slice(0, 2));  // optional
+
+      // ✅ Update Firestore
+>>>>>>> Stashed changes
 =======
       // ✅ Store in localStorage (used by Navbar & Gemini prompts)
       localStorage.setItem('lang', langCode);
@@ -58,6 +66,10 @@ function LanguageSelector() {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+      // ✅ Navigate to stage selector
+>>>>>>> Stashed changes
 =======
       // ✅ Navigate to stage selector
 >>>>>>> Stashed changes
@@ -89,6 +101,7 @@ function LanguageSelector() {
   };
 
   return (
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     <motion.div 
       initial={{ opacity: 0 }}
@@ -139,6 +152,8 @@ function LanguageSelector() {
           </div>
 =======
   return (
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-rose-50 to-pink-100 p-6">
