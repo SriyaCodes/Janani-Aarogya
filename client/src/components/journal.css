@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans&display=swap');
+
+/* Apply bg image to entire journal page */
+.journal-page {
+  background-image: url('/src/assets/journalbg.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  min-height: 100vh;
+}
+
+/* Journal paper effect */
+.journal-paper {
+  position: relative;
+  background: #fffef9;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 20px;
+  border: 2px dashed #f7caca;
+  box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.12);
+  font-family: 'Balsamiq Sans', cursive;
+  line-height: 1.75;
+  max-width: 700px;
+  animation: fadeIn 0.5s ease-in-out;
+  backdrop-filter: blur(2px);
+}
+
+/* Notebook holes */
+.journal-paper::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 20px;
+  width: 6px;
+  height: 6px;
+  background: #aaa;
+  border-radius: 50%;
+  box-shadow:
+    0 30px #aaa,
+    0 60px #aaa,
+    0 90px #aaa,
+    0 120px #aaa,
+    0 150px #aaa;
+}
+
+/* Decorative tape */
+.tape-left,
+.tape-right {
+  position: absolute;
+  width: 60px;
+  height: 8px;
+  background: #fcd5ce;
+  top: -12px;
+  border-radius: 4px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  opacity: 0.9;
+}
+
+.tape-left {
+  left: 20px;
+  transform: rotate(-5deg);
+}
+
+.tape-right {
+  right: 20px;
+  transform: rotate(6deg);
+}
+
+/* Mood tag */
+.mood-label {
+  margin-top: -10px;
+  font-size: 0.95rem;
+  text-align: center;
+  color: #555;
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

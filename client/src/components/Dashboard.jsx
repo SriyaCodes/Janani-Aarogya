@@ -931,8 +931,9 @@ noVisitScheduled: 'ਕੋਈ ਵੀ ਡਾਕਟਰ ਦੀ ਮੁਲਾਕਾਤ
                 </button>
                 {msg && (
                   <p className={`text-sm ${msg.type === 'success' ? 'text-green-600' : 'text-red-500'}`}>
-                    {msg.text}
-                  </p>
+  {msg.text}
+</p>
+
                 )}
               </div>
             </div>
