@@ -27,6 +27,8 @@ const isTrivial = (text) =>
 const JournalPage = () => {
   const [user, setUser] = useState(null);
   const [lang, setLang] = useState('en-IN');
+  const [streak, setStreak] = useState(0);
+
   const [entries, setEntries] = useState([]);
   const [todayJournal, setTodayJournal] = useState(null);
   const [creating, setCreating] = useState(false);
@@ -40,26 +42,30 @@ const navigate = useNavigate();
   const t = journalTranslations[lang] || journalTranslations['en-IN'];
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(getAuth(), async (u) => {
-      if (!u) return;
-      setUser(u);
+  const unsub = onAuthStateChanged(getAuth(), async (u) => {
+    if (!u) return;
+    setUser(u);
 
-      try {
-        const userDoc = await getDoc(doc(db, 'users', u.uid));
-        if (userDoc.exists()) {
-          setLang(userDoc.data().language || 'en-IN');
-        }
-
-        const journalSnap = await getDoc(doc(db, 'users', u.uid, 'journals', todayISO));
-        if (journalSnap.exists()) {
-          setTodayJournal(journalSnap.data().text);
-        }
-      } catch (err) {
-        console.error('Error loading journal/lang:', err);
+    try {
+      const userDoc = await getDoc(doc(db, 'users', u.uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        setLang(data.language || 'en-IN');
+        setStreak(data.streak || 0); // ✅ ADD THIS LINE
       }
-    });
-    return () => unsub();
-  }, [todayISO]);
+
+      const journalSnap = await getDoc(doc(db, 'users', u.uid, 'journals', todayISO));
+      if (journalSnap.exists()) {
+        setTodayJournal(journalSnap.data().text);
+      }
+    } catch (err) {
+      console.error('Error loading journal/lang:', err);
+    }
+  });
+
+  return () => unsub();
+}, [todayISO]);
+
 
   useEffect(() => {
     if (!user) return;
@@ -152,7 +158,8 @@ const handleCreateEntry = () => {
 return (
   <div className="journal-page bg-gradient-to-br from-pink-50 via-rose-50 to-fuchsia-50 min-h-screen pt-0">
     {/* 🌸 Navbar */}
-    <Navbar />
+    <Navbar lang={lang} streak={streak} />
+
 
     {/* Page Heading + Description */}
     <div className="max-w-4xl mx-auto px-4 mt-6">

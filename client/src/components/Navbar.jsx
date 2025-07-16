@@ -3,10 +3,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getAyurvedaPath, getYogaPath } from "./utils/pathUtils.js";
+import navbarTranslations from "../translations/navbarTranslations"; // ✅ NEW
 
-const pulse = {
-  pulse: { scale: [1, 1.1, 1], transition: { duration: 1.6, repeat: Infinity } },
-};
 const pulseVariants = {
   pulse: {
     scale: [1, 1.05, 1],
@@ -19,8 +17,9 @@ const pulseVariants = {
   }
 };
 
-const Navbar = ({ translations, streak = 0 }) => {
+const Navbar = ({ lang = "en-IN", streak = 0 }) => {
   const navigate = useNavigate();
+  const t = navbarTranslations[lang] || navbarTranslations["en-IN"];
 
   return (
     <motion.nav
@@ -33,39 +32,37 @@ const Navbar = ({ translations, streak = 0 }) => {
         whileHover={{ scale: 1.05 }}
         className="text-3xl font-extrabold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent tracking-wide"
       >
-        {translations?.title || 'Janani Aarogya'}
+        {t.title}
       </motion.h1>
 
       <div className="flex gap-4 items-center text-sm font-semibold text-gray-700">
         {streak > 0 && (
-  <motion.span 
-    className="..."
-    variants={pulseVariants}
-    animate="pulse"
-  >
-    🔥 {streak}-{translations?.dayStreak || 'day Streak'}
-  </motion.span>
-)}
-
+          <motion.span className="bg-yellow-100 text-rose-600 px-3 py-1 rounded-full shadow-sm"
+            variants={pulseVariants}
+            animate="pulse"
+          >
+            🔥 {streak} {t.dayStreak}
+          </motion.span>
+        )}
 
         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
           className="hover:text-pink-600" onClick={() => navigate("/journal")}>
-          {translations?.journal || 'Journal'}
+          {t.journal}
         </motion.button>
 
         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
           className="hover:text-pink-600" onClick={() => navigate("/memory-vault")}>
-          {translations?.memoryVault || 'Memory Vault'}
+          {t.memoryVault}
         </motion.button>
 
         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
           className="hover:text-pink-600" onClick={() => navigate(getAyurvedaPath())}>
-          {translations?.ayurveda || 'Ayurveda'}
+          {t.ayurveda}
         </motion.button>
 
         <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
           className="hover:text-pink-600" onClick={() => navigate(getYogaPath())}>
-          {translations?.yoga || 'Yoga'}
+          {t.yoga}
         </motion.button>
 
         <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
