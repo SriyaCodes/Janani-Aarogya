@@ -49,7 +49,7 @@ function InputSection({ onReply }) {
     synth.cancel();
     const uttr    = new SpeechSynthesisUtterance(text);
     uttr.lang     = lang;
-    uttr.rate     = 0.9;
+    uttr.rate     = 1.0;
     uttr.pitch    = 1.0;
     const voices  = synth.getVoices();
     const voice   =

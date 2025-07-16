@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import InputSection from './InputSection';
 import { getAuth } from 'firebase/auth';
 import { collection, doc, getDocs, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+
+import { getYogaPath, getAyurvedaPath } from "./utils/pathUtils";
 import { db } from '../firebase';
 import dayjs from 'dayjs';
 import Confetti from 'react-confetti';
@@ -792,6 +794,41 @@ const pulseVariants = {
 function Dashboard() {
   const [aiReply, setAiReply] = useState('');
   const [stage, setStage] = useState('');
+  const [loadingStage, setLoadingStage] = useState(true); // ✅ NEW
+
+  const getYogaPath = () =>
+    stage === 'prepregnancy'
+      ? '/preconception-yoga'
+      : stage === 'pregnancy'
+      ? '/pregnancy-yoga'
+      : '/post-yoga';
+
+  const getAyurvedaPath = () =>
+    stage === 'prepregnancy'
+      ? '/preconception-ayurveda'
+      : stage === 'pregnancy'
+      ? '/pregnancy-ayurveda'
+      : '/post-ayurveda';
+
+  const getPathFromKey = (key) => {
+    switch (key) {
+      case 'dashboard':
+        return '/dashboard';
+      case 'journal':
+        return '/journal';
+      case 'memoryVault':
+        return '/memory-vault';
+      case 'profile':
+        return '/profile';
+      case 'yoga':
+        return getYogaPath(); // ✅ dynamic
+      case 'ayurveda':
+        return getAyurvedaPath(); // ✅ dynamic
+      default:
+        return null;
+    }
+  };
+
   const [checks, setChecks] = useState([]);
   const [streak, setStreak] = useState(0);
   const [reminderDate, setReminderDate] = useState('');
@@ -802,20 +839,18 @@ function Dashboard() {
   const [translations, setTranslations] = useState(TRANSLATIONS['en-IN']);
   const [nextVisitDate, setNextVisitDate] = useState(null);
   const [isAiReplying, setIsAiReplying] = useState(false);
-  
+
   const auth = getAuth();
   const navigate = useNavigate();
   const { width, height } = useWindowSize();
 
-  // Load saved reminder function
   const loadSavedReminder = async () => {
     const user = auth.currentUser;
     if (!user) return;
-    
     try {
       const reminderRef = collection(db, 'users', user.uid, 'reminders');
       const querySnapshot = await getDocs(reminderRef);
-      
+
       if (!querySnapshot.empty) {
         let latestReminder = null;
         querySnapshot.forEach((doc) => {
@@ -824,39 +859,35 @@ function Dashboard() {
             latestReminder = data;
           }
         });
-        
+
         if (latestReminder) {
           setReminderDate(latestReminder.date);
           setReminderFreq(latestReminder.frequency || 'once');
         }
       }
     } catch (error) {
-      console.error("Error loading reminders:", error);
+      console.error('Error loading reminders:', error);
     }
   };
 
-  // Calculate days remaining effect
   useEffect(() => {
     if (!reminderDate) return;
-    
     const today = dayjs();
     const visitDate = dayjs(reminderDate);
     const daysDiff = visitDate.diff(today, 'day');
-    
+
     setNextVisitDate({
       date: visitDate.format('DD MMMM YYYY'),
-      daysRemaining: daysDiff
+      daysRemaining: daysDiff,
     });
   }, [reminderDate]);
 
-  // Load language preference
   useEffect(() => {
     const savedLang = localStorage.getItem('lang') || 'en-IN';
     setLanguage(savedLang);
     setTranslations(TRANSLATIONS[savedLang] || TRANSLATIONS['en-IN']);
   }, []);
 
-  // Load checklist items
   const CHECK_ITEMS = translations.checklistItems;
   const todayKey = () => `checklist_${new Date().toISOString().split('T')[0]}`;
 
@@ -872,7 +903,6 @@ function Dashboard() {
     }
   }, [CHECK_ITEMS.length]);
 
-  // Auth state and initial data loading
   useEffect(() => {
     const unsub = auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -883,6 +913,7 @@ function Dashboard() {
           setStage(d.stage || 'prepregnancy');
           setStreak(d.streak || 0);
         }
+        setLoadingStage(false); // ✅ ADDED
       }
     });
     return () => unsub();
@@ -913,9 +944,9 @@ function Dashboard() {
 
   const getVisitStatusText = () => {
     if (!nextVisitDate) return translations.noVisitScheduled;
-    
+
     const { date, daysRemaining } = nextVisitDate;
-    
+
     if (daysRemaining === 0) {
       return translations.visitToday;
     } else if (daysRemaining > 0) {
@@ -948,9 +979,9 @@ function Dashboard() {
         email: user.email,
         date: reminderDate,
         frequency: reminderFreq,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
-      
+
       setMsg({ type: 'success', text: translations.reminderSuccess || 'Reminder saved!' });
       setTimeout(() => setMsg(null), 3000);
     } catch (err) {
@@ -967,19 +998,11 @@ function Dashboard() {
     }, 500);
   };
 
-  const getAyurvedaPath = () =>
-    stage === 'prepregnancy'
-      ? '/preconception-ayurveda'
-      : stage === 'pregnancy'
-      ? '/pregnancy-ayurveda'
-      : '/post-ayurveda';
+  // ✅ BLOCK RENDER UNTIL STAGE IS LOADED
+  if (loadingStage) {
+    return <div className="text-center mt-10 text-pink-600 font-semibold text-lg">Loading...</div>;
+  }
 
-  const getYogaPath = () =>
-    stage === 'prepregnancy'
-      ? '/preconception-yoga'
-      : stage === 'pregnancy'
-      ? '/pregnancy-yoga'
-      : '/post-yoga';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-pink-100 relative overflow-x-hidden">
@@ -1408,104 +1431,53 @@ function Dashboard() {
             </motion.div>
           )}
         </AnimatePresence>
+{stage ? (
+  <motion.div 
+    className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4"
+    variants={containerVariants}
+    initial="hidden"
+    animate="visible"
+  >
+    {translations.features.map(({ key, title, desc, link }) => {
+      let finalPath;
+if (key === 'yoga') {
+  finalPath = getYogaPath();
+} else if (key === 'ayurveda') {
+  finalPath = getAyurvedaPath();
+} else {
+  finalPath = link || `/${key}`;
+}
 
-        {/* Enhanced Features Grid */}
-        <motion.div 
-          className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {translations.features.map(({ key, title, desc, link }, index) => {
-            let path = link;
-            if (!path) {
-              if (key === 'yoga') path = getYogaPath();
-              if (key === 'ayurveda') path = getAyurvedaPath();
-            }
-            return (
-              <motion.div 
-                key={key || title} 
-                variants={itemVariants}
-                className="group cursor-pointer"
-                whileHover="hover"
-                initial="rest"
-                animate="rest"
+
+      return (
+        <motion.div key={key || title} className="group cursor-pointer" variants={itemVariants}>
+          <motion.div className="bg-white/80 shadow-lg rounded-2xl border border-pink-200 overflow-hidden">
+            <div className="relative">
+              <motion.img
+                src={FEATURE_IMAGES[key?.toLowerCase()] || '/assets/placeholder.png'}
+                alt={title}
+                className="w-full h-48 object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-pink-600 mb-3">{title}</h3>
+              <p className="text-gray-600 mb-4">{desc}</p>
+              <motion.button
+                onClick={() => navigate(finalPath)}
+                className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md"
               >
-                <motion.div 
-                  className="bg-white/80 backdrop-blur-sm shadow-lg rounded-2xl overflow-hidden border border-pink-200 transition-all duration-300"
-                  variants={cardHoverVariants}
-                >
-                  <div className="relative overflow-hidden">
-                    <motion.img
-                      src={FEATURE_IMAGES[key?.toLowerCase()] || '/assets/placeholder.png'}
-                      alt={title}
-                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </div>
-                  <div className="p-6">
-                    <motion.h3 
-                      className="text-xl font-bold mb-3 text-pink-600 group-hover:text-pink-700 transition-colors duration-200"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      {title}
-                    </motion.h3>
-                    <motion.p 
-                      className="text-gray-600 mb-4 leading-relaxed"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 + 0.1 }}
-                    >
-                      {desc}
-                    </motion.p>
-                    {path && (
-                      <motion.button 
-                        onClick={() => navigate(path)} 
-                        className="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition-all duration-200 transform group-hover:scale-105"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 + 0.2 }}
-                      >
-                        {translations.exploreNow}
-                      </motion.button>
-                    )}
-                  </div>
-                </motion.div>
-              </motion.div>
-            );
-          })}
+                {translations.exploreNow}
+              </motion.button>
+            </div>
+          </motion.div>
         </motion.div>
-
-        {/* Enhanced Footer Section */}
-        <motion.div 
-          className="mt-20 mb-10 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 0.8 }}
-        >
-          <div className="max-w-4xl mx-auto bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-pink-200">
-            <motion.h3 
-              className="text-2xl font-bold text-pink-600 mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.7 }}
-            >
-              {translations.downhead}
-            </motion.h3>
-            <motion.p 
-              className="text-gray-700 text-lg leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.9 }}
-            >
-             {translations.downcontent}
-            </motion.p>
-          </div>
-        </motion.div>
+      );
+    })}
+  </motion.div>
+) : (
+  <div className="text-center text-gray-500 py-10">Loading experience...</div>
+)}
 
       {/* Enhanced Confetti */}
       <AnimatePresence>
