@@ -6,9 +6,12 @@ import { db } from '../firebase';
 import {FaSeedling, FaShareAlt, FaBookmark, FaLeaf } from 'react-icons/fa';
 import translations from './PreAyurTranslations';
 
+import Navbar from '../components/Navbar';                   
+import navbarTranslations from '../translations/navbarTranslations'; 
 const PreConceptionAyurvedaPage = () => {
   const [userData, setUserData] = useState(null);
   const [language, setLanguage] = useState('en-IN');
+  const [streak, setStreak]   = useState(0);                  
   const [bookmarked, setBookmarked] = useState([]);
   const auth = getAuth();
   const t = translations[language] || translations['en-IN'];
@@ -893,6 +896,7 @@ const PreConceptionAyurvedaPage = () => {
           if (docSnap.exists()) {
             setUserData(docSnap.data());
             setLanguage(docSnap.data().language || 'en-IN');
+            setStreak(docSnap.streak || 0); 
             setBookmarked(docSnap.data().bookmarkedRemedies || []);
           }
         }
@@ -919,7 +923,12 @@ const PreConceptionAyurvedaPage = () => {
     };
   
     return (
-      <div className="min-h-screen bg-gradient-to-b from-green-50 to-teal-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-teal-50">
+
+    {/* ✅ Place Navbar outside the padded container to avoid extra spacing */}
+    <Navbar title={t.title} streak={0} lang={language} />
+
+    <div className="p-4 md:p-8">
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1010,7 +1019,7 @@ const PreConceptionAyurvedaPage = () => {
             </p>
           </div>
         </div>
-      </div>
+      </div></div>
     );
   };
   

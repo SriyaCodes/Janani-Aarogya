@@ -5,12 +5,13 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { FaRegClock, FaSeedling } from 'react-icons/fa';
-
+import Navbar from '../components/Navbar';
+import navbarTranslations from '../translations/navbarTranslations'; 
 const PreConceptionYogaPage = () => {
   const [userData, setUserData] = useState(null);
   const [language, setLanguage] = useState('en-IN');
+   const [streak, setStreak]   = useState(0); 
   const auth = getAuth();
-
   useEffect(() => {
     const fetchUserData = async () => {
       if (auth.currentUser) {
@@ -18,6 +19,7 @@ const PreConceptionYogaPage = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUserData(docSnap.data());
+          setStreak(docSnap.streak || 0); 
           setLanguage(docSnap.data().language || 'en-IN');
         }
       }
@@ -729,13 +731,6 @@ const PreConceptionYogaPage = () => {
 ]
 
 
-
-
-
-
-
-
-
   };
 
   const poses = yogaData[language] || yogaData['en-IN'];
@@ -814,86 +809,94 @@ const localizedText = {
   }
 };
 
-return (
-  <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-4 md:p-8">
-    <motion.header
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mb-8 text-center"
-    >
-      <h1 className="text-3xl font-bold text-purple-800 mb-2">
-        {localizedText.heading[language]}
-      </h1>
-      <p className="text-gray-600">
-        {localizedText.subtitle[language]}
-      </p>
-    </motion.header>
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+      {/* ✅ Navbar placed outside the padded content */}
+      <Navbar title={navbarTranslations[language]?.yoga || 'Yoga'} streak={streak} lang={language} />
 
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
-      {poses.map((pose) => (
-        <motion.div
-          key={pose.id}
-          variants={itemVariants}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.98 }}
-          className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
+      <div className="p-4 md:p-8">
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 text-center"
         >
-          <div className="h-48 bg-purple-100 flex items-center justify-center relative">
-           <img
-    src={pose.image}
-    alt={pose.title}
-    className="h-full w-full object-cover"
-  />
-          </div>
-          <div className="p-5">
-            <h3 className="text-xl font-semibold text-purple-700 mb-2">{pose.title}</h3>
-            <div className="flex items-center mb-3">
-              <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded mr-2 flex items-center">
-                <FaRegClock className="mr-1" /> {pose.duration}
-              </span>
-              <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded flex items-center">
-                <FaSeedling className="mr-1" /> {pose.level}
-              </span>
-            </div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-2">
-              {localizedText.benefits[language]}
-            </h4>
-            <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
-              {pose.benefits.map((benefit, i) => <li key={i}>{benefit}</li>)}
-            </ul>
-            <h4 className="text-lg font-semibold text-gray-800 mb-2">
-              {localizedText.steps[language]}
-            </h4>
-            <ol className="list-decimal pl-5 space-y-1 text-gray-700 mb-4">
-              {pose.steps.map((step, i) => <li key={i}>{step}</li>)}
-            </ol>
-            <h4 className="text-lg font-semibold text-gray-800 mb-2">
-              {localizedText.precautions[language]}
-            </h4>
-            <p className="text-red-600">{pose.precautions}</p>
-          </div>
-        </motion.div>
-      ))}
-    </motion.div>
+          <h1 className="text-3xl font-bold text-purple-800 mb-2">
+            {localizedText.heading[language]}
+          </h1>
+          <p className="text-gray-600">
+            {localizedText.subtitle[language]}
+          </p>
+        </motion.header>
 
-    <div className="mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
-      <h2 className="text-xl font-semibold text-purple-800 mb-4">
-        {localizedText.tipHeading[language]}
-      </h2>
-      <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-        <p className="text-purple-800">
-          {localizedText.tipText[language]}
-        </p>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
+          {poses.map((pose) => (
+            <motion.div
+              key={pose.id}
+              variants={itemVariants}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-white rounded-xl shadow-lg overflow-hidden transition-all"
+            >
+              <div className="h-48 bg-purple-100 flex items-center justify-center relative">
+                <img
+                  src={pose.image}
+                  alt={pose.title}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="text-xl font-semibold text-purple-700 mb-2">{pose.title}</h3>
+                <div className="flex items-center mb-3">
+                  <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded mr-2 flex items-center">
+                    <FaRegClock className="mr-1" /> {pose.duration}
+                  </span>
+                  <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded flex items-center">
+                    <FaSeedling className="mr-1" /> {pose.level}
+                  </span>
+                </div>
+
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                  {localizedText.benefits[language]}
+                </h4>
+                <ul className="list-disc pl-5 space-y-1 text-gray-700 mb-4">
+                  {pose.benefits.map((benefit, i) => <li key={i}>{benefit}</li>)}
+                </ul>
+
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                  {localizedText.steps[language]}
+                </h4>
+                <ol className="list-decimal pl-5 space-y-1 text-gray-700 mb-4">
+                  {pose.steps.map((step, i) => <li key={i}>{step}</li>)}
+                </ol>
+
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                  {localizedText.precautions[language]}
+                </h4>
+                <p className="text-red-600">{pose.precautions}</p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        <div className="mt-12 bg-white rounded-xl shadow-md p-6 max-w-4xl mx-auto">
+          <h2 className="text-xl font-semibold text-purple-800 mb-4">
+            {localizedText.tipHeading[language]}
+          </h2>
+          <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+            <p className="text-purple-800">
+              {localizedText.tipText[language]}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-);
-}
+  );
+};
 
 export default PreConceptionYogaPage;
