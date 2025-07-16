@@ -5,9 +5,11 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { FaBookmark, FaLeaf, FaBaby } from 'react-icons/fa';
 import translations from './Pregtranslations';
-
+import Navbar from '../components/Navbar';
+import navbarTranslations from '../translations/navbarTranslations'; 
 const PregAyurvedaPage = () => {
   const [userData, setUserData] = useState(null);
+  const [streak, setStreak]   = useState(0); 
   const [language, setLanguage] = useState('en-IN');
   const [bookmarked, setBookmarked] = useState([]);
   const [trimester, setTrimester] = useState(1);
@@ -839,6 +841,7 @@ const PregAyurvedaPage = () => {
         if (docSnap.exists()) {
           setUserData(docSnap.data());
           setLanguage(docSnap.data().language || 'en-IN');
+          setStreak(docSnap.streak || 0); 
           setBookmarked(docSnap.data().bookmarkedRemedies || []);
           
           if (docSnap.data().pregnancyStartDate) {
@@ -873,7 +876,14 @@ const PregAyurvedaPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-teal-50 p-4 md:p-8">
+     <div className="min-h-screen bg-gradient-to-b from-green-50 to-teal-50">
+
+    {/* ✅ Place Navbar outside the padded container to avoid extra spacing */}
+    <Navbar
+  translations={navbarTranslations[language] || navbarTranslations['en-IN']}
+  streak={streak}
+/>
+
       <motion.header
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -6,12 +6,14 @@ import { db } from '../firebase';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { FaRegClock, FaBaby } from 'react-icons/fa';
 import translations from './PregYogaTransaltions';
+import Navbar from '../components/Navbar';
+import navbarTranslations from '../translations/navbarTranslations'; 
 const PregYogaPage = () => {
   const [userData, setUserData] = useState(null);
   const [language, setLanguage] = useState('en-IN');
   const [trimester, setTrimester] = useState(1);
   const auth = getAuth();
-  
+  const [streak, setStreak]   = useState(0);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -20,8 +22,8 @@ const PregYogaPage = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUserData(docSnap.data());
+          setStreak(docSnap.streak || 0);
           setLanguage(docSnap.data().language || 'en-IN');
-
           if (docSnap.data().pregnancyStartDate) {
             const pregnancyStart = new Date(docSnap.data().pregnancyStartDate);
             const weeksPregnant = Math.floor((new Date() - pregnancyStart) / (7 * 24 * 60 * 60 * 1000));
@@ -771,10 +773,14 @@ const PregYogaPage = () => {
 const trimesterPoses = yogaData[language]?.[trimester] || yogaData['en-IN'][trimester];
 
 return (
-  <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 p-4 md:p-8">
-    <motion.header
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
+ <div className="min-h-screen bg-gradient-to-b from-purple-50 to-pink-50">
+      {/* ✅ Navbar placed outside the padded content */}
+      <Navbar title={navbarTranslations[language]?.yoga || 'Yoga'} streak={streak} lang={language} />
+
+      <div className="p-4 md:p-8">
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="mb-8 text-center"
     >
@@ -841,10 +847,12 @@ return (
       <div className="bg-pink-50 p-4 rounded-lg border border-pink-200">
         <p className="text-pink-800">
           {translations.tips[trimester]?.[language] || translations.tips[trimester]?.['en-IN']}
-        </p>
+          </p>
+        </div>
+        </div>
       </div>
     </div>
-  </div>
-);
-}
+  );
+};
+
 export default PregYogaPage;
