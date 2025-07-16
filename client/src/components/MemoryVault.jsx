@@ -4,7 +4,8 @@ import {
   collection,
   getDocs,
   orderBy,
-  query
+  query,
+  getDoc,
 } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
@@ -62,15 +63,31 @@ const MemoryVault = () => {
       setLoading(false);
 
       // Calculate streak
-      let currentStreak = 0;
-      const today = new Date();
-      for (let i = 0; i < data.length; i++) {
-        const entryDate = new Date(data[i].id);
-        const diff = Math.floor((today - entryDate) / 86_400_000);
-        if (diff === currentStreak) currentStreak++;
-        else break;
-      }
-      setStreak(currentStreak);
+      const sorted = [...data].sort((a, b) => {
+  const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt);
+  const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt);
+  return dateB - dateA;
+});
+
+let streak = 0;
+let currentDate = new Date();
+currentDate.setHours(0, 0, 0, 0); // 🔥 Normalize to 00:00:00
+
+for (let j of sorted) {
+  const entryDate = new Date(j.createdAt?.toDate?.() || j.createdAt);
+  entryDate.setHours(0, 0, 0, 0); // 🔥 Also normalize this
+
+  // ✅ Strict date match
+  if (entryDate.getTime() === currentDate.getTime()) {
+    streak++;
+    currentDate.setDate(currentDate.getDate() - 1); // Move 1 day back
+  } else {
+    break;
+  }
+}
+
+setStreak(streak);
+
     };
 
     fetchJournals();
