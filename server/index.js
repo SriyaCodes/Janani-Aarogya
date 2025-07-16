@@ -21,6 +21,10 @@ app.use(morgan('dev'));
 app.use('/api/gemini', geminiRoute);
 
 const PORT = process.env.PORT || 5000;
+app.get('/', (req, res) => {
+  res.send('✅ Janani Backend is Running!');
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
