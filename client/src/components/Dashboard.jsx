@@ -3,7 +3,7 @@
   import { useNavigate } from 'react-router-dom';
   import InputSection from './InputSection';
   import { getAuth } from 'firebase/auth';
-  import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+  import { collection,doc,getDocs, getDoc, setDoc, updateDoc } from 'firebase/firestore';
   import { db } from '../firebase';
   import dayjs from 'dayjs';
   import Confetti from 'react-confetti';
@@ -41,6 +41,11 @@
       reminderTitle: '🗓 डॉक्टर-दौरा अनुस्मारक',
       reminderLabel: 'दौरा तिथि',
       repeatLabel: 'दोहराएं',
+      daysRemaining: 'डॉक्टर के दौरे में {days} दिन शेष',
+    nextVisitOn: 'आपका अगला चेकअप {date} को है',
+    visitToday: 'आज आपका डॉक्टर का दौरा है!',
+    visitPassed: 'आपका डॉक्टर का दौरा {days} दिन पहले था',
+    noVisitScheduled: 'कोई डॉक्टर दौरा निर्धारित नहीं है',
       frequencyOptions: [
         { value: 'once', label: 'एक बार' },
         { value: 'weekly', label: 'साप्ताहिक' },
@@ -95,6 +100,12 @@
       reminderTitle: '🗓 Doctor-Visit Reminder',
       reminderLabel: 'Visit Date',
       repeatLabel: 'Repeat',
+      daysRemaining: '{days} days left for the doctor visit',
+nextVisitOn: 'Your next check-up is on {date}',
+visitToday: 'Your doctor visit is today!',
+visitPassed: 'Your doctor visit was {days} days ago',
+noVisitScheduled: 'No doctor visit is scheduled'
+,
       frequencyOptions: [
         { value: 'once', label: 'Once' },
         { value: 'weekly', label: 'Weekly' },
@@ -145,6 +156,12 @@
     reminderTitle: '🗓 மருத்துவர்-பார்வை நினைவூட்டல்',
     reminderLabel: 'பார்வை தேதி',
     repeatLabel: 'மீண்டும்',
+    daysRemaining: 'மருத்துவர் சந்திப்பிற்கு இன்னும் {days} நாட்கள் உள்ளன',
+nextVisitOn: 'உங்கள் அடுத்த சோதனை தேதி {date}',
+visitToday: 'இன்று உங்கள் மருத்துவர் சந்திப்பு!',
+visitPassed: 'உங்கள் மருத்துவர் சந்திப்பு {days} நாட்களுக்கு முன் நடைபெற்றது',
+noVisitScheduled: 'மருத்துவர் சந்திப்பு ஏதும் திட்டமிடப்படவில்லை'
+,
     frequencyOptions: [
       { value: 'once', label: 'ஒரு முறை' },
       { value: 'weekly', label: 'வாராந்திர' },
@@ -202,6 +219,12 @@
     reminderTitle: '🗓 డాక్టర్-విజిట్ రిమైండర్',
     reminderLabel: 'విజిట్ తేదీ',
     repeatLabel: 'పునరావృతం',
+    daysRemaining: 'డాక్టర్ సందర్శనకు ఇంకా {days} రోజులు మిగిలి ఉన్నాయి',
+nextVisitOn: 'మీ తదుపరి చెకప్ {date}న ఉంది',
+visitToday: 'ఈ రోజు మీ డాక్టర్ సందర్శన ఉంది!',
+visitPassed: 'మీ డాక్టర్ సందర్శనకు {days} రోజులైంది',
+noVisitScheduled: 'ఎటువంటి డాక్టర్ సందర్శన షెడ్యూల్ కాలేదు'
+,
     frequencyOptions: [
       { value: 'once', label: 'ఒక్కసారి' },
       { value: 'weekly', label: 'వారానికోసారి' },
@@ -258,6 +281,12 @@
     reminderTitle: '🗓 ವೈದ್ಯರ ಭೇಟಿ ಜ್ಞಾಪನೆ',
     reminderLabel: 'ಭೇಟಿ ದಿನಾಂಕ',
     repeatLabel: 'ಪುನರಾವರ್ತಿಸಿ',
+    daysRemaining: 'ಡಾಕ್ಟರ್ ಭೇಟಿ ಮಾಡಲು ಇನ್ನೂ {days} ದಿನಗಳಿವೆ',
+nextVisitOn: 'ನಿಮ್ಮ ಮುಂದಿನ ತಪಾಸಣೆ {date}ರಂದು ಇದೆ',
+visitToday: 'ಇಂದು ನಿಮ್ಮ ಡಾಕ್ಟರ್ ಭೇಟಿಯಿದೆ!',
+visitPassed: 'ನಿಮ್ಮ ಡಾಕ್ಟರ್ ಭೇಟಿ {days} ದಿನಗಳ ಹಿಂದೆ ನಡೆಯಿತು',
+noVisitScheduled: 'ಯಾವುದೇ ಡಾಕ್ಟರ್ ಭೇಟಿ ನಿರ್ಧರಿಸಲ್ಪಟ್ಟಿಲ್ಲ'
+,
     frequencyOptions: [
       { value: 'once', label: 'ಒಮ್ಮೆ' },
       { value: 'weekly', label: 'ಸಾಪ್ತಾಹಿಕ' },
@@ -315,6 +344,12 @@
     reminderTitle: '🗓 डॉक्टर भेटीची आठवण',
     reminderLabel: 'भेटीची तारीख',
     repeatLabel: 'पुनरावृत्ती',
+    daysRemaining: 'डॉक्टरांच्या भेटीसाठी अजून {days} दिवस उरले आहेत',
+nextVisitOn: 'तुमची पुढील तपासणी {date} रोजी आहे',
+visitToday: 'आज तुमची डॉक्टरांची भेट आहे!',
+visitPassed: 'तुमची डॉक्टरांची भेट {days} दिवसांपूर्वी झाली होती',
+noVisitScheduled: 'कोणतीही डॉक्टर भेट नियोजित नाही'
+,
     frequencyOptions: [
       { value: 'once', label: 'एकदा' },
       { value: 'weekly', label: 'साप्ताहिक' },
@@ -371,6 +406,12 @@
     reminderTitle: '🗓 ડૉક્ટરની મુલાકાતની યાદ અપાવનાર',
     reminderLabel: 'મુલાકાત તારીખ',
     repeatLabel: 'પુનરાવર્તન',
+    daysRemaining: 'ડૉક્ટર મુલાકાત માટે હજુ {days} દિવસ બાકી છે',
+nextVisitOn: 'તમારી આગામી ચકાસણી {date}ના રોજ છે',
+visitToday: 'આજે તમારી ડૉક્ટર મુલાકાત છે!',
+visitPassed: 'તમારી ડૉક્ટર મુલાકાતને {days} દિવસ થઈ ગયા',
+noVisitScheduled: 'કોઈ ડૉક્ટર મુલાકાત નક્કી નથી'
+,
     frequencyOptions: [
       { value: 'once', label: 'એક વાર' },
       { value: 'weekly', label: 'સાપ્તાહિક' },
@@ -427,6 +468,12 @@
     reminderTitle: '🗓 ডাক্তারের ভিজিট রিমাইন্ডার',
     reminderLabel: 'ভিজিটের তারিখ',
     repeatLabel: 'পুনরাবৃত্তি',
+    daysRemaining: 'ডাক্তারের ভিজিটে এখনও {days} দিন বাকি',
+nextVisitOn: 'আপনার পরবর্তী চেকআপ {date} তারিখে নির্ধারিত',
+visitToday: 'আজ আপনার ডাক্তারের ভিজিট আছে!',
+visitPassed: 'আপনার ডাক্তারের ভিজিট {days} দিন আগে হয়েছিল',
+noVisitScheduled: 'কোনো ডাক্তারের ভিজিট নির্ধারিত নেই'
+,
     frequencyOptions: [
       { value: 'once', label: 'একবার' },
       { value: 'weekly', label: 'সাপ্তাহিক' },
@@ -483,6 +530,12 @@
     reminderTitle: '🗓 ഡോക്ടർ വിസിറ്റ് ഓർമ്മിപ്പിക്കൽ',
     reminderLabel: 'വിഷിറ്റിന്റെ തീയതി',
     repeatLabel: 'പുനരാവൃത്തി',
+    daysRemaining: 'ഡോക്ടറെ സന്ദർശിക്കാൻ ഇനി {days} ദിവസമാണ് ബാക്കി',
+nextVisitOn: 'നിങ്ങളുടെ അടുത്ത പരിശോധ {date}നാണ്',
+visitToday: 'ഇന്ന് നിങ്ങളുടെ ഡോക്ടർ സന്ദർശനമാണ്!',
+visitPassed: 'നിങ്ങളുടെ ഡോക്ടർ സന്ദർശനം {days} ദിവസം മുമ്പ് ആയിരുന്നു',
+noVisitScheduled: 'ഏത് ഡോക്ടർ സന്ദർശവും നിശ്ചയിച്ചിട്ടില്ല'
+,
     frequencyOptions: [
       { value: 'once', label: 'ഒരിക്കല്‍' },
       { value: 'weekly', label: 'ആഴ്ചയില്‍ ഒന്ന്' },
@@ -539,6 +592,12 @@
     reminderTitle: '🗓 ਡਾਕਟਰ ਦੌਰੇ ਦੀ ਯਾਦ ਦਿਵਾਈ',
     reminderLabel: 'ਮਿਲਣ ਦੀ ਤਾਰੀਖ',
     repeatLabel: 'ਦੁਹਰਾਉਣਾ',
+    daysRemaining: 'ਡਾਕਟਰ ਦੀ ਮੁਲਾਕਾਤ ਲਈ ਹੋਰ {days} ਦਿਨ ਬਾਕੀ ਹਨ',
+nextVisitOn: 'ਤੁਹਾਡੀ ਅਗਲੀ ਜਾਂਚ {date} ਨੂੰ ਹੈ',
+visitToday: 'ਅੱਜ ਤੁਹਾਡੀ ਡਾਕਟਰ ਨਾਲ ਮੁਲਾਕਾਤ ਹੈ!',
+visitPassed: 'ਤੁਹਾਡੀ ਡਾਕਟਰ ਦੀ ਮੁਲਾਕਾਤ {days} ਦਿਨ ਪਹਿਲਾਂ ਹੋਈ ਸੀ',
+noVisitScheduled: 'ਕੋਈ ਵੀ ਡਾਕਟਰ ਦੀ ਮੁਲਾਕਾਤ ਨਿਯਤ ਨਹੀਂ ਕੀਤੀ ਗਈ'
+,
     frequencyOptions: [
       { value: 'once', label: 'ਇੱਕ ਵਾਰੀ' },
       { value: 'weekly', label: 'ਹਫਤਾਵਾਰ' },
@@ -595,19 +654,64 @@
     const [showConfetti, setShowConfetti] = useState(false);
     const [language, setLanguage] = useState('en-IN');
     const [translations, setTranslations] = useState(TRANSLATIONS['en-IN']);
-
+    const [nextVisitDate, setNextVisitDate] = useState(null);
+    
     const auth = getAuth();
     const navigate = useNavigate();
     const { width, height } = useWindowSize();
 
+    // Load saved reminder function
+    const loadSavedReminder = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      
+      try {
+        const reminderRef = collection(db, 'users', user.uid, 'reminders');
+        const querySnapshot = await getDocs(reminderRef);
+        
+        if (!querySnapshot.empty) {
+          // Get the most recent reminder
+          let latestReminder = null;
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (!latestReminder || new Date(data.date) > new Date(latestReminder.date)) {
+              latestReminder = data;
+            }
+          });
+          
+          if (latestReminder) {
+            setReminderDate(latestReminder.date);
+            setReminderFreq(latestReminder.frequency || 'once');
+          }
+        }
+      } catch (error) {
+        console.error("Error loading reminders:", error);
+      }
+    };
+
+    // Calculate days remaining effect
+    useEffect(() => {
+      if (!reminderDate) return;
+      
+      const today = dayjs();
+      const visitDate = dayjs(reminderDate);
+      const daysDiff = visitDate.diff(today, 'day');
+      
+      setNextVisitDate({
+        date: visitDate.format('DD MMMM YYYY'),
+        daysRemaining: daysDiff
+      });
+    }, [reminderDate]);
+
+    // Load language preference
     useEffect(() => {
       const savedLang = localStorage.getItem('lang') || 'en-IN';
       setLanguage(savedLang);
       setTranslations(TRANSLATIONS[savedLang] || TRANSLATIONS['en-IN']);
     }, []);
 
+    // Load checklist items
     const CHECK_ITEMS = translations.checklistItems;
-
     const todayKey = () => `checklist_${new Date().toISOString().split('T')[0]}`;
 
     useEffect(() => {
@@ -622,14 +726,17 @@
       }
     }, [CHECK_ITEMS.length]);
 
+    // Auth state and initial data loading
     useEffect(() => {
       const unsub = auth.onAuthStateChanged(async (user) => {
-        if (!user) return;
-        const snap = await getDoc(doc(db, 'users', user.uid));
-        if (snap.exists()) {
-          const d = snap.data();
-          setStage(d.stage || 'prepregnancy');
-          setStreak(d.streak || 0);
+        if (user) {
+          await loadSavedReminder();
+          const snap = await getDoc(doc(db, 'users', user.uid));
+          if (snap.exists()) {
+            const d = snap.data();
+            setStage(d.stage || 'prepregnancy');
+            setStreak(d.streak || 0);
+          }
         }
       });
       return () => unsub();
@@ -658,6 +765,29 @@
       setStreak(newStreak);
     };
 
+    const getVisitStatusText = () => {
+      if (!nextVisitDate) return translations.noVisitScheduled;
+      
+      const { date, daysRemaining } = nextVisitDate;
+      
+      if (daysRemaining === 0) {
+        return translations.visitToday;
+      } else if (daysRemaining > 0) {
+        return (
+          <>
+            <div className="text-lg font-medium text-blue-600">
+              {translations.daysRemaining.replace('{days}', daysRemaining)}
+            </div>
+            <div className="text-sm text-gray-600">
+              {translations.nextVisitOn.replace('{date}', date)}
+            </div>
+          </>
+        );
+      } else {
+        return translations.visitPassed.replace('{days}', Math.abs(daysRemaining));
+      }
+    };
+
     const saveReminder = async () => {
       const user = auth.currentUser;
       if (!user) return;
@@ -666,21 +796,23 @@
         return;
       }
       try {
-        await setDoc(
-          doc(db, 'users', user.uid, 'reminder', 'settings'),
-          {
-            email: user.email,
-            date: reminderDate,
-            frequency: reminderFreq,
-          },
-          { merge: true }
-        );
+        const reminderRef = doc(collection(db, 'users', user.uid, 'reminders'));
+        await setDoc(reminderRef, {
+          id: reminderRef.id,
+          email: user.email,
+          date: reminderDate,
+          frequency: reminderFreq,
+          createdAt: new Date().toISOString()
+        });
+        
         setMsg({ type: 'success', text: translations.reminderSuccess || 'Reminder saved!' });
       } catch (err) {
         console.error(err);
         setMsg({ type: 'error', text: translations.reminderError || 'Could not save reminder.' });
       }
     };
+
+    // ... rest of your component code remains the same ...
 
     const getAyurvedaPath = () =>
       stage === 'prepregnancy'
@@ -726,7 +858,7 @@
           <motion.img src={HeroImage} alt="Hero" className="w-full md:w-80 rounded-xl shadow-md object-cover" initial={{ x: 30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.4 }} />
         </motion.section>
 
-        {/* Input Section + AI Reply */}
+        {/* Input Section + AI Reply*/}
         <div className="mt-8 px-4">
           <div className="flex justify-center">
             <InputSection onReply={setAiReply} />
@@ -736,7 +868,18 @@
               <strong>{translations.jananiSays || 'Janani Says'}:</strong>
               <div>{aiReply}</div>
             </div>
-          )}
+          )} 
+          {/* Doctor Visit Countdown */}
+        {reminderDate && (
+          <div className="mt-6 max-w-xl mx-auto bg-white border-2 border-white-200 rounded-lg shadow-md p-4 text-center">
+            <h3 className="text-md font-semibold text-pink-600 mb-2">
+              {translations.reminderTitle}
+            </h3>
+            <div className="flex flex-col items-center justify-center">
+              {getVisitStatusText()}
+            </div>
+          </div>
+        )}
 
           {/* Checklist + Reminder */}
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
