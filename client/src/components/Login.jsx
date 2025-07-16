@@ -39,8 +39,14 @@ function Login() {
         userData.stage = data.stage || null;
       }
 
+      // 🌐 Save user data to localStorage
       localStorage.setItem("user", JSON.stringify(userData));
 
+      // ✅ Save individual keys used by navbar / pathUtils
+      if (userData.language) localStorage.setItem("lang", userData.language);
+      if (userData.stage) localStorage.setItem("stage", userData.stage);
+
+      // ⛳ Redirect based on what’s missing
       if (!userData.language) {
         navigate("/language-selector");
       } else if (!userData.stage) {
@@ -59,16 +65,15 @@ function Login() {
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-cover bg-center p-4"
-      style={{
-        backgroundImage: `url(${bgCurves})`,
-      }}
+      style={{ backgroundImage: `url(${bgCurves})` }}
     >
       <div className="flex flex-col md:flex-row bg-white rounded-2xl shadow-lg overflow-hidden w-full max-w-4xl">
-
         {/* Left: Form */}
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-3xl font-bold text-purple-600 mb-2">Log In</h2>
-          <p className="text-sm text-gray-500 mb-6">Welcome back! Please enter your details.</p>
+          <p className="text-sm text-gray-500 mb-6">
+            Welcome back! Please enter your details.
+          </p>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <input
@@ -80,7 +85,6 @@ function Login() {
               onChange={onChange}
               required
             />
-
             <input
               name="password"
               type="password"
@@ -91,7 +95,6 @@ function Login() {
               minLength={6}
               required
             />
-
             <button
               type="submit"
               disabled={loading}
