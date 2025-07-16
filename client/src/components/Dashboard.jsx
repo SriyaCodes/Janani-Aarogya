@@ -1139,98 +1139,85 @@ function Dashboard() {
         </motion.div>
       </motion.section>
 
-      {/* Enhanced AI Input Section - Made More Prominent */}
-      <motion.div 
-        className="mt-12 px-4"
-        initial={{ opacity: 0, y: 50 }}
+   {/* Enhanced AI Input Section - No Continuous Movement */}
+<motion.div 
+  className="mt-12 px-4"
+  initial={{ opacity: 0, y: 50 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.8, duration: 0.8 }}
+>
+  <div className="max-w-4xl mx-auto mb-8">
+    <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-8 rounded-2xl shadow-2xl">
+      
+      <motion.h2 
+        className="text-3xl font-bold text-white text-center mb-6"
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.8 }}
+        transition={{ delay: 1, duration: 0.6 }}
       >
-        <motion.div 
-          className="max-w-4xl mx-auto mb-8"
-          variants={pulseVariants}
-          animate="pulse"
-        >
-          <div className="bg-gradient-to-r from-pink-500 to-rose-500 p-8 rounded-2xl shadow-2xl">
-            <motion.h2 
-              className="text-3xl font-bold text-white text-center mb-6"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1, duration: 0.6 }}
-            >
-              💬 {translations.askJanani}
-            </motion.h2>
-            <motion.div 
-              className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/30"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.2, duration: 0.6 }}
-            >
-              <InputSection onReply={handleAiReply} />
-            </motion.div>
-          </div>
-        </motion.div>
-        </motion.div>
-        
+        💬 {translations.askJanani}
+      </motion.h2>
+
+      <motion.div 
+        className="bg-white/20 backdrop-blur-sm rounded-xl p-6 border border-white/30"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
+      >
+        <InputSection onReply={handleAiReply} />
+      </motion.div>
+
+    </div>
+  </div>
+</motion.div>
 
         {/* Enhanced AI Reply Section */}
-        <AnimatePresence>
-          {(aiReply || isAiReplying) && (
-            <motion.div
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -30, scale: 0.95 }}
-              transition={{ duration: 0.5 }}
-              className="max-w-4xl mx-auto mb-8"
-            >
-              <div className="bg-white/90 backdrop-blur-sm border-2 border-pink-200 rounded-2xl shadow-xl p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">J</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-pink-600">
-                    {translations.jananiSays}
-                  </h3>
-                </div>
-                {isAiReplying ? (
-                  <motion.div 
-                    className="flex items-center gap-2 text-gray-600"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  >
-                    <div className="flex gap-1">
-                      <motion.div 
-                        className="w-2 h-2 bg-pink-400 rounded-full"
-                        animate={{ scale: [1, 1.5, 1] }}
-                        transition={{ duration: 1, repeat: Infinity, delay: 0 }}
-                      />
-                      <motion.div 
-                        className="w-2 h-2 bg-pink-400 rounded-full"
-                        animate={{ scale: [1, 1.5, 1] }}
-                        transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
-                      />
-                      <motion.div 
-                        className="w-2 h-2 bg-pink-400 rounded-full"
-                        animate={{ scale: [1, 1.5, 1] }}
-                        transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
-                      />
-                    </div>
-                    <span className="text-sm">Janani is thinking...</span>
-                  </motion.div>
-                ) : (
-                  <motion.div 
-                    className="text-gray-800 text-lg leading-relaxed"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    {aiReply}
-                  </motion.div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="max-w-4xl mx-auto mb-8 min-h-[10px] transition-all duration-500">
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: aiReply || isAiReplying ? 1 : 0 }}
+    transition={{ duration: 0.4 }}
+    className={`bg-white/90 backdrop-blur-sm border-2 border-pink-200 rounded-2xl shadow-xl p-8 transition-all duration-300 ${
+      aiReply || isAiReplying ? 'block' : 'hidden'
+    }`}
+  >
+    <div className="flex items-center gap-3 mb-4">
+      <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
+        <span className="text-white font-bold">J</span>
+      </div>
+      <h3 className="text-xl font-semibold text-pink-600">
+        {translations.jananiSays}
+      </h3>
+    </div>
+
+    {isAiReplying ? (
+      <div className="flex items-center gap-2 text-gray-600">
+        <div className="flex gap-1">
+          <motion.div
+            className="w-2 h-2 bg-pink-400 rounded-full"
+            animate={{ scale: [1, 1.5, 1] }}
+            transition={{ duration: 1, repeat: Infinity, repeatType: "loop", delay: 0 }}
+          />
+          <motion.div
+            className="w-2 h-2 bg-pink-400 rounded-full"
+            animate={{ scale: [1, 1.5, 1] }}
+            transition={{ duration: 1, repeat: Infinity, repeatType: "loop", delay: 0.2 }}
+          />
+          <motion.div
+            className="w-2 h-2 bg-pink-400 rounded-full"
+            animate={{ scale: [1, 1.5, 1] }}
+            transition={{ duration: 1, repeat: Infinity, repeatType: "loop", delay: 0.4 }}
+          />
+        </div>
+        <span className="text-sm">Janani is thinking...</span>
+      </div>
+    ) : (
+      <div className="text-gray-800 text-lg leading-relaxed">
+        {aiReply}
+      </div>
+    )}
+  </motion.div>
+</div>
 
         {/* Enhanced Doctor Visit Countdown */}
         <AnimatePresence>
