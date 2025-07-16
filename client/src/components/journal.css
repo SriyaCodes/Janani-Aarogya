@@ -2,7 +2,7 @@
 
 /* Apply bg image to entire journal page */
 .journal-page {
-  background-image: url('/src/assets/journalbg.jpeg');
+ 
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
