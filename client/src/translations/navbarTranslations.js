@@ -3,6 +3,7 @@
 const navbarTranslations = {
   "en-IN": {
     title: "Janani Aarogya",
+    dashboard: "Dashboard",
     journal: "Journal",
     memoryVault: "Memory Vault",
     ayurveda: "Ayurveda",
@@ -11,6 +12,7 @@ const navbarTranslations = {
   },
   "hi-IN": {
     title: "जननी आरोग्य",
+    dashboard: "डैशबोर्ड",
     journal: "जर्नल",
     memoryVault: "मेमोरी वॉल्ट",
     ayurveda: "आयुर्वेद",
@@ -19,6 +21,7 @@ const navbarTranslations = {
   },
   "te-IN": {
     title: "జనని ఆరోగ్యo",
+    dashboard: "డాష్‌బోర్డ్",
     journal: "జర్నల్",
     memoryVault: "మెమరీ వాల్ట్",
     ayurveda: "ఆయుర్వేదం",
@@ -27,6 +30,7 @@ const navbarTranslations = {
   },
   "ta-IN": {
     title: "ஜனனி ஆரோக்யா",
+    dashboard: "டாஷ்போர்டு",
     journal: "ஜர்னல்",
     memoryVault: "நினைவகப் பெட்டி",
     ayurveda: "ஆயுர்வேதம்",
@@ -35,6 +39,7 @@ const navbarTranslations = {
   },
   "bn-IN": {
     title: "জননী আরোগ্য",
+    dashboard: "ড্যাশবোর্ড",
     journal: "জার্নাল",
     memoryVault: "মেমোরি ভল্ট",
     ayurveda: "আয়ুর্বেদ",
@@ -43,6 +48,7 @@ const navbarTranslations = {
   },
   "ml-IN": {
     title: "ജനനി ആരോഗ്യ",
+    dashboard: "ഡാഷ്ബോർഡ്",
     journal: "ജേര്‍ണല്‍",
     memoryVault: "മെമ്മറി വാള്‍ട്ട്",
     ayurveda: "ആയുര്‍വേദം",
@@ -51,6 +57,7 @@ const navbarTranslations = {
   },
   "kn-IN": {
     title: "ಜನನಿ ಆರೊಗ್ಯ",
+    dashboard: "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
     journal: "ಜನರಲ್",
     memoryVault: "ಮೆಮೊರಿ ವಾಲ್ಟ್",
     ayurveda: "ಆಯುರ್ವೆದ",
@@ -59,6 +66,7 @@ const navbarTranslations = {
   },
   "gu-IN": {
     title: "જનની આરોગ્ય",
+    dashboard: "ડેશબોર્ડ",
     journal: "જર્નલ",
     memoryVault: "મેમરી વૉલ્ટ",
     ayurveda: "આયુર્વેદ",
@@ -67,6 +75,7 @@ const navbarTranslations = {
   },
   "mr-IN": {
     title: "जननी आरोग्य",
+    dashboard: "डॅशबोर्ड",
     journal: "जर्नल",
     memoryVault: "स्मृती संग्रह",
     ayurveda: "आयुर्वेद",
@@ -75,6 +84,7 @@ const navbarTranslations = {
   },
   "pa-IN": {
     title: "ਜਨਨੀ ਆਰੋਗਿਆ",
+    dashboard: "ਡੈਸ਼ਬੋਰਡ",
     journal: "ਜਰਨਲ",
     memoryVault: "ਮੇਮੋਰੀ ਵਾਲਟ",
     ayurveda: "ਆਯੁਰਵੇਦ",

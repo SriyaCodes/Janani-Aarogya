@@ -3,7 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getAyurvedaPath, getYogaPath } from "./utils/pathUtils.js";
-import navbarTranslations from "../translations/navbarTranslations"; // ✅ NEW
+import navbarTranslations from "../translations/navbarTranslations"; // ✅ Translations
 
 const pulseVariants = {
   pulse: {
@@ -45,29 +45,57 @@ const Navbar = ({ lang = "en-IN", streak = 0 }) => {
           </motion.span>
         )}
 
-        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-          className="hover:text-pink-600" onClick={() => navigate("/journal")}>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="hover:text-pink-600"
+          onClick={() => navigate("/dashboard")}
+        >
+          {t.dashboard || "Dashboard"}
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="hover:text-pink-600"
+          onClick={() => navigate("/journal")}
+        >
           {t.journal}
         </motion.button>
 
-        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-          className="hover:text-pink-600" onClick={() => navigate("/memory-vault")}>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="hover:text-pink-600"
+          onClick={() => navigate("/memory-vault")}
+        >
           {t.memoryVault}
         </motion.button>
 
-        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-          className="hover:text-pink-600" onClick={() => navigate(getAyurvedaPath())}>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="hover:text-pink-600"
+          onClick={() => navigate(getAyurvedaPath())}
+        >
           {t.ayurveda}
         </motion.button>
 
-        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-          className="hover:text-pink-600" onClick={() => navigate(getYogaPath())}>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="hover:text-pink-600"
+          onClick={() => navigate(getYogaPath())}
+        >
           {t.yoga}
         </motion.button>
 
-        <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           className="w-10 h-10 bg-gradient-to-r from-pink-100 to-rose-100 text-pink-700 rounded-full flex items-center justify-center hover:shadow-lg"
-          onClick={() => navigate("/profile")}>
+          onClick={() => navigate("/profile")}
+        >
           👤
         </motion.button>
       </div>
