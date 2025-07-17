@@ -823,13 +823,6 @@ const PregAyurvedaPage = () => {
     }
   ]
 }
-
-
-
-
-
-
-
   };
 
   // Fetch user data
