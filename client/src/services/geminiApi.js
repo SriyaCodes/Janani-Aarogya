@@ -45,7 +45,7 @@ ${prompt}
 
     // ---------- Call your backend → Gemini -------------------------------
     const { data } = await axios.post(
-      'http://localhost:5000/api/gemini',
+      'https://janani-aarogya.vercel.app',
       { prompt: finalPrompt, lang }
     );
 
