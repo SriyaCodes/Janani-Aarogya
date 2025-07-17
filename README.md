@@ -9,7 +9,7 @@ Janani Aarogya is a voice-first, GenAI-powered health companion that enables Ind
 - 🎤 Voice-first AI assistant for Indian mothers
 - 🗣️ Input & output in multiple Indian languages (Hindi, Telugu, Tamil, etc.)
 - 🧠 Gemini-powered personalized responses
-- 🔄 Converts Roman Indian language to native script (e.g., "naku vomit vastundi" → "నాకు వాంతి వస్తోంది")
+- 🔄 Converts Roman Indian language to native script 
 - 📱 Text or voice input options
 - 🔊 Text-to-Speech output in native voice (e.g., Google हिंदी, Google తెలుగు)
 - 👶 Stage-wise guidance: Pre-conception, Pregnancy, Postpartum
