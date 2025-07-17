@@ -35,14 +35,15 @@ git clone https://github.com/SriyaCodes/Janani-Aarogya.git
 cd Janani-Aarogya
 ### 3. Create .env File 
 Inside the server folder:
+
 GEMINI_API_KEY=AIzaSyDD8B2tI77KaVg8h7L6GYh7wZPVntmIw90
 ### 4. Install Dependencies & Start Server
 cd server
 npm install
 npm start
-💻 Frontend Setup
 ### 6. Install Dependencies & Start Client
 In a new terminal tab:
+
 cd client
 npm install
 npm start
