@@ -1,31 +1,18 @@
 {
-  "devDependencies": {
-    "autoprefixer": "^10.4.21",
-    "nodemon": "^3.1.10",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11"
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
   },
   "dependencies": {
     "@google-cloud/translate": "^9.2.0",
     "@google/generative-ai": "^0.24.1",
-    "assert": "^2.1.0",
-    "buffer": "^6.0.3",
     "cors": "^2.8.5",
-    "crypto-browserify": "^3.12.1",
     "dayjs": "^1.11.13",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
-    "https-browserify": "^1.0.0",
-    "morgan": "^1.10.0",
-    "os-browserify": "^0.3.0",
-    "path-browserify": "^1.0.1",
-    "process": "^0.11.10",
-    "querystring-es3": "^0.2.1",
-    "react-confetti": "^6.4.0",
-    "react-use": "^17.6.0",
-    "stream-browserify": "^3.0.0",
-    "stream-http": "^3.2.0",
-    "url": "^0.11.4",
-    "util": "^0.12.5"
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
