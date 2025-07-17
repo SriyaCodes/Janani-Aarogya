@@ -23,15 +23,26 @@ function InputSection({ onReply }) {
   const userLang = localStorage.getItem('lang') || 'en-IN';
 
   /* ─────── voice setup ───── */
-  useEffect(() => {
-    speechSynthesisRef.current = window.speechSynthesis;
-    const populate = () => speechSynthesisRef.current?.getVoices();
-    speechSynthesisRef.current.addEventListener('voiceschanged', populate);
-    return () => {
-      speechSynthesisRef.current.removeEventListener('voiceschanged', populate);
-      speechSynthesisRef.current.cancel();
-    };
-  }, []);
+  /* ─────── voice setup ───── */
+useEffect(() => {
+  speechSynthesisRef.current = window.speechSynthesis;
+
+  const preloadVoices = () => {
+    const voices = speechSynthesisRef.current.getVoices();
+    if (voices.length > 0) {
+      console.log("✅ Voices loaded:", voices.map(v => `${v.name} (${v.lang})`));
+    }
+  };
+
+  preloadVoices();
+  window.speechSynthesis.onvoiceschanged = preloadVoices;
+
+  return () => {
+    window.speechSynthesis.onvoiceschanged = null;
+    speechSynthesisRef.current.cancel();
+  };
+}, []);
+
 
   /* ─────── cleanup ───────── */
   useEffect(() => {
@@ -43,22 +54,35 @@ function InputSection({ onReply }) {
   }, []);
 
   /* ───── TTS helper ──────── */
-  const speak = (text, lang) => {
-    const synth = speechSynthesisRef.current;
-    if (!synth) return;
-    synth.cancel();
-    const uttr    = new SpeechSynthesisUtterance(text);
-    uttr.lang     = lang;
-    uttr.rate     = 1.0;
-    uttr.pitch    = 1.0;
-    const voices  = synth.getVoices();
-    const voice   =
+ /* ───── TTS helper ──────── */
+const speak = (text, lang) => {
+  const synth = speechSynthesisRef.current;
+  if (!synth) return;
+  synth.cancel();
+
+  const speakWithVoice = () => {
+    const voices = synth.getVoices();
+    let voice =
       voices.find(v => v.lang === lang) ||
       voices.find(v => v.lang.startsWith(lang.split('-')[0])) ||
+      voices.find(v => v.name.toLowerCase().includes('google')) ||
       voices[0];
+
+    const uttr = new SpeechSynthesisUtterance(text);
+    uttr.lang = lang;
+    uttr.rate = 1.0;
+    uttr.pitch = 1.0;
     uttr.voice = voice;
-    setTimeout(() => synth.speak(uttr), 100);
+    synth.speak(uttr);
   };
+
+  if (synth.getVoices().length === 0) {
+    window.speechSynthesis.onvoiceschanged = speakWithVoice;
+  } else {
+    speakWithVoice();
+  }
+};
+
 
   /* ───── language detect ─── */
   const detectLanguage = (text) => {
