@@ -20,7 +20,21 @@ Janani Aarogya is a voice-first, GenAI-powered health companion that enables Ind
 - 🔐 Firebase Authentication & Firestore DB
 - 🚀 Fully deployable full-stack app
 
----
+## 🧪 Tech Stack
+
+Frontend: React  
+Styling: Tailwind CSS  
+Backend: Node.js, Express  
+AI: Gemini API (Generative AI)  
+Voice: Browser STT (Google Web Speech API) + TTS with native voices  
+Auth: Firebase Authentication  
+Database: Firestore (NoSQL)
+
+## 🚀 Deployment
+
+Frontend: Vercel  
+Backend: Vercel (Node.js Express API)  
+Database & Auth: Firebase (Firestore + Authentication)
 
 ## ⚙️ Local Development Setup
 
@@ -47,21 +61,4 @@ In a new terminal tab:
 cd client
 npm install
 npm start
-
-## Tech Stack
-
-Frontend: React, Tailwind CSS
-Backend: Node.js, Express
-AI: Gemini API (Generative AI)
-Voice: Browser TTS and STT with native voices
-Auth & DB: Firebase Auth + Firestore
-
-## Deployment
-
-Frontend: Vercel
-Backend: Vercel (Express API)
-Firebase: Firestore & Auth
-
-
-
 
