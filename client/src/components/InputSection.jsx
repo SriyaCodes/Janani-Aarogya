@@ -54,32 +54,78 @@ function InputSection({ onReply }) {
     };
   }, []);
 
-  /* ───── Enhanced voice selection ──────── */
+  /* ───── Enhanced voice selection with extensive fallbacks ──────── */
   const selectBestVoice = (targetLang) => {
     if (!availableVoices.length) return null;
 
-    // Define preferred voice names for each language (native accents)
-    const preferredVoices = {
-      'hi-IN': ['Google हिन्दी', 'Microsoft Kalpana', 'Lekha', 'Neel', 'Shreya'],
-      'te-IN': ['Google తెలుగు', 'Microsoft Heera', 'Chitra'],
-      'ta-IN': ['Google தமிழ்', 'Microsoft Valluvar', 'Karthik'],
-      'kn-IN': ['Google ಕನ್ನಡ', 'Microsoft Suma'],
-      'mr-IN': ['Google मराठी', 'Microsoft Omkar'],
-      'bn-IN': ['Google বাংলা', 'Microsoft Sushmita', 'Bashkar'],
-      'gu-IN': ['Google ગુજરાતી', 'Microsoft Gujarati'],
-      'ml-IN': ['Google മലയാളം', 'Microsoft Malayalam'],
-      'pa-IN': ['Google ਪੰਜਾਬੀ', 'Microsoft Punjabi'],
-      'ur-IN': ['Google اردو', 'Microsoft Urdu'],
-      'en-IN': ['Google English (India)', 'Microsoft Nandini', 'Ravi', 'Heera']
+    console.log(`🔍 Searching for voice for language: ${targetLang}`);
+    console.log(`📋 Available voices:`, availableVoices.map(v => `${v.name} (${v.lang})`));
+
+    // Define comprehensive voice patterns for each language
+    const voicePatterns = {
+      'hi-IN': [
+        // Exact name matches
+        'Google हिन्दी', 'Microsoft Kalpana', 'Lekha', 'Neel', 'Shreya',
+        // Pattern matches
+        /hindi/i, /हिन्दी/i, /devanagari/i, /kalpana/i, /hemant/i
+      ],
+      'te-IN': [
+        'Google తెలుగు', 'Microsoft Heera', 'Chitra',
+        /telugu/i, /తెలుగు/i, /heera/i, /chitra/i
+      ],
+      'ta-IN': [
+        'Google தமிழ்', 'Microsoft Valluvar', 'Karthik',
+        /tamil/i, /தமிழ்/i, /valluvar/i, /karthik/i
+      ],
+      'kn-IN': [
+        'Google ಕನ್ನಡ', 'Microsoft Suma',
+        /kannada/i, /ಕನ್ನಡ/i, /suma/i
+      ],
+      'mr-IN': [
+        'Google मराठी', 'Microsoft Omkar',
+        /marathi/i, /मराठी/i, /omkar/i
+      ],
+      'bn-IN': [
+        'Google বাংলা', 'Microsoft Sushmita', 'Bashkar',
+        /bengali/i, /বাংলা/i, /sushmita/i, /bashkar/i
+      ],
+      'gu-IN': [
+        'Google ગુજરાતી', 'Microsoft Gujarati',
+        /gujarati/i, /ગુજરાતી/i
+      ],
+      'ml-IN': [
+        'Google മലയാളം', 'Microsoft Malayalam',
+        /malayalam/i, /മലയാളം/i
+      ],
+      'pa-IN': [
+        'Google ਪੰਜਾਬੀ', 'Microsoft Punjabi',
+        /punjabi/i, /ਪੰਜਾਬੀ/i
+      ],
+      'ur-IN': [
+        'Google اردو', 'Microsoft Urdu',
+        /urdu/i, /اردو/i
+      ],
+      'en-IN': [
+        'Google English (India)', 'Microsoft Nandini', 'Ravi', 'Heera',
+        /english.*india/i, /nandini/i, /ravi/i
+      ]
     };
 
-    // Step 1: Try to find exact language match with preferred voices
-    const langPreferred = preferredVoices[targetLang] || [];
-    for (const prefName of langPreferred) {
-      const voice = availableVoices.find(v => 
-        v.name.includes(prefName) || 
-        v.name.toLowerCase().includes(prefName.toLowerCase())
-      );
+    // Step 1: Try preferred patterns for the target language
+    const patterns = voicePatterns[targetLang] || [];
+    for (const pattern of patterns) {
+      let voice;
+      if (typeof pattern === 'string') {
+        // Exact string match
+        voice = availableVoices.find(v => 
+          v.name === pattern || 
+          v.name.toLowerCase().includes(pattern.toLowerCase())
+        );
+      } else if (pattern instanceof RegExp) {
+        // Regex pattern match
+        voice = availableVoices.find(v => pattern.test(v.name));
+      }
+      
       if (voice) {
         console.log(`✅ Selected preferred voice: ${voice.name} for ${targetLang}`);
         return voice;
@@ -101,11 +147,11 @@ function InputSection({ onReply }) {
       return familyMatch;
     }
 
-    // Step 4: Try alternative regional codes
+    // Step 4: Try alternative regional codes and variations
     const alternativeRegions = {
-      'hi': ['hi-IN', 'hi'],
+      'hi': ['hi-IN', 'hi-PK', 'hi'],
       'te': ['te-IN', 'te'],
-      'ta': ['ta-IN', 'ta-LK', 'ta'],
+      'ta': ['ta-IN', 'ta-LK', 'ta-SG', 'ta'],
       'kn': ['kn-IN', 'kn'],
       'mr': ['mr-IN', 'mr'],
       'bn': ['bn-IN', 'bn-BD', 'bn'],
@@ -125,28 +171,59 @@ function InputSection({ onReply }) {
       }
     }
 
-    // Step 5: Fallback to English (India) or any English
-    const enIndiaVoice = availableVoices.find(v => v.lang === 'en-IN');
-    if (enIndiaVoice) {
-      console.log(`⚠️ Fallback to English (India): ${enIndiaVoice.name}`);
-      return enIndiaVoice;
+    // Step 5: Try to find any voice that contains the language name
+    const languageNames = {
+      'hi-IN': ['hindi', 'हिन्दी'],
+      'te-IN': ['telugu', 'తెలుగు'],
+      'ta-IN': ['tamil', 'தமிழ்'],
+      'kn-IN': ['kannada', 'ಕನ್ನಡ'],
+      'mr-IN': ['marathi', 'मराठी'],
+      'bn-IN': ['bengali', 'বাংলা'],
+      'gu-IN': ['gujarati', 'ગુજરાતી'],
+      'ml-IN': ['malayalam', 'മലയാളം'],
+      'pa-IN': ['punjabi', 'ਪੰਜਾਬੀ'],
+      'ur-IN': ['urdu', 'اردو']
+    };
+
+    const nameVariants = languageNames[targetLang] || [];
+    for (const name of nameVariants) {
+      const nameMatch = availableVoices.find(v => 
+        v.name.toLowerCase().includes(name.toLowerCase())
+      );
+      if (nameMatch) {
+        console.log(`✅ Selected name match: ${nameMatch.name} for ${targetLang}`);
+        return nameMatch;
+      }
     }
 
+    // Step 6: Fallback to English (India) for Indian languages
+    if (targetLang.endsWith('-IN')) {
+      const enIndiaVoice = availableVoices.find(v => v.lang === 'en-IN');
+      if (enIndiaVoice) {
+        console.log(`⚠️ Fallback to English (India): ${enIndiaVoice.name}`);
+        return enIndiaVoice;
+      }
+    }
+
+    // Step 7: Try any English voice
     const anyEnglish = availableVoices.find(v => v.lang.startsWith('en'));
     if (anyEnglish) {
       console.log(`⚠️ Fallback to English: ${anyEnglish.name}`);
       return anyEnglish;
     }
 
-    // Step 6: Last resort - first available voice
+    // Step 8: Last resort - first available voice
     console.log(`⚠️ Last resort: ${availableVoices[0]?.name}`);
     return availableVoices[0] || null;
   };
 
-  /* ───── Enhanced TTS helper ──────── */
+  /* ───── Enhanced TTS helper with fallback strategies ──────── */
   const speak = (text, lang) => {
     const synth = speechSynthesisRef.current;
-    if (!synth || !text.trim()) return;
+    if (!synth || !text.trim()) {
+      console.warn('⚠️ Speech synthesis not available or empty text');
+      return;
+    }
     
     // Cancel any ongoing speech
     synth.cancel();
@@ -159,7 +236,7 @@ function InputSection({ onReply }) {
       utterance.lang = lang;
       
       // Configure speech parameters for better quality
-      utterance.rate = 0.9;  // Slightly slower for clarity
+      utterance.rate = 0.85;  // Slower for Indian languages
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
       
@@ -167,25 +244,65 @@ function InputSection({ onReply }) {
       const selectedVoice = selectBestVoice(lang);
       if (selectedVoice) {
         utterance.voice = selectedVoice;
-        console.log(`🎤 Speaking with voice: ${selectedVoice.name} (${selectedVoice.lang})`);
+        console.log(`🎤 Speaking with voice: ${selectedVoice.name} (${selectedVoice.lang}) for text: "${text.substring(0, 50)}..."`);
       } else {
-        console.warn('⚠️ No suitable voice found, using default');
+        console.warn('⚠️ No suitable voice found, using system default');
+        // Try to force the language even without a specific voice
+        utterance.lang = lang;
       }
       
-      // Add event listeners for debugging
-      utterance.onstart = () => console.log('🎵 Speech started');
-      utterance.onend = () => console.log('🎵 Speech ended');
-      utterance.onerror = (e) => console.error('🚫 Speech error:', e);
+      // Add event listeners for debugging and fallback
+      utterance.onstart = () => {
+        console.log('🎵 Speech started successfully');
+      };
       
-      // Speak with additional delay to ensure proper voice loading
-      setTimeout(() => {
-        try {
-          synth.speak(utterance);
-        } catch (error) {
-          console.error('Speech synthesis error:', error);
+      utterance.onend = () => {
+        console.log('🎵 Speech ended successfully');
+      };
+      
+      utterance.onerror = (e) => {
+        console.error('🚫 Speech error:', e);
+        
+        // If there's an error, try with English fallback
+        if (lang !== 'en-IN' && lang !== 'en-US') {
+          console.log('🔄 Trying English fallback...');
+          setTimeout(() => {
+            speak(`English translation: ${text}`, 'en-IN');
+          }, 500);
         }
-      }, 100);
-    }, 100);
+      };
+      
+      // Multiple attempts with different timing
+      const attemptSpeech = (attempt = 1) => {
+        try {
+          console.log(`🎯 Speech attempt ${attempt} for language: ${lang}`);
+          synth.speak(utterance);
+          
+          // Check if speech is actually working after a delay
+          setTimeout(() => {
+            if (!synth.speaking && !synth.pending) {
+              console.warn(`⚠️ Speech may have failed silently on attempt ${attempt}`);
+              if (attempt < 3) {
+                console.log(`🔄 Retrying speech attempt ${attempt + 1}...`);
+                attemptSpeech(attempt + 1);
+              } else {
+                console.error('❌ All speech attempts failed');
+              }
+            }
+          }, 100);
+          
+        } catch (error) {
+          console.error(`❌ Speech synthesis error on attempt ${attempt}:`, error);
+          if (attempt < 3) {
+            setTimeout(() => attemptSpeech(attempt + 1), 200);
+          }
+        }
+      };
+      
+      // Start the speech attempts
+      attemptSpeech();
+      
+    }, 150); // Increased delay for better reliability
   };
 
   /* ───── language detect ─── */
@@ -359,10 +476,19 @@ User said:
         </button>
       </div>
       
-      {/* Debug info for development */}
+      {/* Enhanced debug info for development */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="mt-2 text-xs text-gray-500">
-          Available voices: {availableVoices.length} | User lang: {userLang}
+        <div className="mt-2 text-xs text-gray-500 space-y-1">
+          <div>Available voices: {availableVoices.length} | User lang: {userLang}</div>
+          <div className="max-h-20 overflow-y-auto">
+            <strong>Voices:</strong> {availableVoices.map(v => `${v.name} (${v.lang})`).join(', ')}
+          </div>
+          <button 
+            onClick={() => speak('Test voice in ' + userLang, userLang)}
+            className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
+          >
+            Test Voice
+          </button>
         </div>
       )}
     </div>
