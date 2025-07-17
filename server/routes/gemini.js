@@ -15,13 +15,17 @@ const genAI = new GoogleGenerativeAI(apiKey);
 
 router.post('/', async (req, res) => {
   try {
-    const { prompt } = req.body;
+    const { prompt, lang } = req.body;
 
-    if (!prompt) {
-      return res.status(400).json({ error: 'Prompt is required' });
-    }
+console.log("🔍 Received prompt:", prompt);
+console.log("🌐 Language code:", lang);
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+if (!prompt) {
+  return res.status(400).json({ error: 'Prompt is required' });
+}
+
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const result = await model.generateContent({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -31,7 +35,12 @@ router.post('/', async (req, res) => {
     res.json({ reply: text });
 
   } catch (err) {
-    console.error('❌ Gemini API error:', err);
+    console.error('❌ Gemini API error:', err?.response || err.message || err);
+    if (err.response?.status === 429) {
+    return res.status(429).json({
+      error: 'Quota exceeded or too many requests. Try again later.',
+    });
+  }
     res.status(500).json({
       error: err.message || 'Failed to generate response',
       details: err.stack || err,
