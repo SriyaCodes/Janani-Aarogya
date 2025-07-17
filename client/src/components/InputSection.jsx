@@ -13,6 +13,7 @@ function InputSection({ onReply }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [inputMethod, setInputMethod] = useState(null);
   const [availableVoices, setAvailableVoices] = useState([]);
+  const [voicesLoaded, setVoicesLoaded] = useState(false);
 
   /* ───────── refs ────────── */
   const silenceTimerRef   = useRef(null);
@@ -23,202 +24,215 @@ function InputSection({ onReply }) {
   const user     = getAuth().currentUser;
   const userLang = localStorage.getItem('lang') || 'en-IN';
 
-  /* ─────── voice setup ───── */
+  /* ─────── Enhanced voice setup with better loading ───── */
   useEffect(() => {
     speechSynthesisRef.current = window.speechSynthesis;
     
-    const populateVoices = () => {
-      const voices = speechSynthesisRef.current?.getVoices() || [];
-      setAvailableVoices(voices);
-      console.log('Available voices:', voices.map(v => `${v.name} (${v.lang})`));
+    const loadVoices = () => {
+      return new Promise((resolve) => {
+        let voices = speechSynthesisRef.current?.getVoices() || [];
+        
+        if (voices.length > 0) {
+          resolve(voices);
+        } else {
+          // Wait for voices to load
+          const handleVoicesChanged = () => {
+            voices = speechSynthesisRef.current?.getVoices() || [];
+            if (voices.length > 0) {
+              speechSynthesisRef.current.removeEventListener('voiceschanged', handleVoicesChanged);
+              resolve(voices);
+            }
+          };
+          
+          speechSynthesisRef.current.addEventListener('voiceschanged', handleVoicesChanged);
+          
+          // Fallback timeout
+          setTimeout(() => {
+            speechSynthesisRef.current.removeEventListener('voiceschanged', handleVoicesChanged);
+            resolve(speechSynthesisRef.current?.getVoices() || []);
+          }, 3000);
+        }
+      });
     };
     
-    // Load voices immediately if available
-    populateVoices();
-    
-    // Listen for voice changes
-    speechSynthesisRef.current.addEventListener('voiceschanged', populateVoices);
-    
-    return () => {
-      speechSynthesisRef.current.removeEventListener('voiceschanged', populateVoices);
-      speechSynthesisRef.current.cancel();
+    const initializeVoices = async () => {
+      try {
+        const voices = await loadVoices();
+        setAvailableVoices(voices);
+        setVoicesLoaded(true);
+        console.log('🎤 Loaded voices:', voices.map(v => `${v.name} (${v.lang}) - ${v.localService ? 'Local' : 'Remote'}`));
+      } catch (error) {
+        console.error('❌ Failed to load voices:', error);
+        setVoicesLoaded(true); // Set to true anyway to prevent infinite loading
+      }
     };
-  }, []);
-
-  /* ─────── cleanup ───────── */
-  useEffect(() => {
+    
+    initializeVoices();
+    
     return () => {
-      clearTimeout(silenceTimerRef.current);
-      recognitionRef.current?.stop();
       speechSynthesisRef.current?.cancel();
     };
   }, []);
 
-  /* ───── Enhanced voice selection with extensive fallbacks ──────── */
+  /* ───── Enhanced voice selection with better native accent detection ──────── */
   const selectBestVoice = (targetLang) => {
-    if (!availableVoices.length) return null;
+    if (!availableVoices.length) {
+      console.warn('⚠️ No voices available');
+      return null;
+    }
 
-    console.log(`🔍 Searching for voice for language: ${targetLang}`);
-    console.log(`📋 Available voices:`, availableVoices.map(v => `${v.name} (${v.lang})`));
-
-    // Define comprehensive voice patterns for each language
-    const voicePatterns = {
-      'hi-IN': [
-        // Exact name matches
-        'Google हिन्दी', 'Microsoft Kalpana', 'Lekha', 'Neel', 'Shreya',
-        // Pattern matches
-        /hindi/i, /हिन्दी/i, /devanagari/i, /kalpana/i, /hemant/i
-      ],
-      'te-IN': [
-        'Google తెలుగు', 'Microsoft Heera', 'Chitra',
-        /telugu/i, /తెలుగు/i, /heera/i, /chitra/i
-      ],
-      'ta-IN': [
-        'Google தமிழ்', 'Microsoft Valluvar', 'Karthik',
-        /tamil/i, /தமிழ்/i, /valluvar/i, /karthik/i
-      ],
-      'kn-IN': [
-        'Google ಕನ್ನಡ', 'Microsoft Suma',
-        /kannada/i, /ಕನ್ನಡ/i, /suma/i
-      ],
-      'mr-IN': [
-        'Google मराठी', 'Microsoft Omkar',
-        /marathi/i, /मराठी/i, /omkar/i
-      ],
-      'bn-IN': [
-        'Google বাংলা', 'Microsoft Sushmita', 'Bashkar',
-        /bengali/i, /বাংলা/i, /sushmita/i, /bashkar/i
-      ],
-      'gu-IN': [
-        'Google ગુજરાતી', 'Microsoft Gujarati',
-        /gujarati/i, /ગુજરાતી/i
-      ],
-      'ml-IN': [
-        'Google മലയാളം', 'Microsoft Malayalam',
-        /malayalam/i, /മലയാളം/i
-      ],
-      'pa-IN': [
-        'Google ਪੰਜਾਬੀ', 'Microsoft Punjabi',
-        /punjabi/i, /ਪੰਜਾਬੀ/i
-      ],
-      'ur-IN': [
-        'Google اردو', 'Microsoft Urdu',
-        /urdu/i, /اردو/i
-      ],
-      'en-IN': [
-        'Google English (India)', 'Microsoft Nandini', 'Ravi', 'Heera',
-        /english.*india/i, /nandini/i, /ravi/i
-      ]
+    console.log(`🔍 Searching for native voice for language: ${targetLang}`);
+    
+    // Enhanced voice patterns with native accent preferences
+    const nativeVoicePatterns = {
+      'hi-IN': {
+        priority: [
+          // Prefer local/native voices first
+          { patterns: [/Google.*हिन्दी/i, /Microsoft.*Kalpana/i, /Shreya/i], native: true },
+          { patterns: [/hindi/i, /हिन्दी/i], native: true },
+          { patterns: [/Hemant/i, /Lekha/i], native: true }
+        ],
+        fallback: ['hi-IN', 'hi']
+      },
+      'te-IN': {
+        priority: [
+          { patterns: [/Google.*తెలుగు/i, /Microsoft.*Heera/i, /Chitra/i], native: true },
+          { patterns: [/telugu/i, /తెలుగు/i], native: true }
+        ],
+        fallback: ['te-IN', 'te']
+      },
+      'ta-IN': {
+        priority: [
+          { patterns: [/Google.*தமிழ்/i, /Microsoft.*Valluvar/i, /Karthik/i], native: true },
+          { patterns: [/tamil/i, /தமிழ்/i], native: true }
+        ],
+        fallback: ['ta-IN', 'ta', 'ta-LK']
+      },
+      'kn-IN': {
+        priority: [
+          { patterns: [/Google.*ಕನ್ನಡ/i, /Microsoft.*Suma/i], native: true },
+          { patterns: [/kannada/i, /ಕನ್ನಡ/i], native: true }
+        ],
+        fallback: ['kn-IN', 'kn']
+      },
+      'mr-IN': {
+        priority: [
+          { patterns: [/Google.*मराठी/i, /Microsoft.*Omkar/i], native: true },
+          { patterns: [/marathi/i, /मराठी/i], native: true }
+        ],
+        fallback: ['mr-IN', 'mr']
+      },
+      'bn-IN': {
+        priority: [
+          { patterns: [/Google.*বাংলা/i, /Microsoft.*Sushmita/i, /Bashkar/i], native: true },
+          { patterns: [/bengali/i, /বাংলা/i], native: true }
+        ],
+        fallback: ['bn-IN', 'bn', 'bn-BD']
+      },
+      'gu-IN': {
+        priority: [
+          { patterns: [/Google.*ગુજરાતી/i, /Microsoft.*Gujarati/i], native: true },
+          { patterns: [/gujarati/i, /ગુજરાતી/i], native: true }
+        ],
+        fallback: ['gu-IN', 'gu']
+      },
+      'ml-IN': {
+        priority: [
+          { patterns: [/Google.*മലയാളം/i, /Microsoft.*Malayalam/i], native: true },
+          { patterns: [/malayalam/i, /മലയാളം/i], native: true }
+        ],
+        fallback: ['ml-IN', 'ml']
+      },
+      'pa-IN': {
+        priority: [
+          { patterns: [/Google.*ਪੰਜਾਬੀ/i, /Microsoft.*Punjabi/i], native: true },
+          { patterns: [/punjabi/i, /ਪੰਜਾਬੀ/i], native: true }
+        ],
+        fallback: ['pa-IN', 'pa', 'pa-PK']
+      },
+      'ur-IN': {
+        priority: [
+          { patterns: [/Google.*اردو/i, /Microsoft.*Urdu/i], native: true },
+          { patterns: [/urdu/i, /اردو/i], native: true }
+        ],
+        fallback: ['ur-IN', 'ur', 'ur-PK']
+      },
+      'en-IN': {
+        priority: [
+          { patterns: [/Google.*English.*India/i, /Microsoft.*Nandini/i, /Ravi/i], native: true },
+          { patterns: [/english.*india/i, /indian/i], native: true }
+        ],
+        fallback: ['en-IN', 'en-US', 'en-GB']
+      }
     };
 
-    // Step 1: Try preferred patterns for the target language
-    const patterns = voicePatterns[targetLang] || [];
-    for (const pattern of patterns) {
-      let voice;
-      if (typeof pattern === 'string') {
-        // Exact string match
-        voice = availableVoices.find(v => 
-          v.name === pattern || 
-          v.name.toLowerCase().includes(pattern.toLowerCase())
-        );
-      } else if (pattern instanceof RegExp) {
-        // Regex pattern match
-        voice = availableVoices.find(v => pattern.test(v.name));
+    const config = nativeVoicePatterns[targetLang];
+    if (!config) {
+      console.warn(`⚠️ No voice configuration for ${targetLang}`);
+      return availableVoices.find(v => v.lang === targetLang) || availableVoices[0];
+    }
+
+    // Step 1: Try priority patterns (native voices first)
+    for (const priorityGroup of config.priority) {
+      for (const pattern of priorityGroup.patterns) {
+        const voice = availableVoices.find(v => {
+          const match = pattern.test ? pattern.test(v.name) : v.name.toLowerCase().includes(pattern.toLowerCase());
+          return match;
+        });
+        
+        if (voice) {
+          // Prefer local/native voices
+          if (voice.localService || priorityGroup.native) {
+            console.log(`✅ Selected native voice: ${voice.name} (${voice.lang}) - Local: ${voice.localService}`);
+            return voice;
+          }
+          console.log(`🔍 Found voice but checking for better native option: ${voice.name}`);
+        }
       }
-      
+    }
+
+    // Step 2: Try exact language matches from fallback list
+    for (const fallbackLang of config.fallback) {
+      const voice = availableVoices.find(v => v.lang === fallbackLang);
       if (voice) {
-        console.log(`✅ Selected preferred voice: ${voice.name} for ${targetLang}`);
+        console.log(`✅ Selected fallback voice: ${voice.name} (${voice.lang})`);
         return voice;
       }
     }
 
-    // Step 2: Try exact language code match
-    let exactMatch = availableVoices.find(v => v.lang === targetLang);
-    if (exactMatch) {
-      console.log(`✅ Selected exact match: ${exactMatch.name} for ${targetLang}`);
-      return exactMatch;
-    }
-
-    // Step 3: Try language family match (e.g., 'hi' for 'hi-IN')
+    // Step 3: Try any voice that starts with the base language
     const baseLang = targetLang.split('-')[0];
-    const familyMatch = availableVoices.find(v => v.lang.startsWith(baseLang));
-    if (familyMatch) {
-      console.log(`✅ Selected family match: ${familyMatch.name} for ${targetLang}`);
-      return familyMatch;
+    const baseVoice = availableVoices.find(v => v.lang.startsWith(baseLang));
+    if (baseVoice) {
+      console.log(`✅ Selected base language voice: ${baseVoice.name} (${baseVoice.lang})`);
+      return baseVoice;
     }
 
-    // Step 4: Try alternative regional codes and variations
-    const alternativeRegions = {
-      'hi': ['hi-IN', 'hi-PK', 'hi'],
-      'te': ['te-IN', 'te'],
-      'ta': ['ta-IN', 'ta-LK', 'ta-SG', 'ta'],
-      'kn': ['kn-IN', 'kn'],
-      'mr': ['mr-IN', 'mr'],
-      'bn': ['bn-IN', 'bn-BD', 'bn'],
-      'gu': ['gu-IN', 'gu'],
-      'ml': ['ml-IN', 'ml'],
-      'pa': ['pa-IN', 'pa-PK', 'pa'],
-      'ur': ['ur-IN', 'ur-PK', 'ur'],
-      'en': ['en-IN', 'en-US', 'en-GB', 'en-AU', 'en']
-    };
-
-    const alternatives = alternativeRegions[baseLang] || [];
-    for (const altLang of alternatives) {
-      const altVoice = availableVoices.find(v => v.lang === altLang);
-      if (altVoice) {
-        console.log(`✅ Selected alternative: ${altVoice.name} for ${targetLang}`);
-        return altVoice;
-      }
+    // Step 4: Ultimate fallback to English (India) or any English
+    const englishIndia = availableVoices.find(v => v.lang === 'en-IN');
+    if (englishIndia) {
+      console.log(`⚠️ Fallback to English (India): ${englishIndia.name}`);
+      return englishIndia;
     }
 
-    // Step 5: Try to find any voice that contains the language name
-    const languageNames = {
-      'hi-IN': ['hindi', 'हिन्दी'],
-      'te-IN': ['telugu', 'తెలుగు'],
-      'ta-IN': ['tamil', 'தமிழ்'],
-      'kn-IN': ['kannada', 'ಕನ್ನಡ'],
-      'mr-IN': ['marathi', 'मराठी'],
-      'bn-IN': ['bengali', 'বাংলা'],
-      'gu-IN': ['gujarati', 'ગુજરાતી'],
-      'ml-IN': ['malayalam', 'മലയാളം'],
-      'pa-IN': ['punjabi', 'ਪੰਜਾਬੀ'],
-      'ur-IN': ['urdu', 'اردو']
-    };
-
-    const nameVariants = languageNames[targetLang] || [];
-    for (const name of nameVariants) {
-      const nameMatch = availableVoices.find(v => 
-        v.name.toLowerCase().includes(name.toLowerCase())
-      );
-      if (nameMatch) {
-        console.log(`✅ Selected name match: ${nameMatch.name} for ${targetLang}`);
-        return nameMatch;
-      }
-    }
-
-    // Step 6: Fallback to English (India) for Indian languages
-    if (targetLang.endsWith('-IN')) {
-      const enIndiaVoice = availableVoices.find(v => v.lang === 'en-IN');
-      if (enIndiaVoice) {
-        console.log(`⚠️ Fallback to English (India): ${enIndiaVoice.name}`);
-        return enIndiaVoice;
-      }
-    }
-
-    // Step 7: Try any English voice
     const anyEnglish = availableVoices.find(v => v.lang.startsWith('en'));
     if (anyEnglish) {
       console.log(`⚠️ Fallback to English: ${anyEnglish.name}`);
       return anyEnglish;
     }
 
-    // Step 8: Last resort - first available voice
     console.log(`⚠️ Last resort: ${availableVoices[0]?.name}`);
     return availableVoices[0] || null;
   };
 
-  /* ───── Enhanced TTS helper with fallback strategies ──────── */
-  const speak = (text, lang) => {
+  /* ───── Enhanced TTS with better reliability and multiple attempts ──────── */
+  const speak = async (text, lang) => {
+    if (!voicesLoaded) {
+      console.warn('⚠️ Voices not loaded yet, waiting...');
+      setTimeout(() => speak(text, lang), 500);
+      return;
+    }
+
     const synth = speechSynthesisRef.current;
     if (!synth || !text.trim()) {
       console.warn('⚠️ Speech synthesis not available or empty text');
@@ -228,82 +242,116 @@ function InputSection({ onReply }) {
     // Cancel any ongoing speech
     synth.cancel();
     
-    // Wait a moment for cancel to complete
-    setTimeout(() => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Set language
-      utterance.lang = lang;
-      
-      // Configure speech parameters for better quality
-      utterance.rate = 0.85;  // Slower for Indian languages
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-      
-      // Select the best voice
-      const selectedVoice = selectBestVoice(lang);
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-        console.log(`🎤 Speaking with voice: ${selectedVoice.name} (${selectedVoice.lang}) for text: "${text.substring(0, 50)}..."`);
-      } else {
-        console.warn('⚠️ No suitable voice found, using system default');
-        // Try to force the language even without a specific voice
-        utterance.lang = lang;
-      }
-      
-      // Add event listeners for debugging and fallback
-      utterance.onstart = () => {
-        console.log('🎵 Speech started successfully');
-      };
-      
-      utterance.onend = () => {
-        console.log('🎵 Speech ended successfully');
-      };
-      
-      utterance.onerror = (e) => {
-        console.error('🚫 Speech error:', e);
+    // Wait for cancel to complete
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    const attemptSpeech = (attempt = 1, maxAttempts = 3) => {
+      return new Promise((resolve, reject) => {
+        const utterance = new SpeechSynthesisUtterance(text);
         
-        // If there's an error, try with English fallback
-        if (lang !== 'en-IN' && lang !== 'en-US') {
-          console.log('🔄 Trying English fallback...');
-          setTimeout(() => {
-            speak(`English translation: ${text}`, 'en-IN');
-          }, 500);
+        // Configure speech parameters for better quality
+        utterance.lang = lang;
+        utterance.rate = lang.startsWith('hi') || lang.startsWith('te') || lang.startsWith('ta') ? 0.8 : 0.85;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        
+        // Select the best voice
+        const selectedVoice = selectBestVoice(lang);
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          console.log(`🎤 Attempt ${attempt}: Speaking with voice: ${selectedVoice.name} (${selectedVoice.lang})`);
+        } else {
+          console.warn(`⚠️ Attempt ${attempt}: No suitable voice found, using system default`);
         }
-      };
-      
-      // Multiple attempts with different timing
-      const attemptSpeech = (attempt = 1) => {
+        
+        let speechStarted = false;
+        let speechEnded = false;
+        
+        utterance.onstart = () => {
+          speechStarted = true;
+          console.log(`🎵 Speech started successfully on attempt ${attempt}`);
+        };
+        
+        utterance.onend = () => {
+          speechEnded = true;
+          console.log(`🎵 Speech ended successfully on attempt ${attempt}`);
+          resolve();
+        };
+        
+        utterance.onerror = (e) => {
+          console.error(`🚫 Speech error on attempt ${attempt}:`, e);
+          if (attempt < maxAttempts) {
+            console.log(`🔄 Retrying speech attempt ${attempt + 1}...`);
+            setTimeout(() => {
+              attemptSpeech(attempt + 1, maxAttempts)
+                .then(resolve)
+                .catch(reject);
+            }, 300);
+          } else {
+            reject(e);
+          }
+        };
+        
         try {
-          console.log(`🎯 Speech attempt ${attempt} for language: ${lang}`);
           synth.speak(utterance);
           
-          // Check if speech is actually working after a delay
+          // Check if speech started within reasonable time
           setTimeout(() => {
-            if (!synth.speaking && !synth.pending) {
-              console.warn(`⚠️ Speech may have failed silently on attempt ${attempt}`);
-              if (attempt < 3) {
-                console.log(`🔄 Retrying speech attempt ${attempt + 1}...`);
-                attemptSpeech(attempt + 1);
+            if (!speechStarted && !speechEnded) {
+              console.warn(`⚠️ Speech didn't start within timeout on attempt ${attempt}`);
+              if (attempt < maxAttempts) {
+                synth.cancel();
+                setTimeout(() => {
+                  attemptSpeech(attempt + 1, maxAttempts)
+                    .then(resolve)
+                    .catch(reject);
+                }, 300);
               } else {
-                console.error('❌ All speech attempts failed');
+                reject(new Error('Speech failed to start'));
               }
             }
-          }, 100);
+          }, 1000);
           
         } catch (error) {
           console.error(`❌ Speech synthesis error on attempt ${attempt}:`, error);
-          if (attempt < 3) {
-            setTimeout(() => attemptSpeech(attempt + 1), 200);
+          if (attempt < maxAttempts) {
+            setTimeout(() => {
+              attemptSpeech(attempt + 1, maxAttempts)
+                .then(resolve)
+                .catch(reject);
+            }, 300);
+          } else {
+            reject(error);
           }
         }
-      };
+      });
+    };
+    
+    try {
+      await attemptSpeech();
+    } catch (error) {
+      console.error('❌ All speech attempts failed:', error);
       
-      // Start the speech attempts
-      attemptSpeech();
-      
-    }, 150); // Increased delay for better reliability
+      // Try English fallback if original language failed
+      if (lang !== 'en-IN' && lang !== 'en-US') {
+        console.log('🔄 Trying English fallback...');
+        try {
+          await attemptSpeech(1, 2); // Fewer attempts for fallback
+        } catch (fallbackError) {
+          console.error('❌ English fallback also failed:', fallbackError);
+        }
+      }
+    }
   };
+
+  /* ───────── cleanup ───────── */
+  useEffect(() => {
+    return () => {
+      clearTimeout(silenceTimerRef.current);
+      recognitionRef.current?.stop();
+      speechSynthesisRef.current?.cancel();
+    };
+  }, []);
 
   /* ───── language detect ─── */
   const detectLanguage = (text) => {
@@ -389,8 +437,9 @@ User said:
       /* update UI */
       onReply(reply, responseLang, inputMethod || 'text');
       
-      /* speak with enhanced voice selection */
-      speak(reply, responseLang);
+      /* speak with enhanced voice selection - ALWAYS speak the response */
+      console.log(`🎤 Speaking response in ${responseLang}: "${reply.substring(0, 50)}..."`);
+      await speak(reply, responseLang);
       
       setInput('');
       setInputMethod(null);
@@ -414,7 +463,7 @@ User said:
         ? 'क्षमा करें, अभी उत्तर उपलब्ध नहीं है। कृपया पुनः प्रयास करें।'
         : 'Sorry, Im unable to respond right now. Please try again.';
       onReply(fallback, userLang, inputMethod || 'text');
-      speak(fallback, userLang);
+      await speak(fallback, userLang);
     } finally {
       setIsProcessing(false);
     }
@@ -428,21 +477,41 @@ User said:
 
   /* ───── translations ────── */
   const translations = {
-    'hi-IN': { ph:'जननी से बात करें...', send:'भेजें', mic:'बोलें' },
-    'te-IN': { ph:"జననితో మాట్లాడండి...", send:'పంపు', mic:'మాట్లాడు' },
-    'ta-IN': { ph:"ஜனனியுடன் பேசுங்கள்...", send:'அனுப்பு', mic:'பேச' },
-    'kn-IN': { ph:"ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ...", send:'ಕಳುಹೆ', mic:'ಮಾತನಾಡಿ' },
-    'mr-IN': { ph:"जननीसोबत बोला...", send:'पाठवा', mic:'बोला' },
-    'bn-IN': { ph:"জননির সঙ্গে কথা বলুন...", send:'পাঠান', mic:'বলুন' },
-    'gu-IN': { ph:"જનની સાથે વાત કરો...", send:'મોકલો', mic:'બોલો' },
-    'ml-IN': { ph:"ജനനിയുമായി സംസാരിക്കുക...", send:'അയയ്ക്കുക', mic:'സംസാരിക്കുക' },
-    'pa-IN': { ph:"ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ...", send:'ਭੇਜੋ', mic:'ਬੋਲੋ' },
-    'ur-IN': { ph:'اپنا سوال لکھیں...', send:'بھیجیں', mic:'بولیں' },
-    default: { ph:'Talk to Janani...', send:'Send', mic:'Speak' }
+    'hi-IN': { ph:'जननी से बात करें...', send:'भेजें', mic:'बोलें', test:'आवाज़ टेस्ट करें' },
+    'te-IN': { ph:"జననితో మాట్లాడండి...", send:'పంపు', mic:'మాట్లాడు', test:'వాయిస్ టెస్ట్' },
+    'ta-IN': { ph:"ஜனனியுடன் பேசுங்கள்...", send:'அனுப்பு', mic:'பேச', test:'குரல் சோதனை' },
+    'kn-IN': { ph:"ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ...", send:'ಕಳುಹೆ', mic:'ಮಾತನಾಡಿ', test:'ಧ್ವನಿ ಪರೀಕ್ಷೆ' },
+    'mr-IN': { ph:"जननीसोबत बोला...", send:'पाठवा', mic:'बोला', test:'आवाज चाचणी' },
+    'bn-IN': { ph:"জননির সঙ্গে কথা বলুন...", send:'পাঠান', mic:'বলুন', test:'ভয়েস টেস্ট' },
+    'gu-IN': { ph:"જનની સાથે વાત કરો...", send:'મોકલો', mic:'બોલો', test:'અવાજ ટેસ્ટ' },
+    'ml-IN': { ph:"ജനനിയുമായി സംസാരിക്കുക...", send:'അയയ്ക്കുക', mic:'സംസാരിക്കുക', test:'ശബ്ദ പരിശോധന' },
+    'pa-IN': { ph:"ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ...", send:'ਭੇਜੋ', mic:'ਬੋਲੋ', test:'ਆਵਾਜ਼ ਟੈਸਟ' },
+    'ur-IN': { ph:'اپنا سوال لکھیں...', send:'بھیجیں', mic:'بولیں', test:'آواز ٹیسٹ' },
+    default: { ph:'Talk to Janani...', send:'Send', mic:'Speak', test:'Test Voice' }
   };
   
   const t = translations[userLang] || translations.default;
-  const { ph: placeholder, send, mic: speakLabel } = t;
+  const { ph: placeholder, send, mic: speakLabel, test: testLabel } = t;
+
+  /* ───── Test voice function ─── */
+  const testVoice = () => {
+    const testMessages = {
+      'hi-IN': 'नमस्ते, मैं जननी हूं। मैं आपकी मदद के लिए यहां हूं।',
+      'te-IN': 'నమస్కారం, నేను జనని. మీకు సహాయం చేయడానికి నేను ఇక్కడ ఉన్నాను.',
+      'ta-IN': 'வணக்கம், நான் ஜனனி. உங்களுக்கு உதவ நான் இங்கே இருக்கிறேன்.',
+      'kn-IN': 'ನಮಸ್ಕಾರ, ನಾನು ಜನನಿ. ನಿಮಗೆ ಸಹಾಯ ಮಾಡಲು ನಾನು ಇಲ್ಲಿದ್ದೇನೆ.',
+      'mr-IN': 'नमस्कार, मी जनानी. मी तुमच्या मदतीसाठी येथे आहे.',
+      'bn-IN': 'নমস্কার, আমি জননি। আমি আপনার সাহায্যের জন্য এখানে আছি।',
+      'gu-IN': 'નમસ્તે, હું જનની. હું તમારી મદદ માટે અહીં છું.',
+      'ml-IN': 'നമസ്കാരം, ഞാൻ ജനനി. നിങ്ങളെ സഹായിക്കാൻ ഞാൻ ഇവിടെയുണ്ട്.',
+      'pa-IN': 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ, ਮੈਂ ਜਨਨੀ ਹਾਂ। ਮੈਂ ਤੁਹਾਡੀ ਮਦਦ ਲਈ ਇੱਥੇ ਹਾਂ।',
+      'ur-IN': 'سلام، میں جننی ہوں۔ میں آپ کی مدد کے لیے یہاں ہوں۔',
+      'en-IN': 'Hello, I am Janani. I am here to help you.'
+    };
+    
+    const testMessage = testMessages[userLang] || testMessages['en-IN'];
+    speak(testMessage, userLang);
+  };
 
   /* ───── render ───── */
   return (
@@ -479,16 +548,33 @@ User said:
       {/* Enhanced debug info for development */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-2 text-xs text-gray-500 space-y-1">
-          <div>Available voices: {availableVoices.length} | User lang: {userLang}</div>
-          <div className="max-h-20 overflow-y-auto">
-            <strong>Voices:</strong> {availableVoices.map(v => `${v.name} (${v.lang})`).join(', ')}
+          <div>
+            Available voices: {availableVoices.length} | User lang: {userLang} | Voices loaded: {voicesLoaded ? '✅' : '⏳'}
           </div>
-          <button 
-            onClick={() => speak('Test voice in ' + userLang, userLang)}
-            className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
-          >
-            Test Voice
-          </button>
+          <div className="max-h-20 overflow-y-auto">
+            <strong>Native voices:</strong> {availableVoices
+              .filter(v => v.localService || v.lang.includes(userLang.split('-')[0]))
+              .map(v => `${v.name} (${v.lang}) ${v.localService ? '📍' : '☁️'}`)
+              .join(', ') || 'None found'}
+          </div>
+          <div className="flex gap-2">
+            <button 
+              onClick={testVoice}
+              disabled={!voicesLoaded}
+              className="px-2 py-1 bg-blue-500 text-white rounded text-xs disabled:opacity-50"
+            >
+              {testLabel}
+            </button>
+            <button 
+              onClick={() => {
+                console.log('🔍 Available voices:', availableVoices);
+                console.log('🎯 Selected voice for', userLang, ':', selectBestVoice(userLang));
+              }}
+              className="px-2 py-1 bg-green-500 text-white rounded text-xs"
+            >
+              Debug Voices
+            </button>
+          </div>
         </div>
       )}
     </div>
