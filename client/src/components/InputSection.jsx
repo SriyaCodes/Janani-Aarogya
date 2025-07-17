@@ -63,10 +63,12 @@ const speak = (text, lang) => {
   const speakWithVoice = () => {
     const voices = synth.getVoices();
     let voice =
-      voices.find(v => v.lang === lang) ||
-      voices.find(v => v.lang.startsWith(lang.split('-')[0])) ||
-      voices.find(v => v.name.toLowerCase().includes('google')) ||
-      voices[0];
+  voices.find(v => v.lang === lang && v.name.toLowerCase().includes('google')) ||
+  voices.find(v => v.lang.startsWith(lang.split('-')[0]) && v.name.toLowerCase().includes('google')) ||
+  voices.find(v => v.name.toLowerCase().includes('google')) ||
+  voices.find(v => v.lang === lang) ||
+  voices[0];
+
 
     const uttr = new SpeechSynthesisUtterance(text);
     uttr.lang = lang;
