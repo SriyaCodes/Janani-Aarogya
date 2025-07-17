@@ -1,10 +1,8 @@
-#JANANI AAROGYA
+# JANANI AAROGYA
 
 **India’s First Multilingual Voice-Based AI Health Companion for Mothers**
 
-Janani Aarogya is a voice-first, AI-powered platform that empowers Indian mothers—especially those with low digital literacy—to access health support in their own language.
-
----
+Janani Aarogya is a voice-first, GenAI-powered health companion that enables Indian mothers—especially those with low digital literacy—to access personalized care, cultural guidance, and emotional support in their own language through smart voice conversations, auto-generated health responses, transliteration, memory journaling, and stage-based insights.
 
 ## Features
 
@@ -49,26 +47,18 @@ cd client
 npm install
 npm start
 
-🧪 Tech Stack
+## Tech Stack
+
 Frontend: React, Tailwind CSS
-
 Backend: Node.js, Express
-
 AI: Gemini API (Generative AI)
-
-Voice Input: Google STT
-
-Transliteration: @ai4bharat/indic-transliteration
-
-Voice Output: Browser TTS with native voices
-
+Voice: Browser TTS and STT with native voices
 Auth & DB: Firebase Auth + Firestore
 
-🚀 Deployment
+## Deployment
+
 Frontend: Vercel
-
 Backend: Vercel (Express API)
-
 Firebase: Firestore & Auth
 
 
