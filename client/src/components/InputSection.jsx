@@ -60,29 +60,99 @@ function InputSection({ onReply }) {
     const speakWithVoice = () => {
       const voices = synth.getVoices();
       
-      // Priority order for Indian motherly voice
-      let voice =
-        voices.find(v => v.lang === lang && /india|hindi|tamil|telugu|bengali|marathi/gmi.test(v.name)) ||
-        voices.find(v => v.lang === lang && /female|woman/gmi.test(v.name)) ||
-        voices.find(v => v.lang === 'en-IN' && /female|woman/gmi.test(v.name)) ||
-        voices.find(v => v.lang.startsWith(lang.split('-')[0]) && /female|woman/gmi.test(v.name)) ||
-        voices.find(v => v.lang === lang) ||
-        voices.find(v => v.lang.startsWith(lang.split('-')[0])) ||
-        voices.find(v => /female|woman/gmi.test(v.name)) ||
-        voices[0];
+      // Language-specific voice selection logic
+      const getVoiceForLang = (targetLang) => {
+        // Special handling for each Indian language
+        const languagePreferences = {
+          'hi-IN': { // Hindi
+            primary: v => v.lang === 'hi-IN' && /india|hindi|female|woman/gmi.test(v.name),
+            fallback: v => v.lang === 'hi-IN',
+            secondary: v => v.lang.startsWith('hi-')
+          },
+          'te-IN': { // Telugu
+            primary: v => v.lang === 'te-IN' && /telugu|india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'te-IN',
+            secondary: v => v.lang.startsWith('te-')
+          },
+          'ta-IN': { // Tamil
+            primary: v => v.lang === 'ta-IN' && /tamil|india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'ta-IN',
+            secondary: v => v.lang.startsWith('ta-')
+          },
+          // Add similar patterns for other Indian languages
+          'kn-IN': { // Kannada
+            primary: v => v.lang === 'kn-IN' && /kannada|india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'kn-IN',
+            secondary: v => v.lang.startsWith('kn-')
+          },
+          'mr-IN': { // Marathi
+            primary: v => v.lang === 'mr-IN' && /marathi|india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'mr-IN',
+            secondary: v => v.lang.startsWith('mr-')
+          },
+          'bn-IN': { // Bengali
+            primary: v => v.lang === 'bn-IN' && /bengali|india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'bn-IN',
+            secondary: v => v.lang.startsWith('bn-')
+          },
+          'gu-IN': { // Gujarati
+            primary: v => v.lang === 'gu-IN' && /gujarati|india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'gu-IN',
+            secondary: v => v.lang.startsWith('gu-')
+          },
+          'ml-IN': { // Malayalam
+            primary: v => v.lang === 'ml-IN' && /malayalam|india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'ml-IN',
+            secondary: v => v.lang.startsWith('ml-')
+          },
+          'pa-IN': { // Punjabi
+            primary: v => v.lang === 'pa-IN' && /punjabi|india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'pa-IN',
+            secondary: v => v.lang.startsWith('pa-')
+          },
+          'ur-IN': { // Urdu
+            primary: v => v.lang === 'ur-IN' && /urdu|india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'ur-IN',
+            secondary: v => v.lang.startsWith('ur-')
+          },
+          'en-IN': { // Indian English
+            primary: v => v.lang === 'en-IN' && /india|female/gmi.test(v.name),
+            fallback: v => v.lang === 'en-IN',
+            secondary: v => v.lang.startsWith('en-')
+          }
+        };
+
+        const prefs = languagePreferences[targetLang] || {
+          primary: v => v.lang === targetLang,
+          fallback: v => v.lang.startsWith(targetLang.split('-')[0]),
+          secondary: v => /female|woman/gmi.test(v.name)
+        };
+
+        return (
+          voices.find(prefs.primary) ||
+          voices.find(prefs.fallback) ||
+          voices.find(prefs.secondary) ||
+          voices.find(v => v.lang === targetLang) ||
+          voices.find(v => v.lang.startsWith(targetLang.split('-')[0])) ||
+          voices[0]
+        );
+      };
+
+      const voice = getVoiceForLang(lang);
 
       const uttr = new SpeechSynthesisUtterance(text);
       uttr.lang = lang;
-      uttr.rate = 0.9;  // Slightly slower pace
-      uttr.pitch = 0.85; // Slightly lower pitch
-      uttr.volume = 1;
-      uttr.voice = voice;
-
-      // Additional adjustments for Indian languages
-      if (!lang.includes('en')) {
-        uttr.rate = 0.85;
+      
+      // Adjust speech parameters based on language
+      if (lang.endsWith('-IN')) {
+        uttr.rate = 0.85;  // Slightly slower for Indian languages
+        uttr.pitch = 0.9;  // Slightly warmer pitch
+      } else {
+        uttr.rate = 1.0;
+        uttr.pitch = 1.0;
       }
-
+      
+      uttr.voice = voice;
       synth.speak(uttr);
     };
 
@@ -193,7 +263,7 @@ User said:
       console.error('Gemini error', err);
       const fallback = userLang.startsWith('hi')
         ? 'क्षमा करें, अभी उत्तर उपलब्ध नहीं है। कृपया पुनः प्रयास करें।'
-        : 'Sorry, I’m unable to respond right now. Please try again.';
+        : 'Sorry, Im unable to respond right now. Please try again.';
       onReply(fallback, userLang, inputMethod || 'text');
       speak(fallback, userLang);
     } finally {
