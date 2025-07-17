@@ -8,30 +8,28 @@ import { franc } from 'franc';
 
 function InputSection({ onReply }) {
   /* ───────── state ───────── */
-  const [input, setInput] = useState('');
+  const [input, setInput]           = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [inputMethod, setInputMethod] = useState(null);
 
   /* ───────── refs ────────── */
-  const silenceTimerRef = useRef(null);
-  const recognitionRef = useRef(null);
+  const silenceTimerRef   = useRef(null);
+  const recognitionRef    = useRef(null);
   const speechSynthesisRef = useRef(null);
 
   /* ───────── user / lang ─── */
-  const user = getAuth().currentUser;
+  const user     = getAuth().currentUser;
   const userLang = localStorage.getItem('lang') || 'en-IN';
 
   /* ─────── voice setup ───── */
   useEffect(() => {
     speechSynthesisRef.current = window.speechSynthesis;
-    // Pre-load voices
-    const populateVoices = () => speechSynthesisRef.current?.getVoices();
-    speechSynthesisRef.current.addEventListener('voiceschanged', populateVoices);
-    
+    const populate = () => speechSynthesisRef.current?.getVoices();
+    speechSynthesisRef.current.addEventListener('voiceschanged', populate);
     return () => {
-      speechSynthesisRef.current?.removeEventListener('voiceschanged', populateVoices);
-      speechSynthesisRef.current?.cancel();
+      speechSynthesisRef.current.removeEventListener('voiceschanged', populate);
+      speechSynthesisRef.current.cancel();
     };
   }, []);
 
@@ -48,29 +46,17 @@ function InputSection({ onReply }) {
   const speak = (text, lang) => {
     const synth = speechSynthesisRef.current;
     if (!synth) return;
-    
-    synth.cancel(); // Clear any previous speech
-    
-    const uttr = new SpeechSynthesisUtterance(text);
-    uttr.lang = lang;
-    uttr.rate = 1.0;
-    uttr.pitch = 1.0;
-    
-    const voices = synth.getVoices();
-    
-    // This logic attempts to find the best available voice in the browser.
-    const voice =
-      // 1. Try for an exact match (e.g., 'hi-IN')
-      voices.find(v => v.lang === lang) || 
-      // 2. Try for a partial language match (e.g., 'hi')
-      voices.find(v => v.lang.startsWith(lang.split('-')[0])) || 
-      // 3. Fallback to the very first voice available on the system.
-      // This is what causes a different language voice to speak if a native one isn't found.
+    synth.cancel();
+    const uttr    = new SpeechSynthesisUtterance(text);
+    uttr.lang     = lang;
+    uttr.rate     = 1.0;
+    uttr.pitch    = 1.0;
+    const voices  = synth.getVoices();
+    const voice   =
+      voices.find(v => v.lang === lang) ||
+      voices.find(v => v.lang.startsWith(lang.split('-')[0])) ||
       voices[0];
-      
     uttr.voice = voice;
-    
-    // A small delay can help prevent issues on some browsers.
     setTimeout(() => synth.speak(uttr), 100);
   };
 
@@ -95,13 +81,12 @@ function InputSection({ onReply }) {
 
   const startListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) return alert('Speech Recognition not supported in this browser.');
-    
-    recognitionRef.current = new SR();
-    recognitionRef.current.lang = userLang;
-    recognitionRef.current.interimResults = true;
-    recognitionRef.current.continuous = true;
-    recognitionRef.current.maxAlternatives = 1;
+    if (!SR) return alert('Speech Recognition not supported in this browser');
+    recognitionRef.current                  = new SR();
+    recognitionRef.current.lang             = userLang;
+    recognitionRef.current.interimResults   = true;
+    recognitionRef.current.continuous       = true;
+    recognitionRef.current.maxAlternatives  = 1;
 
     const resetSilence = () => {
       clearTimeout(silenceTimerRef.current);
@@ -117,7 +102,7 @@ function InputSection({ onReply }) {
       }
     };
     recognitionRef.current.onerror = (err) => { console.error(err); stopListening(); };
-    recognitionRef.current.onend = () => { setIsListening(false); setIsProcessing(false); };
+    recognitionRef.current.onend   = () => { setIsListening(false); setIsProcessing(false); };
 
     setIsListening(true);
     recognitionRef.current.start();
@@ -132,8 +117,9 @@ function InputSection({ onReply }) {
     setIsProcessing(true);
     try {
       const responseLang = forcedLang || detectLanguage(finalInput);
-      const langCode = responseLang.slice(0, 2);
+      const langCode     = responseLang.slice(0,2);
 
+      /* ---------- NEW EMOTIONAL PROMPT ---------- */
       const prompt = `
 You are a wise, emotionally strong Indian woman (like an elder sister or trusted midwife).
 Give a short, warm, and deeply empathetic reply in ${langCode}.
@@ -154,6 +140,7 @@ User said:
 
       /* store entry */
       if (user) {
+        console.log('📦 Saving entry for UID:', user.uid);
         await addDoc(collection(db, 'users', user.uid, 'entries'), {
           input: finalInput,
           response: reply,
@@ -179,20 +166,28 @@ User said:
 
   /* ───── translations ────── */
   const translations = {
-    'hi-IN': { ph: 'जननी से बात करें...', send: 'भेजें', mic: 'बोलें' },
-    'te-IN': { ph: "జననితో మాట్లాడండి...", send: 'పంపు', mic: 'మాట్లాడు' },
-    'ta-IN': { ph: "ஜனனியுடன் பேசுங்கள்...", send: 'அனுப்பு', mic: 'பேச' },
-    'kn-IN': { ph: "ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ...", send: 'ಕಳುಹಿಸು', mic: 'ಮಾತನಾಡಿ' },
-    'mr-IN': { ph: "जननीसोबत बोला...", send: 'पाठवा', mic: 'बोला' },
-    'bn-IN': { ph: "জননির সঙ্গে কথা বলুন...", send: 'পাঠান', mic: 'বলুন' },
-    'gu-IN': { ph: "જનની સાથે વાત કરો...", send: 'મોકલો', mic: 'બોલો' },
-    'ml-IN': { ph: "ജനനിയുമായി സംസാരിക്കുക...", send: ' അയയ്ക്കുക', mic: 'സംസാരിക്കുക' },
-    'pa-IN': { ph: "ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ...", send: 'ਭੇਜੋ', mic: 'ਬੋਲੋ' },
-    'ur-IN': { ph: 'اپنا سوال لکھیں...', send: 'بھیجیں', mic: 'بولیں' },
-    default: { ph: 'Talk to Janani...', send: 'Send', mic: 'Speak' }
+    'hi-IN': { ph:'जननी से बात करें...', send:'भेजें', mic:'बोलें' },
+    'te-IN': { ph:"జననితో మాట్లాడండి..."
+, send:'పంపు', mic:'మాట్లాడు' },
+    'ta-IN': { ph:"ஜனனியுடன் பேசுங்கள்..."
+, send:'அனுப்பு', mic:'பேச' },
+    'kn-IN': { ph:"ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ..."
+, send:'ಕಳುಹೆ', mic:'ಮಾತನಾಡಿ' },
+    'mr-IN': { ph:"जननीसोबत बोला..."
+, send:'पाठवा', mic:'बोला' },
+    'bn-IN': { ph:"জননির সঙ্গে কথা বলুন..."
+, send:'পাঠান', mic:'বলুন' },
+    'gu-IN': { ph:"જનની સાથે વાત કરો..."
+, send:'મોકલો', mic:'બોલો' },
+    'ml-IN': { ph:"ജനനിയുമായി സംസാരിക്കുക..."
+, send:' അയയ്ക്കുക', mic:'സംസാരിക്കുക' },
+    'pa-IN': { ph:"ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ..."
+, send:'ਭੇਜੋ', mic:'ਬੋਲੋ' },
+    'ur-IN': { ph:'اپنا سوال لکھیں...', send:'بھیجیں', mic:'بولیں' },
+    default : { ph:'Talk to Janani...', send:'Send', mic:'Speak' }
   };
   const t = translations[userLang] || translations.default;
-  const { ph: placeholder, send, mic: speakLabel } = t;
+  const { ph:placeholder, send, mic:speakLabel } = t;
 
   /* ───── render ───── */
   return (
@@ -203,13 +198,13 @@ User said:
           placeholder={placeholder}
           value={input}
           onChange={e => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && !isProcessing && handleTextSubmit()}
+          onKeyDown={e => e.key === 'Enter' && handleTextSubmit()}
           className="flex-1 border p-2 rounded-lg"
           disabled={isProcessing}
         />
         <button
           onClick={handleTextSubmit}
-          disabled={isProcessing || !input.trim()}
+          disabled={isProcessing}
           className="px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 disabled:opacity-50"
         >
           {isProcessing ? '...' : send}
@@ -217,15 +212,12 @@ User said:
         <button
           onClick={isListening ? stopListening : startListening}
           disabled={isProcessing}
-          className={`p-3 rounded-full text-white transition-colors ${
-            isListening ? 'bg-red-500 hover:bg-red-600' : 'bg-pink-500 hover:bg-pink-600'
+          className={`px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 disabled:opacity-50 ${
+            isListening ? 'bg-red-500 text-white' : 'bg-gray-100'
           } disabled:opacity-50`}
           title={speakLabel}
         >
-          {/* Using a simple mic icon for consistency */}
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-          </svg>
+          {isProcessing ? '...' : '🎙️'}
         </button>
       </div>
     </div>
