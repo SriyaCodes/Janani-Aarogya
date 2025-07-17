@@ -34,7 +34,7 @@ RULES
    already emotional or reflective**.
 4. Never add unrelated poetic imagery to practical questions.
 5. Keep replies under 120 words.
-6. If the user just talks about greetings or casual conversation like "how are you", "what are you doing", etc., do not add the encouraging line.
+6. if the user just talks about greeting or casual conversation like how are you what are you doing etc, do not add encouraging line. 
 
 User message ↓
 ${prompt}
@@ -51,9 +51,7 @@ ${prompt}
 
     return data.reply || 'No reply.';
   } catch (err) {
-    console.error('❌ Gemini API error:', err);
-
-    // Return a default fallback message
-    return '⚠️ Sorry, I couldn’t understand that. Please try again later.';
+    console.error('Gemini API error:', err);
+    throw err;
   }
 };
