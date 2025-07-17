@@ -16,62 +16,57 @@ function InputSection({ onReply }) {
   /* ───────── refs ────────── */
   const silenceTimerRef = useRef(null);
   const recognitionRef = useRef(null);
-  const speechSynthesisRef = useRef(null);
 
   /* ───────── user / lang ─── */
   const user = getAuth().currentUser;
   const userLang = localStorage.getItem('lang') || 'en-IN';
 
-  /* ─────── voice setup ───── */
-  useEffect(() => {
-    speechSynthesisRef.current = window.speechSynthesis;
-    // Pre-load voices
-    const populateVoices = () => speechSynthesisRef.current?.getVoices();
-    speechSynthesisRef.current.addEventListener('voiceschanged', populateVoices);
-    
-    return () => {
-      speechSynthesisRef.current?.removeEventListener('voiceschanged', populateVoices);
-      speechSynthesisRef.current?.cancel();
-    };
-  }, []);
-
   /* ─────── cleanup ───────── */
   useEffect(() => {
+    // This cleans up the speech recognition timer and stops any speaking
     return () => {
       clearTimeout(silenceTimerRef.current);
       recognitionRef.current?.stop();
-      speechSynthesisRef.current?.cancel();
+      if (window.responsiveVoice) {
+        window.responsiveVoice.cancel();
+      }
     };
   }, []);
 
-  /* ───── TTS helper ──────── */
+  /* ───── TTS helper (with ResponsiveVoice.js) ──────── */
   const speak = (text, lang) => {
-    const synth = speechSynthesisRef.current;
-    if (!synth) return;
+    if (typeof window.responsiveVoice === 'undefined') {
+      console.error('ResponsiveVoice library not loaded. Check script tag in index.html.');
+      return;
+    }
     
-    synth.cancel(); // Clear any previous speech
-    
-    const uttr = new SpeechSynthesisUtterance(text);
-    uttr.lang = lang;
-    uttr.rate = 1.0;
-    uttr.pitch = 1.0;
-    
-    const voices = synth.getVoices();
-    
-    // This logic attempts to find the best available voice in the browser.
-    const voice =
-      // 1. Try for an exact match (e.g., 'hi-IN')
-      voices.find(v => v.lang === lang) || 
-      // 2. Try for a partial language match (e.g., 'hi')
-      voices.find(v => v.lang.startsWith(lang.split('-')[0])) || 
-      // 3. Fallback to the very first voice available on the system.
-      // This is what causes a different language voice to speak if a native one isn't found.
-      voices[0];
-      
-    uttr.voice = voice;
-    
-    // A small delay can help prevent issues on some browsers.
-    setTimeout(() => synth.speak(uttr), 100);
+    window.responsiveVoice.cancel(); // Stop any previous speech
+
+    // Map your app's language codes to the specific voice names ResponsiveVoice needs
+    const getVoiceForLang = (langCode) => {
+      const voiceMap = {
+        'hi-IN': 'Hindi Female',
+        'te-IN': 'Telugu Female',
+        'ta-IN': 'Tamil Female',
+        'kn-IN': 'Kannada Female',
+        'bn-IN': 'Bengali Female',
+        'gu-IN': 'Gujarati Female',
+        'ml-IN': 'Malayalam Female',
+        'en-IN': 'UK English Female',
+        // Languages NOT supported by ResponsiveVoice:
+        // 'mr-IN' (Marathi), 'pa-IN' (Punjabi), 'ur-IN' (Urdu)
+      };
+      return voiceMap[langCode];
+    };
+
+    const voice = getVoiceForLang(lang);
+
+    // Speak only if a supported voice is found
+    if (voice) {
+      window.responsiveVoice.speak(text, voice);
+    } else {
+      console.warn(`Voice output is not available for language: ${lang}`);
+    }
   };
 
   /* ───── language detect ─── */
@@ -94,6 +89,9 @@ function InputSection({ onReply }) {
   };
 
   const startListening = () => {
+    if (window.responsiveVoice) {
+      window.responsiveVoice.cancel();
+    }
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) return alert('Speech Recognition not supported in this browser.');
     
@@ -110,7 +108,7 @@ function InputSection({ onReply }) {
 
     recognitionRef.current.onresult = (e) => {
       resetSilence();
-      const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+      const transcript = Array.from(e.results).map((r) => r[0].transcript).join('');
       if (e.results[e.results.length - 1].isFinal) {
         setInputMethod('speech');
         handleSubmit(transcript, detectLanguage(transcript));
@@ -129,6 +127,10 @@ function InputSection({ onReply }) {
     const finalInput = textVal || input.trim();
     if (!finalInput) return;
 
+    if (window.responsiveVoice) {
+      window.responsiveVoice.cancel();
+    }
+
     setIsProcessing(true);
     try {
       const responseLang = forcedLang || detectLanguage(finalInput);
@@ -146,22 +148,20 @@ User said:
 
       const reply = await getGeminiReply(prompt, langCode);
 
-      /* update UI */
       onReply(reply, responseLang, inputMethod || 'text');
       speak(reply, responseLang);
       setInput('');
       setInputMethod(null);
 
-      /* store entry */
       if (user) {
         await addDoc(collection(db, 'users', user.uid, 'entries'), {
           input: finalInput,
           response: reply,
           lang: responseLang,
           inputMethod: inputMethod || 'text',
-          createdAt: serverTimestamp()
+          createdAt: serverTimestamp(),
         });
-      } else console.warn('⚠️ No authenticated user, skipping Firestore write');
+      }
     } catch (err) {
       console.error('Gemini error', err);
       const fallback = userLang.startsWith('hi')
@@ -175,21 +175,24 @@ User said:
   };
 
   /* ───── text submit click ─ */
-  const handleTextSubmit = () => { setInputMethod('text'); handleSubmit(); };
+  const handleTextSubmit = () => {
+    setInputMethod('text');
+    handleSubmit();
+  };
 
   /* ───── translations ────── */
   const translations = {
     'hi-IN': { ph: 'जननी से बात करें...', send: 'भेजें', mic: 'बोलें' },
-    'te-IN': { ph: "జననితో మాట్లాడండి...", send: 'పంపు', mic: 'మాట్లాడు' },
-    'ta-IN': { ph: "ஜனனியுடன் பேசுங்கள்...", send: 'அனுப்பு', mic: 'பேச' },
-    'kn-IN': { ph: "ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ...", send: 'ಕಳುಹಿಸು', mic: 'ಮಾತನಾಡಿ' },
-    'mr-IN': { ph: "जननीसोबत बोला...", send: 'पाठवा', mic: 'बोला' },
-    'bn-IN': { ph: "জননির সঙ্গে কথা বলুন...", send: 'পাঠান', mic: 'বলুন' },
-    'gu-IN': { ph: "જનની સાથે વાત કરો...", send: 'મોકલો', mic: 'બોલો' },
-    'ml-IN': { ph: "ജനനിയുമായി സംസാരിക്കുക...", send: ' അയയ്ക്കുക', mic: 'സംസാരിക്കുക' },
-    'pa-IN': { ph: "ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ...", send: 'ਭੇਜੋ', mic: 'ਬੋਲੋ' },
+    'te-IN': { ph: 'జననితో మాట్లాడండి...', send: 'పంపు', mic: 'మాట్లాడు' },
+    'ta-IN': { ph: 'ஜனனியுடன் பேசுங்கள்...', send: 'அனுப்பு', mic: 'பேச' },
+    'kn-IN': { ph: 'ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ...', send: 'ಕಳುಹಿಸು', mic: 'ಮಾತನಾಡಿ' },
+    'mr-IN': { ph: 'जननीसोबत बोला...', send: 'पाठवा', mic: 'बोला' },
+    'bn-IN': { ph: 'জননির সঙ্গে কথা বলুন...', send: 'পাঠান', mic: 'বলুন' },
+    'gu-IN': { ph: 'જનની સાથે વાત કરો...', send: 'મોકલો', mic: 'બોલો' },
+    'ml-IN': { ph: 'ജനനിയുമായി സംസാരിക്കുക...', send: 'അയയ്ക്കുക', mic: 'സംസാരിക്കുക' },
+    'pa-IN': { ph: 'ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ...', send: 'ਭੇਜੋ', mic: 'ਬੋਲੋ' },
     'ur-IN': { ph: 'اپنا سوال لکھیں...', send: 'بھیجیں', mic: 'بولیں' },
-    default: { ph: 'Talk to Janani...', send: 'Send', mic: 'Speak' }
+    default: { ph: 'Talk to Janani...', send: 'Send', mic: 'Speak' },
   };
   const t = translations[userLang] || translations.default;
   const { ph: placeholder, send, mic: speakLabel } = t;
@@ -202,7 +205,7 @@ User said:
           type="text"
           placeholder={placeholder}
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && !isProcessing && handleTextSubmit()}
           className="flex-1 border p-2 rounded-lg"
           disabled={isProcessing}
@@ -222,9 +225,19 @@ User said:
           } disabled:opacity-50`}
           title={speakLabel}
         >
-          {/* Using a simple mic icon for consistency */}
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+            />
           </svg>
         </button>
       </div>

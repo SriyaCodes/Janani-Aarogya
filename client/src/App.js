@@ -1,21 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-import LanguageSelector from './components/LanguageSelector';
-import StageSelector from './components/StageSelector';
-import Dashboard from './components/Dashboard';
-import Login from './components/Login';
-import Signup from './components/Signup';
-import YogaPage from './components/YogaPage';
-import AyurvedaPage from './components/AyurvedaPage';
-import MemoryVault from './components/MemoryVault';
-import JournalPage from './components/JournalPage';
-import ProfilePage from './components/ProfilePage';
-import PreConceptionYogaPage from './components/PreConceptionYogaPage';
-import PregYogaPage from './components/PregYogaPage';
-import PostYogaPage from './components/PostYogaPage';
-import PreConceptionAyurvedaPage from './components/PreConceptionAyurvedaPage';
-import PregAyurvedaPage from './components/PregAyurvedaPage';
+// ... all your other component imports
 import PostAyurvedaPage from './components/PostAyurvedaPage';
 
 function App() {
@@ -30,53 +16,33 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        {/* Default Route */}
-        <Route path="/" element={<Signup />} />
+    // Wrap everything in a React Fragment <> ... </>
+    <>
+      <Router>
+        <Routes>
+          {/* ... all your <Route> components remain unchanged ... */}
+          <Route path="/post-ayurveda" element={<PostAyurvedaPage />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Router>
 
-        {/* Auth Routes */}
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-
-        {/* Onboarding */}
-        <Route
-          path="/language-selector"
-          element={user ? <LanguageSelector /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/stage-selector"
-          element={user ? <StageSelector /> : <Navigate to="/login" />}
-        />
-
-        {/* Main Dashboard */}
-        <Route
-          path="/dashboard"
-          element={user ? <Dashboard /> : <Navigate to="/login" />}
-        />
-
-        {/* Pages */}
-        <Route path="/yoga" element={<YogaPage />} />
-        <Route path="/ayurveda" element={<AyurvedaPage />} />
-        <Route path="/memory-vault" element={<MemoryVault />} />
-        <Route
-          path="/journal"
-          element={user ? <JournalPage /> : <Navigate to="/login" />}
-        />
-        <Route path="/profile" element={<ProfilePage />} />
-
-        {/* Stage-specific Yoga & Ayurveda */}
-        <Route path="/preconception-yoga" element={<PreConceptionYogaPage />} />
-        <Route path="/pregnancy-yoga" element={<PregYogaPage />} />
-        <Route path="/post-yoga" element={<PostYogaPage />} />
-        <Route path="/preconception-ayurveda" element={<PreConceptionAyurvedaPage />} />
-        <Route path="/pregnancy-ayurveda" element={<PregAyurvedaPage />} />
-        <Route path="/post-ayurveda" element={<PostAyurvedaPage />} />
-
-        {/* Catch-all Route */}
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </Router>
+      {/* 👇 ADD THIS FOOTER FOR ATTRIBUTION 👇 */}
+      <footer style={{ 
+          textAlign: 'center', 
+          padding: '10px', 
+          marginTop: '20px', 
+          fontSize: '12px', 
+          color: '#888' 
+        }}>
+        <a 
+          href="https://responsivevoice.org" 
+          title="ResponsiveVoice - Text to Speech" 
+          style={{ color: "inherit", textDecoration: "none" }}
+        >
+          Speech by ResponsiveVoice
+        </a>
+      </footer>
+    </>
   );
 }
 
