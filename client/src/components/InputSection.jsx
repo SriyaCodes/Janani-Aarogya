@@ -8,41 +8,39 @@ import { franc } from 'franc';
 
 function InputSection({ onReply }) {
   /* ───────── state ───────── */
-  const [input, setInput]           = useState('');
+  const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [inputMethod, setInputMethod] = useState(null);
 
   /* ───────── refs ────────── */
-  const silenceTimerRef   = useRef(null);
-  const recognitionRef    = useRef(null);
+  const silenceTimerRef = useRef(null);
+  const recognitionRef = useRef(null);
   const speechSynthesisRef = useRef(null);
 
   /* ───────── user / lang ─── */
-  const user     = getAuth().currentUser;
+  const user = getAuth().currentUser;
   const userLang = localStorage.getItem('lang') || 'en-IN';
 
   /* ─────── voice setup ───── */
-  /* ─────── voice setup ───── */
-useEffect(() => {
-  speechSynthesisRef.current = window.speechSynthesis;
+  useEffect(() => {
+    speechSynthesisRef.current = window.speechSynthesis;
 
-  const preloadVoices = () => {
-    const voices = speechSynthesisRef.current.getVoices();
-    if (voices.length > 0) {
-      console.log("✅ Voices loaded:", voices.map(v => `${v.name} (${v.lang})`));
-    }
-  };
+    const preloadVoices = () => {
+      const voices = speechSynthesisRef.current.getVoices();
+      if (voices.length > 0) {
+        console.log("✅ Voices loaded:", voices.map(v => `${v.name} (${v.lang})`));
+      }
+    };
 
-  preloadVoices();
-  window.speechSynthesis.onvoiceschanged = preloadVoices;
+    preloadVoices();
+    window.speechSynthesis.onvoiceschanged = preloadVoices;
 
-  return () => {
-    window.speechSynthesis.onvoiceschanged = null;
-    speechSynthesisRef.current.cancel();
-  };
-}, []);
-
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+      speechSynthesisRef.current?.cancel();
+    };
+  }, []);
 
   /* ─────── cleanup ───────── */
   useEffect(() => {
@@ -54,37 +52,46 @@ useEffect(() => {
   }, []);
 
   /* ───── TTS helper ──────── */
- /* ───── TTS helper ──────── */
-const speak = (text, lang) => {
-  const synth = speechSynthesisRef.current;
-  if (!synth) return;
-  synth.cancel();
+  const speak = (text, lang) => {
+    const synth = speechSynthesisRef.current;
+    if (!synth) return;
+    synth.cancel();
 
-  const speakWithVoice = () => {
-    const voices = synth.getVoices();
-    let voice =
-  voices.find(v => v.lang === lang && v.name.toLowerCase().includes('google')) ||
-  voices.find(v => v.lang.startsWith(lang.split('-')[0]) && v.name.toLowerCase().includes('google')) ||
-  voices.find(v => v.name.toLowerCase().includes('google')) ||
-  voices.find(v => v.lang === lang) ||
-  voices[0];
+    const speakWithVoice = () => {
+      const voices = synth.getVoices();
+      
+      // Priority order for Indian motherly voice
+      let voice =
+        voices.find(v => v.lang === lang && /india|hindi|tamil|telugu|bengali|marathi/gmi.test(v.name)) ||
+        voices.find(v => v.lang === lang && /female|woman/gmi.test(v.name)) ||
+        voices.find(v => v.lang === 'en-IN' && /female|woman/gmi.test(v.name)) ||
+        voices.find(v => v.lang.startsWith(lang.split('-')[0]) && /female|woman/gmi.test(v.name)) ||
+        voices.find(v => v.lang === lang) ||
+        voices.find(v => v.lang.startsWith(lang.split('-')[0])) ||
+        voices.find(v => /female|woman/gmi.test(v.name)) ||
+        voices[0];
 
+      const uttr = new SpeechSynthesisUtterance(text);
+      uttr.lang = lang;
+      uttr.rate = 0.9;  // Slightly slower pace
+      uttr.pitch = 0.85; // Slightly lower pitch
+      uttr.volume = 1;
+      uttr.voice = voice;
 
-    const uttr = new SpeechSynthesisUtterance(text);
-    uttr.lang = lang;
-    uttr.rate = 1.0;
-    uttr.pitch = 1.0;
-    uttr.voice = voice;
-    synth.speak(uttr);
+      // Additional adjustments for Indian languages
+      if (!lang.includes('en')) {
+        uttr.rate = 0.85;
+      }
+
+      synth.speak(uttr);
+    };
+
+    if (synth.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = speakWithVoice;
+    } else {
+      speakWithVoice();
+    }
   };
-
-  if (synth.getVoices().length === 0) {
-    window.speechSynthesis.onvoiceschanged = speakWithVoice;
-  } else {
-    speakWithVoice();
-  }
-};
-
 
   /* ───── language detect ─── */
   const detectLanguage = (text) => {
@@ -108,11 +115,12 @@ const speak = (text, lang) => {
   const startListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) return alert('Speech Recognition not supported in this browser');
-    recognitionRef.current                  = new SR();
-    recognitionRef.current.lang             = userLang;
-    recognitionRef.current.interimResults   = true;
-    recognitionRef.current.continuous       = true;
-    recognitionRef.current.maxAlternatives  = 1;
+    
+    recognitionRef.current = new SR();
+    recognitionRef.current.lang = userLang;
+    recognitionRef.current.interimResults = true;
+    recognitionRef.current.continuous = true;
+    recognitionRef.current.maxAlternatives = 1;
 
     const resetSilence = () => {
       clearTimeout(silenceTimerRef.current);
@@ -127,8 +135,16 @@ const speak = (text, lang) => {
         handleSubmit(transcript, detectLanguage(transcript));
       }
     };
-    recognitionRef.current.onerror = (err) => { console.error(err); stopListening(); };
-    recognitionRef.current.onend   = () => { setIsListening(false); setIsProcessing(false); };
+    
+    recognitionRef.current.onerror = (err) => { 
+      console.error(err); 
+      stopListening(); 
+    };
+    
+    recognitionRef.current.onend = () => { 
+      setIsListening(false); 
+      setIsProcessing(false); 
+    };
 
     setIsListening(true);
     recognitionRef.current.start();
@@ -143,14 +159,13 @@ const speak = (text, lang) => {
     setIsProcessing(true);
     try {
       const responseLang = forcedLang || detectLanguage(finalInput);
-      const langCode     = responseLang.slice(0,2);
+      const langCode = responseLang.slice(0,2);
 
-      /* ---------- NEW EMOTIONAL PROMPT ---------- */
       const prompt = `
 You are a wise, emotionally strong Indian woman (like an elder sister or trusted midwife).
 Give a short, warm, and deeply empathetic reply in ${langCode}.
-if user mentions any symptoms related to health, give suggestions accordingly. keep in mind that the user is either in pregnancy or prepreganncy or post pregnancy.
-• 2‑3 concise lines
+If user mentions any symptoms related to health, give suggestions accordingly. Keep in mind that the user is either in pregnancy, pre-pregnancy or post-pregnancy.
+• 2-3 concise lines
 • Gentle reassurance, emotional support
 • A dash of motivation or cultural wisdom if fitting
 User said:
@@ -166,7 +181,6 @@ User said:
 
       /* store entry */
       if (user) {
-        console.log('📦 Saving entry for UID:', user.uid);
         await addDoc(collection(db, 'users', user.uid, 'entries'), {
           input: finalInput,
           response: reply,
@@ -174,7 +188,7 @@ User said:
           inputMethod: inputMethod || 'text',
           createdAt: serverTimestamp()
         });
-      } else console.warn('⚠️ No authenticated user, skipping Firestore write');
+      }
     } catch (err) {
       console.error('Gemini error', err);
       const fallback = userLang.startsWith('hi')
@@ -188,32 +202,28 @@ User said:
   };
 
   /* ───── text submit click ─ */
-  const handleTextSubmit = () => { setInputMethod('text'); handleSubmit(); };
+  const handleTextSubmit = () => { 
+    setInputMethod('text'); 
+    handleSubmit(); 
+  };
 
   /* ───── translations ────── */
   const translations = {
     'hi-IN': { ph:'जननी से बात करें...', send:'भेजें', mic:'बोलें' },
-    'te-IN': { ph:"జననితో మాట్లాడండి..."
-, send:'పంపు', mic:'మాట్లాడు' },
-    'ta-IN': { ph:"ஜனனியுடன் பேசுங்கள்..."
-, send:'அனுப்பு', mic:'பேச' },
-    'kn-IN': { ph:"ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ..."
-, send:'ಕಳುಹೆ', mic:'ಮಾತನಾಡಿ' },
-    'mr-IN': { ph:"जननीसोबत बोला..."
-, send:'पाठवा', mic:'बोला' },
-    'bn-IN': { ph:"জননির সঙ্গে কথা বলুন..."
-, send:'পাঠান', mic:'বলুন' },
-    'gu-IN': { ph:"જનની સાથે વાત કરો..."
-, send:'મોકલો', mic:'બોલો' },
-    'ml-IN': { ph:"ജനനിയുമായി സംസാരിക്കുക..."
-, send:' അയയ്ക്കുക', mic:'സംസാരിക്കുക' },
-    'pa-IN': { ph:"ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ..."
-, send:'ਭੇਜੋ', mic:'ਬੋਲੋ' },
+    'te-IN': { ph:"జననితో మాట్లాడండి...", send:'పంపు', mic:'మాట్లాడు' },
+    'ta-IN': { ph:"ஜனனியுடன் பேசுங்கள்...", send:'அனுப்பு', mic:'பேச' },
+    'kn-IN': { ph:"ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ...", send:'ಕಳುಹೆ', mic:'ಮಾತನಾಡಿ' },
+    'mr-IN': { ph:"जननीसोबत बोला...", send:'पाठवा', mic:'बोला' },
+    'bn-IN': { ph:"জননির সঙ্গে কথা বলুন...", send:'পাঠান', mic:'বলুন' },
+    'gu-IN': { ph:"જનની સાથે વાત કરો...", send:'મોકલો', mic:'બોલો' },
+    'ml-IN': { ph:"ജനനിയുമായി സംസാരിക്കുക...", send:'അയയ്ക്കുക', mic:'സംസാരിക്കുക' },
+    'pa-IN': { ph:"ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ...", send:'ਭੇਜੋ', mic:'ਬੋਲੋ' },
     'ur-IN': { ph:'اپنا سوال لکھیں...', send:'بھیجیں', mic:'بولیں' },
-    default : { ph:'Talk to Janani...', send:'Send', mic:'Speak' }
+    default: { ph:'Talk to Janani...', send:'Send', mic:'Speak' }
   };
+  
   const t = translations[userLang] || translations.default;
-  const { ph:placeholder, send, mic:speakLabel } = t;
+  const { ph: placeholder, send, mic: speakLabel } = t;
 
   /* ───── render ───── */
   return (
@@ -223,24 +233,24 @@ User said:
           type="text"
           placeholder={placeholder}
           value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleTextSubmit()}
-          className="flex-1 border p-2 rounded-lg"
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleTextSubmit()}
+          className="flex-1 border p-2 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-transparent"
           disabled={isProcessing}
         />
         <button
           onClick={handleTextSubmit}
           disabled={isProcessing}
-          className="px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 disabled:opacity-50"
+          className="px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 disabled:opacity-50 transition-colors"
         >
           {isProcessing ? '...' : send}
         </button>
         <button
           onClick={isListening ? stopListening : startListening}
           disabled={isProcessing}
-          className={`px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 disabled:opacity-50 ${
-            isListening ? 'bg-red-500 text-white' : 'bg-gray-100'
-          } disabled:opacity-50`}
+          className={`p-2 rounded-lg ${isListening 
+            ? 'bg-red-500 animate-pulse' 
+            : 'bg-pink-500'} text-white hover:bg-pink-600 disabled:opacity-50 transition-colors`}
           title={speakLabel}
         >
           {isProcessing ? '...' : '🎙️'}
