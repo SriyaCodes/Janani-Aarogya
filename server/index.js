@@ -24,6 +24,7 @@ const PORT = process.env.PORT || 5000;
 app.get('/', (req, res) => {
   res.send('✅ Janani Backend is Running!');
 });
+console.log("GEMINI KEY:", process.env.GEMINI_API_KEY);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

@@ -879,12 +879,8 @@ const PreConceptionAyurvedaPage = () => {
   }
 ]
 
-
-
   };
 
- 
-  
      const remedies = ayurvedicRemedies[language] || ayurvedicRemedies['en-IN'];
   
     // Fetch user data
