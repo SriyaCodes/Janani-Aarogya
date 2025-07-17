@@ -8,37 +8,28 @@ import { franc } from 'franc';
 
 function InputSection({ onReply }) {
   /* ───────── state ───────── */
-  const [input, setInput] = useState('');
+  const [input, setInput]           = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [inputMethod, setInputMethod] = useState(null);
 
   /* ───────── refs ────────── */
-  const silenceTimerRef = useRef(null);
-  const recognitionRef = useRef(null);
+  const silenceTimerRef   = useRef(null);
+  const recognitionRef    = useRef(null);
   const speechSynthesisRef = useRef(null);
 
   /* ───────── user / lang ─── */
-  const user = getAuth().currentUser;
+  const user     = getAuth().currentUser;
   const userLang = localStorage.getItem('lang') || 'en-IN';
 
   /* ─────── voice setup ───── */
   useEffect(() => {
     speechSynthesisRef.current = window.speechSynthesis;
-
-    const preloadVoices = () => {
-      const voices = speechSynthesisRef.current.getVoices();
-      if (voices.length > 0) {
-        console.log("✅ Voices loaded:", voices.map(v => `${v.name} (${v.lang})`));
-      }
-    };
-
-    preloadVoices();
-    window.speechSynthesis.onvoiceschanged = preloadVoices;
-
+    const populate = () => speechSynthesisRef.current?.getVoices();
+    speechSynthesisRef.current.addEventListener('voiceschanged', populate);
     return () => {
-      window.speechSynthesis.onvoiceschanged = null;
-      speechSynthesisRef.current?.cancel();
+      speechSynthesisRef.current.removeEventListener('voiceschanged', populate);
+      speechSynthesisRef.current.cancel();
     };
   }, []);
 
@@ -56,111 +47,17 @@ function InputSection({ onReply }) {
     const synth = speechSynthesisRef.current;
     if (!synth) return;
     synth.cancel();
-
-    const speakWithVoice = () => {
-      const voices = synth.getVoices();
-      
-      // Language-specific voice selection logic
-      const getVoiceForLang = (targetLang) => {
-        // Special handling for each Indian language
-        const languagePreferences = {
-          'hi-IN': { // Hindi
-            primary: v => v.lang === 'hi-IN' && /india|hindi|female|woman/gmi.test(v.name),
-            fallback: v => v.lang === 'hi-IN',
-            secondary: v => v.lang.startsWith('hi-')
-          },
-          'te-IN': { // Telugu
-            primary: v => v.lang === 'te-IN' && /telugu|india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'te-IN',
-            secondary: v => v.lang.startsWith('te-')
-          },
-          'ta-IN': { // Tamil
-            primary: v => v.lang === 'ta-IN' && /tamil|india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'ta-IN',
-            secondary: v => v.lang.startsWith('ta-')
-          },
-          // Add similar patterns for other Indian languages
-          'kn-IN': { // Kannada
-            primary: v => v.lang === 'kn-IN' && /kannada|india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'kn-IN',
-            secondary: v => v.lang.startsWith('kn-')
-          },
-          'mr-IN': { // Marathi
-            primary: v => v.lang === 'mr-IN' && /marathi|india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'mr-IN',
-            secondary: v => v.lang.startsWith('mr-')
-          },
-          'bn-IN': { // Bengali
-            primary: v => v.lang === 'bn-IN' && /bengali|india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'bn-IN',
-            secondary: v => v.lang.startsWith('bn-')
-          },
-          'gu-IN': { // Gujarati
-            primary: v => v.lang === 'gu-IN' && /gujarati|india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'gu-IN',
-            secondary: v => v.lang.startsWith('gu-')
-          },
-          'ml-IN': { // Malayalam
-            primary: v => v.lang === 'ml-IN' && /malayalam|india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'ml-IN',
-            secondary: v => v.lang.startsWith('ml-')
-          },
-          'pa-IN': { // Punjabi
-            primary: v => v.lang === 'pa-IN' && /punjabi|india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'pa-IN',
-            secondary: v => v.lang.startsWith('pa-')
-          },
-          'ur-IN': { // Urdu
-            primary: v => v.lang === 'ur-IN' && /urdu|india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'ur-IN',
-            secondary: v => v.lang.startsWith('ur-')
-          },
-          'en-IN': { // Indian English
-            primary: v => v.lang === 'en-IN' && /india|female/gmi.test(v.name),
-            fallback: v => v.lang === 'en-IN',
-            secondary: v => v.lang.startsWith('en-')
-          }
-        };
-
-        const prefs = languagePreferences[targetLang] || {
-          primary: v => v.lang === targetLang,
-          fallback: v => v.lang.startsWith(targetLang.split('-')[0]),
-          secondary: v => /female|woman/gmi.test(v.name)
-        };
-
-        return (
-          voices.find(prefs.primary) ||
-          voices.find(prefs.fallback) ||
-          voices.find(prefs.secondary) ||
-          voices.find(v => v.lang === targetLang) ||
-          voices.find(v => v.lang.startsWith(targetLang.split('-')[0])) ||
-          voices[0]
-        );
-      };
-
-      const voice = getVoiceForLang(lang);
-
-      const uttr = new SpeechSynthesisUtterance(text);
-      uttr.lang = lang;
-      
-      // Adjust speech parameters based on language
-      if (lang.endsWith('-IN')) {
-        uttr.rate = 0.85;  // Slightly slower for Indian languages
-        uttr.pitch = 0.9;  // Slightly warmer pitch
-      } else {
-        uttr.rate = 1.0;
-        uttr.pitch = 1.0;
-      }
-      
-      uttr.voice = voice;
-      synth.speak(uttr);
-    };
-
-    if (synth.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = speakWithVoice;
-    } else {
-      speakWithVoice();
-    }
+    const uttr    = new SpeechSynthesisUtterance(text);
+    uttr.lang     = lang;
+    uttr.rate     = 1.0;
+    uttr.pitch    = 1.0;
+    const voices  = synth.getVoices();
+    const voice   =
+      voices.find(v => v.lang === lang) ||
+      voices.find(v => v.lang.startsWith(lang.split('-')[0])) ||
+      voices[0];
+    uttr.voice = voice;
+    setTimeout(() => synth.speak(uttr), 100);
   };
 
   /* ───── language detect ─── */
@@ -185,12 +82,11 @@ function InputSection({ onReply }) {
   const startListening = () => {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) return alert('Speech Recognition not supported in this browser');
-    
-    recognitionRef.current = new SR();
-    recognitionRef.current.lang = userLang;
-    recognitionRef.current.interimResults = true;
-    recognitionRef.current.continuous = true;
-    recognitionRef.current.maxAlternatives = 1;
+    recognitionRef.current                  = new SR();
+    recognitionRef.current.lang             = userLang;
+    recognitionRef.current.interimResults   = true;
+    recognitionRef.current.continuous       = true;
+    recognitionRef.current.maxAlternatives  = 1;
 
     const resetSilence = () => {
       clearTimeout(silenceTimerRef.current);
@@ -205,16 +101,8 @@ function InputSection({ onReply }) {
         handleSubmit(transcript, detectLanguage(transcript));
       }
     };
-    
-    recognitionRef.current.onerror = (err) => { 
-      console.error(err); 
-      stopListening(); 
-    };
-    
-    recognitionRef.current.onend = () => { 
-      setIsListening(false); 
-      setIsProcessing(false); 
-    };
+    recognitionRef.current.onerror = (err) => { console.error(err); stopListening(); };
+    recognitionRef.current.onend   = () => { setIsListening(false); setIsProcessing(false); };
 
     setIsListening(true);
     recognitionRef.current.start();
@@ -229,13 +117,14 @@ function InputSection({ onReply }) {
     setIsProcessing(true);
     try {
       const responseLang = forcedLang || detectLanguage(finalInput);
-      const langCode = responseLang.slice(0,2);
+      const langCode     = responseLang.slice(0,2);
 
+      /* ---------- NEW EMOTIONAL PROMPT ---------- */
       const prompt = `
 You are a wise, emotionally strong Indian woman (like an elder sister or trusted midwife).
 Give a short, warm, and deeply empathetic reply in ${langCode}.
-If user mentions any symptoms related to health, give suggestions accordingly. Keep in mind that the user is either in pregnancy, pre-pregnancy or post-pregnancy.
-• 2-3 concise lines
+if user mentions any symptoms related to health, give suggestions accordingly. keep in mind that the user is either in pregnancy or prepreganncy or post pregnancy.
+• 2‑3 concise lines
 • Gentle reassurance, emotional support
 • A dash of motivation or cultural wisdom if fitting
 User said:
@@ -251,6 +140,7 @@ User said:
 
       /* store entry */
       if (user) {
+        console.log('📦 Saving entry for UID:', user.uid);
         await addDoc(collection(db, 'users', user.uid, 'entries'), {
           input: finalInput,
           response: reply,
@@ -258,12 +148,12 @@ User said:
           inputMethod: inputMethod || 'text',
           createdAt: serverTimestamp()
         });
-      }
+      } else console.warn('⚠️ No authenticated user, skipping Firestore write');
     } catch (err) {
       console.error('Gemini error', err);
       const fallback = userLang.startsWith('hi')
         ? 'क्षमा करें, अभी उत्तर उपलब्ध नहीं है। कृपया पुनः प्रयास करें।'
-        : 'Sorry, Im unable to respond right now. Please try again.';
+        : 'Sorry, I’m unable to respond right now. Please try again.';
       onReply(fallback, userLang, inputMethod || 'text');
       speak(fallback, userLang);
     } finally {
@@ -272,28 +162,32 @@ User said:
   };
 
   /* ───── text submit click ─ */
-  const handleTextSubmit = () => { 
-    setInputMethod('text'); 
-    handleSubmit(); 
-  };
+  const handleTextSubmit = () => { setInputMethod('text'); handleSubmit(); };
 
   /* ───── translations ────── */
   const translations = {
     'hi-IN': { ph:'जननी से बात करें...', send:'भेजें', mic:'बोलें' },
-    'te-IN': { ph:"జననితో మాట్లాడండి...", send:'పంపు', mic:'మాట్లాడు' },
-    'ta-IN': { ph:"ஜனனியுடன் பேசுங்கள்...", send:'அனுப்பு', mic:'பேச' },
-    'kn-IN': { ph:"ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ...", send:'ಕಳುಹೆ', mic:'ಮಾತನಾಡಿ' },
-    'mr-IN': { ph:"जननीसोबत बोला...", send:'पाठवा', mic:'बोला' },
-    'bn-IN': { ph:"জননির সঙ্গে কথা বলুন...", send:'পাঠান', mic:'বলুন' },
-    'gu-IN': { ph:"જનની સાથે વાત કરો...", send:'મોકલો', mic:'બોલો' },
-    'ml-IN': { ph:"ജനനിയുമായി സംസാരിക്കുക...", send:'അയയ്ക്കുക', mic:'സംസാരിക്കുക' },
-    'pa-IN': { ph:"ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ...", send:'ਭੇਜੋ', mic:'ਬੋਲੋ' },
+    'te-IN': { ph:"జననితో మాట్లాడండి..."
+, send:'పంపు', mic:'మాట్లాడు' },
+    'ta-IN': { ph:"ஜனனியுடன் பேசுங்கள்..."
+, send:'அனுப்பு', mic:'பேச' },
+    'kn-IN': { ph:"ಜನನಿಯೊಂದಿಗೆ ಮಾತನಾಡಿ..."
+, send:'ಕಳುಹೆ', mic:'ಮಾತನಾಡಿ' },
+    'mr-IN': { ph:"जननीसोबत बोला..."
+, send:'पाठवा', mic:'बोला' },
+    'bn-IN': { ph:"জননির সঙ্গে কথা বলুন..."
+, send:'পাঠান', mic:'বলুন' },
+    'gu-IN': { ph:"જનની સાથે વાત કરો..."
+, send:'મોકલો', mic:'બોલો' },
+    'ml-IN': { ph:"ജനനിയുമായി സംസാരിക്കുക..."
+, send:' അയയ്ക്കുക', mic:'സംസാരിക്കുക' },
+    'pa-IN': { ph:"ਜਨਨੀ ਨਾਲ ਗੱਲ ਕਰੋ..."
+, send:'ਭੇਜੋ', mic:'ਬੋਲੋ' },
     'ur-IN': { ph:'اپنا سوال لکھیں...', send:'بھیجیں', mic:'بولیں' },
-    default: { ph:'Talk to Janani...', send:'Send', mic:'Speak' }
+    default : { ph:'Talk to Janani...', send:'Send', mic:'Speak' }
   };
-  
   const t = translations[userLang] || translations.default;
-  const { ph: placeholder, send, mic: speakLabel } = t;
+  const { ph:placeholder, send, mic:speakLabel } = t;
 
   /* ───── render ───── */
   return (
@@ -303,24 +197,24 @@ User said:
           type="text"
           placeholder={placeholder}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleTextSubmit()}
-          className="flex-1 border p-2 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-transparent"
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handleTextSubmit()}
+          className="flex-1 border p-2 rounded-lg"
           disabled={isProcessing}
         />
         <button
           onClick={handleTextSubmit}
           disabled={isProcessing}
-          className="px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 disabled:opacity-50 transition-colors"
+          className="px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 disabled:opacity-50"
         >
           {isProcessing ? '...' : send}
         </button>
         <button
           onClick={isListening ? stopListening : startListening}
           disabled={isProcessing}
-          className={`p-2 rounded-lg ${isListening 
-            ? 'bg-red-500 animate-pulse' 
-            : 'bg-pink-500'} text-white hover:bg-pink-600 disabled:opacity-50 transition-colors`}
+          className={`px-4 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 disabled:opacity-50 ${
+            isListening ? 'bg-red-500 text-white' : 'bg-gray-100'
+          } disabled:opacity-50`}
           title={speakLabel}
         >
           {isProcessing ? '...' : '🎙️'}
