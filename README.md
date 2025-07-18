@@ -35,30 +35,3 @@ Database: Firestore (NoSQL)
 Frontend: Vercel  
 Backend: Vercel (Node.js Express API)  
 Database & Auth: Firebase (Firestore + Authentication)
-
-## ⚙️ Local Development Setup
-
-Follow these steps to set up and run the project locally:
-
-### 1. Clone the Repository
-
-git clone https://github.com/SriyaCodes/Janani-Aarogya.git
-
-### 2. Navigate to the Project Directory
-
-cd Janani-Aarogya
-### 3. Create .env File 
-Inside the server folder:
-
-GEMINI_API_KEY=AIzaSyDD8B2tI77KaVg8h7L6GYh7wZPVntmIw90
-### 4. Install Dependencies & Start Server
-cd server
-npm install
-npm start
-### 6. Install Dependencies & Start Client
-In a new terminal tab:
-
-cd client
-npm install
-npm start
-
